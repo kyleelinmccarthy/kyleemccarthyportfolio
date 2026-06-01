@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      # Turnstile test keys (always pass) so build + e2e run without secrets.
+      TURNSTILE_SECRET_KEY: 1x0000000000000000000000000000000AA
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
+      CONTACT_TO_EMAIL: test@example.com
+      CONTACT_FROM_EMAIL: Test <onboarding@resend.dev>
+      NEXT_PUBLIC_SITE_URL: http://localhost:3100
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e

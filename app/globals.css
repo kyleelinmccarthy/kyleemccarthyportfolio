@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Design tokens — single source of truth.
+ * Raw palette swatches are locked by the brief; semantic aliases below
+ * resolve per theme and respect the verified AA contrast table:
+ *   - light accent text  -> #771606 (7.74:1 on cream)
+ *   - dark  accent text  -> #D87F63 (6.32:1 on blackberry, DERIVED)
+ *   - #BF4D3A / #A62E1A / #771606 on the opposite bg are large/non-text only
+ */
+
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+  --surface: #12121c; /* blackberry */
+  --surface-raised: #1c1b27;
+  --fg: #e9d5bd; /* cream — 13.04:1 */
+  --fg-muted: #c2b29a; /* muted cream — ~9:1 on blackberry */
+  --accent: #d9602f; /* burnt terracotta, AA 5.02:1, not peachy */
+  --accent-strong: #bf4d3a; /* true terracotta — large/display only on dark */
+  --rule: #2c2b37;
+  --fill: #a62e1a; /* terracotta fill; cream text = 4.86:1 (AA) */
+  --fill-fg: #e9d5bd;
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --surface: #e9d5bd; /* cream */
+  --surface-raised: #f2e6d3;
+  --fg: #12121c; /* ink — 13.04:1 */
+  --fg-muted: #4a4640; /* muted ink — ~6.6:1 on cream */
+  --accent: #a62e1a; /* terracotta-600 — 4.86:1 (AA normal), brick not oxblood */
+  --accent-strong: #771606; /* deepest terracotta for emphasis */
+  --rule: #cdb89c;
+  --fill: #a62e1a; /* cream text = 4.86:1 (AA) */
+  --fill-fg: #e9d5bd;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem; /* clears the sticky nav on anchor jumps */
+  }
+
+  body {
+    background-color: var(--surface);
+    color: var(--fg);
+    font-feature-settings: 'kern';
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transition:
+      background-color 320ms cubic-bezier(0.65, 0, 0.35, 1),
+      color 320ms cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  /* Visible terracotta focus ring on every interactive element. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--surface);
+  }
+}
+
+@layer components {
+  /*
+   * Always-dark context (hero + stats bar are blackberry in BOTH themes).
+   * Re-declares the dark token values locally so child utilities like
+   * text-fg / text-accent stay AA-correct on blackberry regardless of theme.
+   */
+  .section-dark {
+    --surface: #12121c;
+    --surface-raised: #1c1b27;
+    --fg: #e9d5bd;
+    --fg-muted: #c2b29a;
+    --accent: #d9602f; /* burnt terracotta, AA 5.02:1, not peachy */
+    --accent-strong: #bf4d3a;
+    --rule: #2c2b37;
+    --fill: #a62e1a;
+    --fill-fg: #e9d5bd;
+    background-color: var(--surface);
+    color: var(--fg);
+  }
+
+  /* Skip-to-content link — visible only when focused. */
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 100;
+    transform: translateY(-150%);
+    padding: 0.625rem 1rem;
+    background-color: var(--fill);
+    color: var(--fill-fg);
+    border-radius: 0.375rem;
+    font-weight: 600;
+    transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+}
+
+/* Honor reduced-motion globally as a backstop to the JS-level handling. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
