@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og'
+import { hero } from '@/content/hero'
 
 export const runtime = 'edge'
 export const alt = 'Kylee McCarthy — Technology Leader, Builder & Designer'
@@ -34,14 +35,14 @@ export default function OpengraphImage() {
         <div
           style={{
             marginTop: 24,
-            fontSize: 84,
-            lineHeight: 1.04,
+            fontSize: 60,
+            lineHeight: 1.08,
             fontWeight: 700,
             color: '#E9D5BD',
-            maxWidth: 1000,
+            maxWidth: 1040,
           }}
         >
-          I Build What Others Only Plan For.
+          {hero.headline}
         </div>
         <div style={{ marginTop: 40, display: 'flex', alignItems: 'center', gap: 20 }}>
           <div style={{ width: 80, height: 5, backgroundColor: '#BF4D3A' }} />
