@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react'
 import { Container } from './Container'
+import { BackgroundShapes } from '@/components/media/BackgroundShapes'
 
 /**
  * A page section with an anchor id and optional eyebrow label + heading.
@@ -14,6 +15,7 @@ export function Section({
   className = '',
   containerWidth = 'default',
   as: Tag = 'section',
+  shapes = false,
 }: {
   id: string
   label?: string
@@ -23,15 +25,17 @@ export function Section({
   className?: string
   containerWidth?: 'default' | 'wide' | 'narrow'
   as?: 'section' | 'div'
+  shapes?: boolean
 }) {
   const labelledBy = headingId ?? (heading ? `${id}-heading` : undefined)
   return (
     <Tag
       id={id}
       aria-labelledby={heading ? labelledBy : undefined}
-      className={`scroll-mt-20 py-20 sm:py-28 lg:py-32 ${className}`}
+      className={`relative scroll-mt-20 py-20 sm:py-28 lg:py-32 ${shapes ? 'overflow-hidden' : ''} ${className}`}
     >
-      <Container width={containerWidth}>
+      {shapes && <BackgroundShapes />}
+      <Container width={containerWidth} className={shapes ? 'relative z-10' : ''}>
         {(label || heading) && (
           <header className="mb-10 sm:mb-14">
             {label && (

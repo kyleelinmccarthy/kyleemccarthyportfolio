@@ -11,6 +11,7 @@ import {
   type MotionValue,
 } from 'framer-motion'
 import { SceneActiveContext } from './sceneActive'
+import { BackgroundShapes } from '@/components/media/BackgroundShapes'
 
 export type Dir = 'start' | 'right' | 'left' | 'up' | 'down' | 'in'
 
@@ -97,10 +98,11 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
         {scenes.map((s) => (
           <section
             key={s.id}
-            className="flex min-h-[100svh] items-center bg-surface py-24"
+            className="relative flex min-h-[100svh] items-center overflow-hidden bg-surface py-24"
             aria-label={s.id}
           >
-            <div className="mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">{s.node}</div>
+            <BackgroundShapes />
+            <div className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">{s.node}</div>
           </section>
         ))}
       </div>
@@ -211,18 +213,24 @@ function Panel({
 
   return (
     <motion.div
-      className="absolute flex h-[100svh] w-screen items-center bg-surface"
+      className="absolute flex h-[100svh] w-screen items-center overflow-hidden bg-surface"
       style={{
         left: `${x * 100}vw`,
         top: `${y * 100}vh`,
         zIndex: z,
         opacity: reduce ? 1 : panelOpacity,
         scale: reduce ? 1 : panelScale,
+        // Only the centered scene is interactive. Without this, an 'in'/zoom
+        // scene that shares a grid cell with the scene beneath it sits on top
+        // at opacity 0 and still swallows every click (opacity alone doesn't
+        // disable pointer events) — which made the Build scene's links dead.
+        pointerEvents: isActive ? 'auto' : 'none',
       }}
     >
+      <BackgroundShapes />
       {/* The scene's own content animates on arrival via SceneActiveContext. */}
       <SceneActiveContext.Provider value={isActive}>
-        <div key={enterKey} className="mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
+        <div key={enterKey} className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
           {children}
         </div>
       </SceneActiveContext.Provider>

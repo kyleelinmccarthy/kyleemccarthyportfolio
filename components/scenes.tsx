@@ -1,5 +1,8 @@
 'use client'
 
+import { useRef } from 'react'
+import { useInView } from 'framer-motion'
+import { InfoTip } from '@/components/primitives/InfoTip'
 import { NameLogo } from '@/components/primitives/NameLogo'
 import { CTA } from '@/components/primitives/CTA'
 import { CountUp } from '@/components/primitives/CountUp'
@@ -12,25 +15,35 @@ import { projects } from '@/content/projects'
 import { site } from '@/content/site'
 
 // Only projects with a public live URL become clickable bubbles. Aura has no
-// standalone site (it's embedded), so it gets an info tooltip instead — and
+// standalone site (it's embedded), so it gets an info popover instead — and
 // Tech Hub is internal-only, so it's omitted here entirely.
-const FLAGSHIP_SLUGS = ['403hq', 'nbs-marketing', 'ember-tattoo']
+const FLAGSHIP_SLUGS = ['403hq', 'nbs-marketing', 'ember-tattoo', 'homeschool-platform']
 
 function Eyebrow({ children }: { children: string }) {
   return <p className="font-sans text-label uppercase text-accent">{children}</p>
 }
 
 function Figure({ value, label, index = 0 }: { value: string; label: string; index?: number }) {
-  const active = useSceneActive()
+  const sceneActive = useSceneActive()
+  // In the desktop journey the scene-active flag drives the count-up. The mobile
+  // stacked fallback (and standalone pages) have no scene context, so drive it
+  // off a reliable block-level in-view trigger here — CountUp's own observer
+  // watches a bare inline span, which is flaky on mobile and left the numeral
+  // stuck at 0.
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-15% 0px' })
+  const active = sceneActive === null ? inView : sceneActive
   return (
-    <RevealOnActive index={index}>
-      <span className="block whitespace-nowrap font-serif text-fluid-stat leading-none text-accent">
-        <CountUp value={value} active={active ?? undefined} />
-      </span>
-      <span className="mt-2 block max-w-[14rem] font-sans text-sm leading-snug text-fg-muted">
-        {label}
-      </span>
-    </RevealOnActive>
+    <div ref={ref}>
+      <RevealOnActive index={index}>
+        <span className="block whitespace-nowrap font-serif text-fluid-stat leading-none text-accent">
+          <CountUp value={value} active={active} />
+        </span>
+        <span className="mt-2 block max-w-[14rem] font-sans text-sm leading-snug text-fg-muted">
+          {label}
+        </span>
+      </RevealOnActive>
+    </div>
   )
 }
 
@@ -88,7 +101,7 @@ export function ValueScene() {
       </RevealOnActive>
       <div className="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-2">
         {journey.value.items.map((it, i) => (
-          <RevealOnActive key={it.number} index={i + 1} className="border-l-2 border-terracotta-500 pl-5">
+          <RevealOnActive key={it.number} index={i + 1} className="border-l-2 border-accent pl-5">
             <p className="font-serif text-xl text-accent">{it.number}</p>
             <h3 className="mt-1 font-serif text-2xl leading-tight text-fg">{it.title}</h3>
             <p className="mt-2 font-sans text-fg-muted">{it.tag}</p>
@@ -99,9 +112,30 @@ export function ValueScene() {
   )
 }
 
+// Aura isn't its own site, so instead of a link it gets an info chip carrying
+// the same note used on the /work cards (pulled from the project so the copy
+// stays in one place).
+function AuraInfo() {
+  const aura = projects.find((p) => p.slug === 'aura')
+  if (!aura?.embedNote) return null
+  return (
+    <InfoTip
+      label="Aura"
+      buttonClassName="inline-flex cursor-help items-center gap-2 rounded-full bg-surface-raised px-4 py-2 font-sans text-sm font-medium text-fg ring-1 ring-rule transition-colors hover:text-accent hover:ring-accent focus-visible:text-accent focus-visible:ring-accent"
+    >
+      {aura.embedNote}
+    </InfoTip>
+  )
+}
+
 export function BuildScene() {
   const flagships = FLAGSHIP_SLUGS.map((s) => projects.find((p) => p.slug === s)).filter(
     (p): p is NonNullable<typeof p> => Boolean(p?.liveUrl)
+  )
+  // Apps-built count tracks the real project list so it never drifts when a
+  // project is added (the first build figure is the "production apps" stat).
+  const figures = journey.build.figures.map((f, i) =>
+    i === 0 ? { ...f, value: String(projects.length) } : f
   )
   return (
     <div>
@@ -111,7 +145,7 @@ export function BuildScene() {
       </RevealOnActive>
       <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)]">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-          {journey.build.figures.map((f, i) => (
+          {figures.map((f, i) => (
             <Figure key={f.label} value={f.value} label={f.label} index={i + 1} />
           ))}
         </div>
@@ -136,26 +170,10 @@ export function BuildScene() {
               </a>
             </li>
           ))}
-          {/* Aura has no standalone site — chip carries an info tooltip pointing
+          {/* Aura has no standalone site — chip carries an info popover pointing
               to the live sites where it can actually be seen. */}
-          <li className="group relative">
-            <button
-              type="button"
-              aria-describedby="aura-tip"
-              className="inline-flex cursor-help items-center gap-2 rounded-full bg-surface-raised px-4 py-2 font-sans text-sm font-medium text-fg ring-1 ring-rule transition-colors hover:text-accent hover:ring-accent focus-visible:text-accent focus-visible:ring-accent"
-            >
-              Aura
-              <span aria-hidden="true" className="text-accent">
-                ⓘ
-              </span>
-            </button>
-            <span
-              role="tooltip"
-              id="aura-tip"
-              className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-56 -translate-x-1/2 rounded-lg bg-surface-raised px-3 py-2 text-center font-sans text-xs leading-snug text-fg-muted opacity-0 shadow-lg ring-1 ring-rule transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100"
-            >
-              Aura is embedded, not its own site. See it live on 403HQ or the NBS Marketing Site.
-            </span>
+          <li>
+            <AuraInfo />
           </li>
         </ul>
       </RevealOnActive>

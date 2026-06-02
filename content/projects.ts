@@ -4,7 +4,7 @@ export const workIntro = {
   label: 'Work',
   heading: "What I've Built",
   subheading:
-    'Six production applications shipped in four months, alongside leading a 20+ person department. Five more built on personal time. Every one of them started with a real problem.',
+    'Six production applications shipped in four months, alongside leading a 20+ person department. Six more built on personal time. Every one of them started with a real problem.',
 } as const
 
 export const projects: Project[] = [
@@ -42,8 +42,8 @@ export const projects: Project[] = [
   },
   {
     slug: 'nbs-marketing',
-    name: 'NBS Marketing Website',
-    descriptor: 'External Marketing Site · Full Rebuild',
+    name: 'NBS Company Website',
+    descriptor: 'External Company Site · Full Rebuild',
     category: 'Marketing & Web',
     headline:
       'A full rebuild that handed content control back to the marketing team.',
@@ -84,7 +84,9 @@ export const projects: Project[] = [
       'The company was paying $800/year per site for accessiBe, a per-site licensing model that got more expensive with every new web property. Two sites at the time, more coming.',
     built: 'A proprietary, reusable accessibility widget, built once, deployed everywhere.',
     outcome:
-      'Eliminated $1,600+/year in licensing across 2 sites at the time of replacement. Now live on 10+ sites at zero marginal cost per deployment. The economics improve with every new property added. (NBS-owned, not embedded here; see it live on the NBS Marketing Website or 403HQ.)',
+      'Eliminated $1,600+/year in licensing across 2 sites at the time of replacement. Now live on 10+ sites at zero marginal cost per deployment. The economics improve with every new property added.',
+    embedNote:
+      'Aura is embedded, not its own site. See it live on 403HQ or the NBS Company Website.',
     isPersonal: false,
   },
   {
@@ -132,8 +134,8 @@ export const projects: Project[] = [
   },
   {
     slug: 'homeschool-platform',
-    name: 'Homeschool Platform',
-    descriptor: 'Education Platform',
+    name: 'Kingdoms & Crowns',
+    descriptor: 'Homeschool Education Platform',
     category: 'Personal',
     headline:
       'Curriculum planning with gamified progress, designed for kids.',
@@ -142,6 +144,7 @@ export const projects: Project[] = [
       'A custom platform for curriculum planning with gamified progress tracking, designed to drive engagement and make learning tangible.',
     outcome:
       'Full product thinking applied to a personal problem. UX designed for the actual users: kids who need motivation, not spreadsheets.',
+    liveUrl: 'https://kingdomsandcrowns.com',
     isPersonal: true,
   },
   {
@@ -172,6 +175,22 @@ export const projects: Project[] = [
       'A simple, clean, modern to-do app that gently nudges the user to check off a task. Snooze an item only so many times before it stops asking yes-or-no and starts asking what is preventing you, surfacing the real blocker behind a stalled to-do. Lightweight prioritization and tracking, and nothing else.',
     outcome:
       'A tool my kids actually use to track their own chores, and a small proof that the right product removes friction instead of adding features.',
+    isPersonal: true,
+  },
+  {
+    slug: 'this-portfolio',
+    name: 'This Portfolio',
+    descriptor: 'Personal Site · You’re Looking At It',
+    category: 'Personal',
+    headline:
+      'The most honest project on this list is the one you’re reading it on.',
+    problem:
+      'A résumé lists what you’ve done; it doesn’t show how you think or what you can build. I wanted the portfolio itself to be the proof, not a description of the proof.',
+    built:
+      'A custom Next.js site with a cinematic scroll-driven journey, hand-built animation and motion work, a typographic system, and a component architecture designed to keep content and presentation cleanly separated. No template, no page builder.',
+    outcome:
+      'The site you’re on right now. Every other project here is something you have to take my word for (or go research); this one you’re experiencing as you read.',
+    liveUrl: 'https://kyleemccarthy.com',
     isPersonal: true,
   },
 ]

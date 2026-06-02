@@ -39,13 +39,14 @@ export const journey = {
     eyebrow: 'What I build',
     statement: 'And I stay close enough to build it myself.',
     context:
-      'Those nine are 2026 alone. One of them, Aura, is an accessibility platform I built in-house to replace per-site vendor licensing. It now runs on 10+ sites at zero marginal cost, and the savings compound with every new property the company adds.',
+      'Every one of those is 2026 alone. One of them, Aura, is an accessibility platform I built in-house to replace per-site vendor licensing. It now runs on 10+ sites at zero marginal cost, and the savings compound with every new property the company adds.',
     figures: [
-      { value: '9', label: 'production apps built in 2026 so far' },
+      // value is derived from projects.length in BuildScene so it can't go stale.
+      { value: '12', label: 'production apps built in 2026 so far' },
       { value: '6 weeks', label: 'kickoff to a live client portal that kept the contract' },
       { value: '10+', label: 'sites on Aura, the accessibility platform I built' },
     ],
-    flagships: ['403HQ', 'Tech Hub', 'Aura', 'NBS Marketing Site'],
+    flagships: ['403HQ', 'Tech Hub', 'Aura', 'NBS Company Website'],
   },
   talk: {
     heading: 'Let’s get to work.',

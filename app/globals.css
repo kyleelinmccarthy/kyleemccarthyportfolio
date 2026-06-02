@@ -18,24 +18,26 @@
   --surface-raised: #1c1b27;
   --fg: #e9d5bd; /* cream — 13.04:1 */
   --fg-muted: #c2b29a; /* muted cream — ~9:1 on blackberry */
-  --accent: #d9602f; /* burnt terracotta, AA 5.02:1, not peachy */
-  --accent-strong: #bf4d3a; /* true terracotta — large/display only on dark */
+  --accent: #e9d5bd; /* cream — accent text role; yellow stays a sparing pop */
+  --accent-strong: #e9d5bd;
   --rule: #2c2b37;
-  --fill: #a62e1a; /* terracotta fill; cream text = 4.86:1 (AA) */
-  --fill-fg: #e9d5bd;
+  --fill: #ffe676; /* yellow — sparing pop: buttons; ink text for contrast */
+  --fill-fg: #12121c;
+  --decor: #ffe676; /* yellow — background line-work (dark) */
 }
 
 [data-theme='light'] {
   color-scheme: light;
-  --surface: #e9d5bd; /* cream */
-  --surface-raised: #f2e6d3;
+  --surface: #f5f5f4; /* neutral off-white */
+  --surface-raised: #ffffff;
   --fg: #12121c; /* ink — 13.04:1 */
-  --fg-muted: #4a4640; /* muted ink — ~6.6:1 on cream */
-  --accent: #a62e1a; /* terracotta-600 — 4.86:1 (AA normal), brick not oxblood */
-  --accent-strong: #771606; /* deepest terracotta for emphasis */
-  --rule: #cdb89c;
-  --fill: #a62e1a; /* cream text = 4.86:1 (AA) */
-  --fill-fg: #e9d5bd;
+  --fg-muted: #4a4640; /* muted ink — ~6.6:1 on surface */
+  --accent: #1e3a5f; /* deep navy — ~12:1 on surface; primary accent text/borders/rings/dots */
+  --accent-strong: #1e3a5f;
+  --rule: #e2e2e0;
+  --fill: #d8b04a; /* gold — all buttons + decorative accents */
+  --fill-fg: #1e3a5f; /* navy text on gold; ~5.6:1 (AA) */
+  --decor: #d8b04a; /* gold — background geometric shapes (light) */
 }
 
 @layer base {
@@ -79,11 +81,12 @@
     --surface-raised: #1c1b27;
     --fg: #e9d5bd;
     --fg-muted: #c2b29a;
-    --accent: #d9602f; /* burnt terracotta, AA 5.02:1, not peachy */
-    --accent-strong: #bf4d3a;
+    --accent: #e9d5bd; /* cream — accent text role; yellow stays a sparing pop */
+    --accent-strong: #e9d5bd;
     --rule: #2c2b37;
-    --fill: #a62e1a;
-    --fill-fg: #e9d5bd;
+    --fill: #ffe676;
+    --fill-fg: #12121c;
+    --decor: #ffe676;
     background-color: var(--surface);
     color: var(--fg);
   }

@@ -1,4 +1,5 @@
 import { projects } from '@/content/projects'
+import { InfoTip } from '@/components/primitives/InfoTip'
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -31,7 +32,7 @@ export function ProjectDetails() {
               <Field label="What I Built">{p.built}</Field>
               {p.outcome && <Field label="Outcome">{p.outcome}</Field>}
             </dl>
-            {p.liveUrl && (
+            {p.liveUrl ? (
               <a
                 href={p.liveUrl}
                 target="_blank"
@@ -42,6 +43,17 @@ export function ProjectDetails() {
                 <span aria-hidden="true">↗</span>
                 <span className="sr-only">{p.name} (opens in a new tab)</span>
               </a>
+            ) : (
+              p.embedNote && (
+                <div className="mt-4">
+                  <InfoTip
+                    label="Where to see it"
+                    buttonClassName="inline-flex items-center gap-1.5 font-sans text-sm font-semibold text-accent"
+                  >
+                    {p.embedNote}
+                  </InfoTip>
+                </div>
+              )
             )}
           </article>
         ))}

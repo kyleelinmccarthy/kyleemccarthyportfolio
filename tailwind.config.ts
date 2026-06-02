@@ -35,6 +35,7 @@ const config: Config = {
         rule: 'var(--rule)',
         fill: 'var(--fill)',
         'fill-fg': 'var(--fill-fg)',
+        decor: 'var(--decor)',
       },
       fontFamily: {
         // Wired by next/font in app/layout.tsx -> CSS variables

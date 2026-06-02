@@ -3,7 +3,7 @@ import { site } from '@/content/site'
 
 /**
  * Art-directed portrait: natural color, most of the photo visible, with the
- * edges softly feathered into a terracotta tint (baked in process-headshot.ts)
+ * edges softly feathered into a gold tint (baked in process-headshot.ts)
  * so it ties to the site without a hard frame.
  */
 export function Portrait({ className = '' }: { className?: string }) {

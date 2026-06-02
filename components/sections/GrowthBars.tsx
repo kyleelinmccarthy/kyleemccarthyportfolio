@@ -28,7 +28,7 @@ export function GrowthBars() {
               className="mb-2 block font-serif text-3xl leading-none text-accent"
             />
             <motion.div
-              className="w-full max-w-[64px] rounded-t-md bg-gradient-to-t from-terracotta-700 to-terracotta-500"
+              className="w-full max-w-[64px] rounded-t-md bg-gradient-to-t from-accent-strong to-accent"
               initial={false}
               animate={{ height: reduce || run ? `${(s.value / max) * 120}px` : 0 }}
               transition={{ duration: 1.2, ease: ease.out, delay: 0.15 + i * 0.2 }}

@@ -34,6 +34,9 @@ export interface Project {
   built: string
   outcome?: string // some in-progress projects have none
   liveUrl?: string // absence => abstract palette panel, not a screenshot
+  /** For projects with no standalone site (e.g. embedded widgets): a short note,
+   *  surfaced as an info tooltip, explaining where the work can be seen live. */
+  embedNote?: string
   /** Filename in /public/screenshots for projects we captured; falls back to a panel. */
   screenshot?: string
   isPersonal: boolean

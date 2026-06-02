@@ -5,7 +5,7 @@ import { contact } from '@/content/contact'
 
 export function Contact() {
   return (
-    <Section id="contact">
+    <Section id="contact" shapes>
       <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-16">
         <Reveal>
           <div className="max-w-prose space-y-5 font-sans text-lg leading-relaxed text-fg-muted">

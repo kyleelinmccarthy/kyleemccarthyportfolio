@@ -1,7 +1,7 @@
 /**
  * Art-directs the selfie while keeping Kylee's natural colors:
  *   tight 4:5 crop  ->  keep face sharp + true color, dim & blur the background
- *   ->  terracotta highlight rimming the outer edge  ->  soft feather to transparent.
+ *   ->  gold highlight rimming the outer edge  ->  soft feather to transparent.
  *
  * Run:  npm run process:headshot
  * Output: public/kylee-portrait-2.png (+ .avif), with transparency.
@@ -68,11 +68,11 @@ async function main() {
     .png()
     .toBuffer()
 
-  // Terracotta tint ONLY where the photo is fading (inverse of the feather),
-  // so the soft edges bleed into terracotta and tie the photo to the site.
+  // Gold tint ONLY where the photo is fading (inverse of the feather),
+  // so the soft edges bleed into gold and tie the photo to the site.
   const terraAlpha = await sharp(featherAlpha).negate().linear(0.88, 0).png().toBuffer()
   const terraLayer = await sharp({
-    create: { width: W, height: H, channels: 3, background: { r: 0xbf, g: 0x4d, b: 0x3a } },
+    create: { width: W, height: H, channels: 3, background: { r: 0xff, g: 0xe6, b: 0x76 } },
   })
     .joinChannel(terraAlpha)
     .png()

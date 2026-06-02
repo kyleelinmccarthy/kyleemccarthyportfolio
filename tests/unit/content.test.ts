@@ -4,9 +4,9 @@ import { journey } from '@/content/journey'
 import { inquiryOptions, inquiryLabel } from '@/content/contactOptions'
 
 describe('projects content', () => {
-  it('has the expected 9 projects (6 work + 3 personal)', () => {
-    expect(projects).toHaveLength(9)
-    expect(projects.filter((p) => p.isPersonal)).toHaveLength(3)
+  it('has the expected 12 projects (6 work + 6 personal)', () => {
+    expect(projects).toHaveLength(12)
+    expect(projects.filter((p) => p.isPersonal)).toHaveLength(6)
     expect(projects.filter((p) => !p.isPersonal)).toHaveLength(6)
   })
 
@@ -36,10 +36,15 @@ describe('projects content', () => {
 })
 
 describe('journey figures', () => {
-  it('carries the "9 apps in 2026" claim with timeframe framing', () => {
-    const nine = journey.build.figures.find((f) => f.value === '9')
-    expect(nine).toBeTruthy()
-    expect(nine!.label.toLowerCase()).toContain('2026')
+  it('carries the apps-built-in-2026 claim, counting every project', () => {
+    const appsFigure = journey.build.figures.find((f) =>
+      f.label.toLowerCase().includes('production apps')
+    )
+    expect(appsFigure).toBeTruthy()
+    expect(appsFigure!.label.toLowerCase()).toContain('2026')
+    // BuildScene derives the displayed value from projects.length; keep the
+    // content fallback in sync so it never reads as stale on its own.
+    expect(appsFigure!.value).toBe(String(projects.length))
   })
 
   it('splits lead vs build figures, all with non-empty labels', () => {
