@@ -29,7 +29,7 @@ export const milestones: Milestone[] = [
   {
     marker: '2026',
     title: 'Still shipping',
-    detail: '9 production apps this year: 6 at work in four months, 3 on personal time.',
+    detail: '10 production apps this year: 6 at work in four months, 4 on personal time.',
   },
 ]
 

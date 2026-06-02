@@ -4,7 +4,7 @@ export const workIntro = {
   label: 'Work',
   heading: "What I've Built",
   subheading:
-    'Six production applications shipped in four months, alongside leading a 20+ person department. Three more built on personal time. Every one of them started with a real problem.',
+    'Six production applications shipped in four months, alongside leading a 20+ person department. Five more built on personal time. Every one of them started with a real problem.',
 } as const
 
 export const projects: Project[] = [
@@ -142,6 +142,36 @@ export const projects: Project[] = [
       'A custom platform for curriculum planning with gamified progress tracking, designed to drive engagement and make learning tangible.',
     outcome:
       'Full product thinking applied to a personal problem. UX designed for the actual users: kids who need motivation, not spreadsheets.',
+    isPersonal: true,
+  },
+  {
+    slug: 'sentral',
+    name: 'Sentral',
+    descriptor: 'All-in-One Personal Hub · Modular Workspace',
+    category: 'Personal',
+    headline:
+      'One modular hub for everything: projects, planning, expenses, and a full Excalidraw replacement built from scratch.',
+    problem:
+      'The tools for running a life and its projects are scattered across a dozen apps, projects and to-dos in one, events in another, a separate whiteboard, yet another for expenses. Nothing talks to each other, and none of it works the way I think.',
+    built:
+      'A modularized, all-in-one hub for tracking projects, to-dos, and events, with project planning, expense tracking, asset management, and idea buckets. At its center, a full Excalidraw replacement built from scratch: a multi-user whiteboard for sharing, presenting, and real-time collaboration, complete with a laser pointer for live presenting.',
+    outcome:
+      'A single workspace that consolidates what used to take a dozen subscriptions, with real-time multi-user collaboration as a first-class feature, not an afterthought.',
+    isPersonal: true,
+  },
+  {
+    slug: 'get-doing-the-thing',
+    name: 'Get Doing the Thing',
+    descriptor: 'Zero-Friction To-Do App · Built for My Kids',
+    category: 'Personal',
+    headline:
+      'A to-do app that nudges my kids to do the thing, then asks what is getting in the way.',
+    problem:
+      "Helping my kids stay on top of chores and to-dos meant nagging, and most to-do apps drown the one thing that matters in features nobody needs. I wanted something zero-friction that just asks: did you do the thing?",
+    built:
+      'A simple, clean, modern to-do app that gently nudges the user to check off a task. Snooze an item only so many times before it stops asking yes-or-no and starts asking what is preventing you, surfacing the real blocker behind a stalled to-do. Lightweight prioritization and tracking, and nothing else.',
+    outcome:
+      'A tool my kids actually use to track their own chores, and a small proof that the right product removes friction instead of adding features.',
     isPersonal: true,
   },
 ]

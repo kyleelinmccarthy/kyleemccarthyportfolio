@@ -11,7 +11,10 @@ import { journey } from '@/content/journey'
 import { projects } from '@/content/projects'
 import { site } from '@/content/site'
 
-const FLAGSHIP_SLUGS = ['403hq', 'tech-hub', 'aura', 'nbs-marketing']
+// Only projects with a public live URL become clickable bubbles. Aura has no
+// standalone site (it's embedded), so it gets an info tooltip instead — and
+// Tech Hub is internal-only, so it's omitted here entirely.
+const FLAGSHIP_SLUGS = ['403hq', 'nbs-marketing', 'ember-tattoo']
 
 function Eyebrow({ children }: { children: string }) {
   return <p className="font-sans text-label uppercase text-accent">{children}</p>
@@ -33,8 +36,8 @@ function Figure({ value, label, index = 0 }: { value: string; label: string; ind
 
 export function AboutScene() {
   return (
-    <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,300px)_minmax(0,1fr)] lg:gap-14">
-      <Portrait className="max-w-[240px] lg:max-w-none" />
+    <div className="grid items-center gap-10 text-center lg:grid-cols-[minmax(0,300px)_minmax(0,1fr)] lg:gap-14 lg:text-left">
+      <Portrait className="mx-auto max-w-[240px] lg:mx-0 lg:max-w-none" />
       <div>
         <p className="mb-2 font-sans text-label uppercase text-accent">{journey.about.eyebrow}</p>
         <NameLogo size="hero" animate />
@@ -44,10 +47,10 @@ export function AboutScene() {
           </h1>
         </RevealOnActive>
         <RevealOnActive index={2}>
-          <p className="mt-5 max-w-xl font-sans text-lg leading-relaxed text-fg">{hero.why}</p>
+          <p className="mx-auto mt-5 max-w-xl font-sans text-lg leading-relaxed text-fg lg:mx-0">{hero.why}</p>
         </RevealOnActive>
         <RevealOnActive index={3}>
-          <p className="mt-4 max-w-xl font-sans leading-relaxed text-fg-muted">{journey.about.lede}</p>
+          <p className="mx-auto mt-4 max-w-xl font-sans leading-relaxed text-fg-muted lg:mx-0">{journey.about.lede}</p>
         </RevealOnActive>
       </div>
     </div>
@@ -65,7 +68,7 @@ export function LeadScene() {
         <RevealOnActive index={1}>
           <p className="mt-5 max-w-xl font-sans leading-relaxed text-fg-muted">{journey.lead.context}</p>
         </RevealOnActive>
-        <div className="mt-8 grid grid-cols-3 gap-6">
+        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
           {journey.lead.figures.map((f, i) => (
             <Figure key={f.label} value={f.value} label={f.label} index={i + 2} />
           ))}
@@ -98,7 +101,7 @@ export function ValueScene() {
 
 export function BuildScene() {
   const flagships = FLAGSHIP_SLUGS.map((s) => projects.find((p) => p.slug === s)).filter(
-    (p): p is NonNullable<typeof p> => Boolean(p)
+    (p): p is NonNullable<typeof p> => Boolean(p?.liveUrl)
   )
   return (
     <div>
@@ -107,7 +110,7 @@ export function BuildScene() {
         <h2 className="mt-4 max-w-2xl font-serif text-fluid-h2 text-fg">{journey.build.statement}</h2>
       </RevealOnActive>
       <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)]">
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
           {journey.build.figures.map((f, i) => (
             <Figure key={f.label} value={f.value} label={f.label} index={i + 1} />
           ))}
@@ -117,24 +120,43 @@ export function BuildScene() {
         </RevealOnActive>
       </div>
       <RevealOnActive index={5}>
-        <ul className="mt-10 flex flex-wrap gap-3">
+        <ul className="mt-10 flex flex-wrap justify-center gap-3 lg:justify-start">
           {flagships.map((p) => (
             <li key={p.slug}>
               <a
-                href={p.liveUrl ?? '#contact'}
-                target={p.liveUrl ? '_blank' : undefined}
-                rel={p.liveUrl ? 'noopener noreferrer' : undefined}
+                href={p.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full bg-surface-raised px-4 py-2 font-sans text-sm font-medium text-fg ring-1 ring-rule transition-colors hover:text-accent hover:ring-accent"
               >
                 {p.name}
-                {p.liveUrl && (
-                  <span aria-hidden="true" className="text-accent">
-                    ↗
-                  </span>
-                )}
+                <span aria-hidden="true" className="text-accent">
+                  ↗
+                </span>
               </a>
             </li>
           ))}
+          {/* Aura has no standalone site — chip carries an info tooltip pointing
+              to the live sites where it can actually be seen. */}
+          <li className="group relative">
+            <button
+              type="button"
+              aria-describedby="aura-tip"
+              className="inline-flex cursor-help items-center gap-2 rounded-full bg-surface-raised px-4 py-2 font-sans text-sm font-medium text-fg ring-1 ring-rule transition-colors hover:text-accent hover:ring-accent focus-visible:text-accent focus-visible:ring-accent"
+            >
+              Aura
+              <span aria-hidden="true" className="text-accent">
+                ⓘ
+              </span>
+            </button>
+            <span
+              role="tooltip"
+              id="aura-tip"
+              className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-56 -translate-x-1/2 rounded-lg bg-surface-raised px-3 py-2 text-center font-sans text-xs leading-snug text-fg-muted opacity-0 shadow-lg ring-1 ring-rule transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100"
+            >
+              Aura is embedded, not its own site. See it live on 403HQ or the NBS Marketing Site.
+            </span>
+          </li>
         </ul>
       </RevealOnActive>
     </div>

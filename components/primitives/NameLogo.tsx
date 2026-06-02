@@ -25,7 +25,9 @@ const SEGMENTS = [
 // up and the baseline aligned via line-height + translate in CSS classes below.
 const sizeClasses: Record<Size, string> = {
   nav: 'text-3xl sm:text-4xl',
-  hero: 'text-6xl sm:text-7xl lg:text-8xl',
+  // Fluid so the full signature always fits the viewport width — a fixed size
+  // overflowed narrow phones and clipped the trailing "y" of McCarthy.
+  hero: 'text-[clamp(2rem,9vw,6rem)]',
   footer: 'text-4xl',
 }
 
@@ -58,7 +60,9 @@ export function NameLogo({
     }))
   )
 
-  const baseClass = `inline-flex select-none items-baseline leading-none text-accent ${sizeClasses[size]} ${className}`
+  // pb reserves room for the script descenders (the "y" tails) so leading-none
+  // doesn't let them clip or collide with the element below.
+  const baseClass = `inline-flex select-none items-baseline pb-[0.18em] leading-none text-accent ${sizeClasses[size]} ${className}`
 
   if (!shouldAnimate) {
     return (
