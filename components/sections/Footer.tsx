@@ -6,7 +6,7 @@ import { site } from '@/content/site'
 
 export function Footer() {
   return (
-    <footer className="section-dark border-t border-rule">
+    <footer className="bg-surface text-fg border-t border-rule">
       <Container className="py-16">
         <div className="flex flex-col gap-10 lg:flex-row lg:justify-between">
           <div>
