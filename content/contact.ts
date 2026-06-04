@@ -11,7 +11,7 @@ export const contact = {
   options: {
     email: site.email,
     linkedin: site.linkedin,
-    linkedinLabel: 'linkedin.com/in/kyleemccarthy',
+    linkedinLabel: 'linkedin.com/in/kylee-mccarthy-ms',
   },
 } as const
 

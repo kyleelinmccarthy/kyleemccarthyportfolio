@@ -11,7 +11,7 @@ export const site = {
   location: 'Saratoga Springs, UT',
   jobTitle: 'Director of Technology Operations',
   email: 'kyleelinmccarthy@gmail.com',
-  linkedin: 'https://www.linkedin.com/in/kyleemccarthy',
+  linkedin: 'https://www.linkedin.com/in/kylee-mccarthy-ms-706499123/',
   resumePath: '/Kylee-McCarthy-Resume.pdf',
   portraitAlt: 'Portrait of Kylee McCarthy',
 } as const
