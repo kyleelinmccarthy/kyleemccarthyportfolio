@@ -1,5 +1,20 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
+import { render } from '@testing-library/react'
 import { parseStatValue, formatCountValue } from '@/lib/countup'
+import { CountUp } from '@/components/primitives/CountUp'
+
+// Mock IntersectionObserver for framer-motion useInView
+beforeAll(() => {
+  global.IntersectionObserver = class IntersectionObserver {
+    constructor() {}
+    disconnect() {}
+    observe() {}
+    takeRecords() {
+      return []
+    }
+    unobserve() {}
+  } as any
+})
 
 describe('parseStatValue', () => {
   it('parses a bare integer', () => {
@@ -64,5 +79,16 @@ describe('formatCountValue', () => {
   it('renders non-animatable values as their literal prefix', () => {
     const parsed = parseStatValue('N/A')
     expect(formatCountValue(parsed, 0)).toBe('N/A')
+  })
+})
+
+describe('CountUp component', () => {
+  it('exposes the value with a role that permits an accessible name', () => {
+    const { container } = render(<CountUp value="200+" active={false} />)
+    const labelled = container.querySelector('[aria-label]')
+    expect(labelled).not.toBeNull()
+    // A bare <span> is role=generic, which prohibits aria-label (axe:
+    // aria-prohibited-attr, serious). It needs a role that permits naming.
+    expect(labelled!.getAttribute('role')).toBe('img')
   })
 })

@@ -48,7 +48,7 @@ export function CountUp({
   }, [run, reduce, parsed.target, parsed.animatable])
 
   return (
-    <span ref={ref} className={className} aria-label={value}>
+    <span ref={ref} className={className} role="img" aria-label={value}>
       <span aria-hidden="true">{display}</span>
     </span>
   )
