@@ -9,12 +9,16 @@ import Link from 'next/link'
  * so it themes correctly in both modes. The light glow is bg-accent at low
  * opacity with a blur — a semantic token, not a hardcoded warm hex, so it
  * reads correctly in both light and dark themes.
+ *
+ * The aria-label starts with the visible text ("There is another room") to
+ * satisfy WCAG 2.5.3 Label in Name — a voice-control user saying what they can
+ * see must be able to activate the link.
  */
 export function Door() {
   return (
     <Link
       href="/room"
-      aria-label="Open the door to another room — the personal side"
+      aria-label="There is another room — open the door to the personal side"
       className="group mt-12 inline-flex flex-col items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
     >
       <span className="relative block h-40 w-24 rounded-t-[3rem] bg-surface-raised ring-1 ring-rule transition-colors group-hover:ring-accent">

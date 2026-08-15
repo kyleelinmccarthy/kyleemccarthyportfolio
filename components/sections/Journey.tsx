@@ -15,7 +15,9 @@ export function Journey() {
     { id: 'lead', dir: 'right', node: <LeadScene /> },
     { id: 'value', dir: 'down', node: <ValueScene /> },
     { id: 'build', dir: 'left', node: <BuildScene /> },
-    { id: 'talk', dir: 'in', node: <TalkScene /> },
+    // The door is the last beat of the home scroll only (spec §5) — /connect
+    // renders the same scene without it.
+    { id: 'talk', dir: 'in', node: <TalkScene showDoor /> },
   ]
   return <CinematicJourney scenes={scenes} />
 }

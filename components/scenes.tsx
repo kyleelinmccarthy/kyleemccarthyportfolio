@@ -177,7 +177,13 @@ export function BuildScene() {
   )
 }
 
-export function TalkScene() {
+/**
+ * Shared by the home journey's final scene and the standalone /connect route.
+ * The door is opt-in (`showDoor`) because spec §5 puts it at the end of the
+ * home scroll only — rendering it from inside the scene dropped it into the
+ * middle of /connect, between the copy and the contact form.
+ */
+export function TalkScene({ showDoor = false }: { showDoor?: boolean }) {
   return (
     <div className="max-w-2xl">
       <RevealOnActive>
@@ -199,9 +205,11 @@ export function TalkScene() {
           </a>
         </div>
       </RevealOnActive>
-      <RevealOnActive index={3}>
-        <Door />
-      </RevealOnActive>
+      {showDoor && (
+        <RevealOnActive index={3}>
+          <Door />
+        </RevealOnActive>
+      )}
     </div>
   )
 }
