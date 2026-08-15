@@ -6,7 +6,7 @@
  */
 import { existsSync, mkdirSync } from 'node:fs'
 import { resolve, join } from 'node:path'
-import { generateWithFallback, fallbackMessage } from './lib/imageLadder'
+import { generateWithFallback, LadderReport } from './lib/imageLadder'
 
 interface Source {
   slug: string
@@ -36,7 +36,7 @@ const SOURCES: Source[] = [
 ]
 
 async function main() {
-  const fellBack: string[] = []
+  const report = new LadderReport()
 
   for (const s of SOURCES) {
     if (!existsSync(s.dir)) {
@@ -54,20 +54,12 @@ async function main() {
       }
 
       const result = await generateWithFallback(src, outDir, name)
-
-      if (result.stepIndex > 0) {
-        const msg = fallbackMessage(`${s.slug}/${name}`, result)
-        console.warn(`  ${msg}`)
-        fellBack.push(msg)
-      }
+      report.record(`${s.slug}/${name}`, result)
       console.log(`  ${s.slug}/${name}`)
     }
   }
 
-  if (fellBack.length) {
-    console.warn(`\n${fellBack.length} image(s) needed the size-budget fallback:`)
-    for (const m of fellBack) console.warn(`  - ${m}`)
-  }
+  report.print()
 }
 
 main().catch((e) => {

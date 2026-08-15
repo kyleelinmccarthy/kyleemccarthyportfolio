@@ -11,7 +11,7 @@ import { resolve, join } from 'node:path'
 import sharp from 'sharp'
 import { artSlug } from './lib/artSlug'
 import { artAlt, tattooAlt } from '../content/room'
-import { generateWithFallback, fallbackMessage } from './lib/imageLadder'
+import { generateWithFallback, LadderReport } from './lib/imageLadder'
 
 const SOURCES = [
   { dir: 'C:/Users/kylee/Pictures/Art/PortfolioArt', out: 'art', alt: artAlt },
@@ -61,7 +61,7 @@ async function probeFailOn(src: string, file: string): Promise<'none' | undefine
 
 async function main() {
   const missingAlt: string[] = []
-  const fellBack: string[] = []
+  const report = new LadderReport()
 
   for (const { dir, out, alt } of SOURCES) {
     if (!existsSync(dir)) {
@@ -81,19 +81,13 @@ async function main() {
 
       const result = await generateWithFallback(src, outDir, slug, { rotate: true, failOn })
 
-      if (result.stepIndex > 0) {
-        const msg = fallbackMessage(`${out}/${slug}`, result)
-        console.warn(`  ${msg}`)
-        fellBack.push(msg)
-      }
-      console.log(`  ${out}/${slug}`)
+      const label = `${out}/${slug}`
+      report.record(label, result)
+      console.log(`  ${label}`)
     }
   }
 
-  if (fellBack.length) {
-    console.warn(`\n${fellBack.length} image(s) needed the size-budget fallback:`)
-    for (const m of fellBack) console.warn(`  - ${m}`)
-  }
+  report.print()
 
   if (missingAlt.length) {
     console.warn(`\n${missingAlt.length} image(s) have no alt text in content/room.ts:`)

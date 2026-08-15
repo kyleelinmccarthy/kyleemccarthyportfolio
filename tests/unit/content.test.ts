@@ -1,8 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { existsSync } from 'node:fs'
+import { existsSync, statSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { readdirSync } from 'node:fs'
 import { projects } from '@/content/projects'
 import { journey } from '@/content/journey'
+import { artAlt, tattooAlt } from '@/content/room'
 import { inquiryOptions, inquiryLabel } from '@/content/contactOptions'
 
 describe('projects content', () => {
@@ -80,6 +82,57 @@ describe('projects content', () => {
       expect(p.problem.length).toBeGreaterThan(10)
       expect(p.built.length).toBeGreaterThan(10)
     }
+  })
+})
+
+/**
+ * RoomSections builds its gallery srcs from these alt maps, so a slug with no
+ * matching .jpg is a 404 on /room that no other test would catch.
+ */
+describe('room gallery media', () => {
+  const cases: Array<[string, Record<string, string>]> = [
+    ['art', artAlt],
+    ['tattoo', tattooAlt],
+  ]
+
+  for (const [dir, alts] of cases) {
+    it(`points every ${dir} slug at a committed .jpg`, () => {
+      const onDisk = new Set(readdirSync(resolve(process.cwd(), 'public/media', dir)))
+      const slugs = Object.keys(alts)
+      expect(slugs.length).toBeGreaterThan(0)
+      for (const slug of slugs) {
+        expect(onDisk.has(`${slug}.jpg`), `/media/${dir}/${slug}.jpg is missing`).toBe(true)
+      }
+    })
+
+    it(`commits nothing under media/${dir} that the page cannot serve`, () => {
+      // JPEG is the only format the app requests; next/image re-encodes to
+      // AVIF/WebP at request time. Committed siblings were unreachable bytes.
+      const files = readdirSync(resolve(process.cwd(), 'public/media', dir))
+      expect(files.filter((f) => /\.(avif|webp)$/i.test(f))).toEqual([])
+    })
+  }
+})
+
+describe('committed media stays within the 250KB per-file budget', () => {
+  it('has no oversized image and no unreachable format anywhere under /media', () => {
+    const root = resolve(process.cwd(), 'public/media')
+    const walk = (dir: string): string[] =>
+      readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
+        e.isDirectory() ? walk(resolve(dir, e.name)) : [resolve(dir, e.name)]
+      )
+    const files = walk(root)
+    expect(files.length).toBeGreaterThan(0)
+
+    const unreachable = files.filter((f) => /\.(avif|webp)$/i.test(f))
+    expect(unreachable, 'AVIF/WebP siblings are never requested by the app').toEqual([])
+
+    const MAX = 250 * 1024
+    const oversized = files
+      .map((f) => [f, statSync(f).size] as const)
+      .filter(([, size]) => size > MAX)
+      .map(([f, size]) => `${f} (${Math.round(size / 1024)}KB)`)
+    expect(oversized).toEqual([])
   })
 })
 

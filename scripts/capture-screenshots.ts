@@ -1,20 +1,24 @@
 /**
  * Captures hero screenshots of the public project sites into
- * public/media/<slug>/hero.{avif,webp,jpg}.
+ * public/media/<slug>/hero.jpg.
+ *
+ * Encoding goes through scripts/lib/imageLadder.ts, the same ladder the two
+ * import scripts use, so a captured hero gets the 250KB budget check and the
+ * per-file step-down fallback rather than a hardcoded copy of STEPS[0] with no
+ * budget enforced at all.
  *
  *   npx playwright install chromium
  *   npm run capture:screenshots
  */
 import { chromium } from '@playwright/test'
-import sharp from 'sharp'
 import { mkdirSync } from 'node:fs'
-import { resolve, join } from 'node:path'
+import { resolve } from 'node:path'
 import { projects } from '../content/projects'
-
-const WIDTH = 1600
+import { generateWithFallback, LadderReport } from './lib/imageLadder'
 
 async function main() {
   const targets = projects.filter((p) => p.autoCapture && p.liveUrl)
+  const report = new LadderReport()
   const browser = await chromium.launch()
   const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } })
 
@@ -27,10 +31,9 @@ async function main() {
 
       const outDir = resolve(process.cwd(), 'public/media', p.slug)
       mkdirSync(outDir, { recursive: true })
-      const base = sharp(raw).resize(WIDTH, null, { withoutEnlargement: true })
-      await base.clone().avif({ quality: 55 }).toFile(join(outDir, 'hero.avif'))
-      await base.clone().webp({ quality: 72 }).toFile(join(outDir, 'hero.webp'))
-      await base.clone().jpeg({ quality: 78, mozjpeg: true }).toFile(join(outDir, 'hero.jpg'))
+
+      const result = await generateWithFallback(raw, outDir, 'hero')
+      report.record(`${p.slug}/hero`, result)
       console.log(`  saved ${p.slug}/hero`)
     } catch (e) {
       console.warn(`  skipped ${p.name}:`, (e as Error).message)
@@ -38,6 +41,7 @@ async function main() {
   }
 
   await browser.close()
+  report.print()
 }
 
 main().catch((e) => {
