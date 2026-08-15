@@ -22,6 +22,23 @@ export type ProjectCategory =
   | 'Internal Tools'
   | 'Marketing & Web'
   | 'Personal'
+  | 'Games'
+
+/** One image with its accessible description. */
+export interface MediaItem {
+  /** Path under /media/, e.g. "/media/kingdoms-and-crowns/hero.jpg" */
+  src: string
+  /** Required — axe runs in CI, so an empty alt fails the build. */
+  alt: string
+  caption?: string
+}
+
+export type ProjectStatus =
+  | 'production'
+  | 'releasing'
+  | 'building'
+  | 'beta'
+  | 'concept'
 
 export interface Project {
   slug: string
@@ -37,8 +54,12 @@ export interface Project {
   /** For projects with no standalone site (e.g. embedded widgets): a short note,
    *  surfaced as an info tooltip, explaining where the work can be seen live. */
   embedNote?: string
-  /** Filename in /public/screenshots for projects we captured; falls back to a panel. */
-  screenshot?: string
+  status: ProjectStatus
+  media?: { hero: MediaItem; gallery?: MediaItem[] }
+  /** Hero is Playwright-captured from liveUrl rather than imported from a repo. */
+  autoCapture?: boolean
+  /** Resume-grounded tech chips. */
+  stack?: string[]
   isPersonal: boolean
 }
 

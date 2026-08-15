@@ -22,7 +22,7 @@ export const projects: Project[] = [
     outcome:
       'Delivered in 6 weeks. The client stayed. The codebase became reusable infrastructure now being extended to additional clients, turning a crisis into a product.',
     liveUrl: 'https://403hq.nbsbenefits.com',
-    screenshot: '403hq.jpg',
+    status: 'production',
     isPersonal: false,
   },
   {
@@ -38,6 +38,7 @@ export const projects: Project[] = [
       "A second client portal built on the 403HQ codebase, adapted for a different client's needs and proactively offered to modernize their experience.",
     outcome:
       'Currently in client-side testing ahead of launch. A demonstration that the instinct is proactive, not reactive, and that good infrastructure compounds.',
+    status: 'releasing',
     isPersonal: false,
   },
   {
@@ -55,7 +56,7 @@ export const projects: Project[] = [
       'A site that represents the brand accurately, with content ownership returned to the people closest to the message. Aura is live here, this is one of the places to see it.',
     liveUrl:
       'https://nbswebsite-release-bwftcbgub8c3hzfm.westus2-01.azurewebsites.net/',
-    screenshot: 'nbs-marketing.jpg',
+    status: 'releasing',
     isPersonal: false,
   },
   {
@@ -71,6 +72,7 @@ export const projects: Project[] = [
       'A custom remote engagement platform with Microsoft SSO integration, richer social features, and an experience employees actually wanted to use.',
     outcome:
       'Eliminated the vendor cost. Measurably higher adoption. Access managed automatically through existing identity infrastructure.',
+    status: 'production',
     isPersonal: false,
   },
   {
@@ -87,6 +89,7 @@ export const projects: Project[] = [
       'Eliminated $1,600+/year in licensing across 2 sites at the time of replacement. Now live on 10+ sites at zero marginal cost per deployment. The economics improve with every new property added.',
     embedNote:
       'Aura is embedded, not its own site. See it live on 403HQ or the NBS Company Website.',
+    status: 'production',
     isPersonal: false,
   },
   {
@@ -102,6 +105,7 @@ export const projects: Project[] = [
       'A unified internal platform purpose-built for how the team actually works, multi-source project and ticket aggregation, asset management, sprint demo coordination, automated pull request workflows, department-wide PTO calendar, technology roadmap, automated code standards review, executive dashboards, and an embedded UX/UI design framework.',
     outcome:
       'Replaced multiple paid tool subscriptions. Single source of truth for the entire IS department. The design system I built lives here, making it the foundation of every product the team ships.',
+    status: 'production',
     isPersonal: false,
   },
   {
@@ -117,7 +121,7 @@ export const projects: Project[] = [
       'A complete speculative redesign, modern aesthetic, improved UX, and a visual language that matches the craft.',
     outcome: 'A pitch. And a reminder that the builder instinct doesn’t clock out.',
     liveUrl: 'https://ember-tattoo-web.vercel.app',
-    screenshot: 'ember-tattoo.jpg',
+    status: 'production',
     isPersonal: true,
   },
   {
@@ -130,6 +134,7 @@ export const projects: Project[] = [
     problem: "Existing budgeting tools didn't work the way I think about money.",
     built:
       'A personal budgeting application built for personal use. Same instinct that drives every product decision at work: if something could work better, build it.',
+    status: 'production',
     isPersonal: true,
   },
   {
@@ -145,6 +150,7 @@ export const projects: Project[] = [
     outcome:
       'Full product thinking applied to a personal problem. UX designed for the actual users: kids who need motivation, not spreadsheets.',
     liveUrl: 'https://kingdomsandcrowns.com',
+    status: 'beta',
     isPersonal: true,
   },
   {
@@ -160,6 +166,7 @@ export const projects: Project[] = [
       'A modularized, all-in-one hub for tracking projects, to-dos, and events, with project planning, expense tracking, asset management, and idea buckets. At its center, a full Excalidraw replacement built from scratch: a multi-user whiteboard for sharing, presenting, and real-time collaboration, complete with a laser pointer for live presenting.',
     outcome:
       'A single workspace that consolidates what used to take a dozen subscriptions, with real-time multi-user collaboration as a first-class feature, not an afterthought.',
+    status: 'building',
     isPersonal: true,
   },
   {
@@ -175,6 +182,7 @@ export const projects: Project[] = [
       'A simple, clean, modern to-do app that gently nudges the user to check off a task. Snooze an item only so many times before it stops asking yes-or-no and starts asking what is preventing you, surfacing the real blocker behind a stalled to-do. Lightweight prioritization and tracking, and nothing else.',
     outcome:
       'A tool my kids actually use to track their own chores, and a small proof that the right product removes friction instead of adding features.',
+    status: 'production',
     isPersonal: true,
   },
   {
@@ -191,6 +199,7 @@ export const projects: Project[] = [
     outcome:
       'The site you’re on right now. Every other project here is something you have to take my word for (or go research); this one you’re experiencing as you read.',
     liveUrl: 'https://kyleemccarthy.com',
+    status: 'production',
     isPersonal: true,
   },
 ]

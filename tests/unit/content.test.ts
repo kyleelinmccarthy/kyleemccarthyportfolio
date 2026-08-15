@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest'
+import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { projects } from '@/content/projects'
 import { journey } from '@/content/journey'
 import { inquiryOptions, inquiryLabel } from '@/content/contactOptions'
@@ -15,10 +17,39 @@ describe('projects content', () => {
     expect(new Set(slugs).size).toBe(slugs.length)
   })
 
-  it('only declares a screenshot when there is a live URL to capture from', () => {
+  it('only claims a capture when there is a live URL to capture from', () => {
     for (const p of projects) {
-      if (p.screenshot) expect(p.liveUrl, `${p.slug} has a screenshot but no liveUrl`).toBeTruthy()
+      if (p.autoCapture) {
+        expect(p.liveUrl, `${p.slug} is autoCapture but has no liveUrl`).toBeTruthy()
+      }
     }
+  })
+
+  it('gives every media item non-empty alt text', () => {
+    for (const p of projects) {
+      if (!p.media) continue
+      const items = [p.media.hero, ...(p.media.gallery ?? [])]
+      for (const m of items) {
+        expect(m.alt.trim().length, `${p.slug}: ${m.src} has empty alt`).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('points every media src at a file that actually exists', () => {
+    for (const p of projects) {
+      if (!p.media) continue
+      const items = [p.media.hero, ...(p.media.gallery ?? [])]
+      for (const m of items) {
+        expect(m.src.startsWith('/media/'), `${p.slug}: ${m.src} must live under /media/`).toBe(true)
+        const onDisk = resolve(process.cwd(), 'public', m.src.replace(/^\//, ''))
+        expect(existsSync(onDisk), `${p.slug}: missing file ${m.src}`).toBe(true)
+      }
+    }
+  })
+
+  it('gives every project a status', () => {
+    const valid = ['production', 'releasing', 'building', 'beta', 'concept']
+    for (const p of projects) expect(valid).toContain(p.status)
   })
 
   it('has well-formed live URLs where present', () => {
