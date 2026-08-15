@@ -7,12 +7,9 @@ export const journey = {
     eyebrow: 'Get to know',
     heading: 'The strategist who also builds',
     lede: 'I taught myself to code by automating my own job. Eleven years later I run the department, and I still write production code.',
-    milestones: [
-      'Director of Technology Operations',
-      'M.S. Technology Management',
-      'B.S. Marketing Management',
-      '11 years, five roles, one organisation',
-    ],
+    // The career arc and the degrees live in content/timeline.ts (milestones,
+    // education) and render on /about. They were duplicated here as four
+    // undated labels; one source of truth is enough.
   },
   lead: {
     eyebrow: 'How I lead',

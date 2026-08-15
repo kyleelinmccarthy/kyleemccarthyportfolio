@@ -1,8 +1,9 @@
 import type { Milestone } from './types'
 
 /**
- * The career arc, as an animated timeline. Phase markers (not invented exact
- * years) keep it accurate; the growth numbers below carry the proof.
+ * The career arc, rendered on /about. Markers are the real start dates from
+ * the résumé, so nothing here is inferred; the growth numbers below carry the
+ * proof of what changed.
  */
 export const milestones: Milestone[] = [
   {
@@ -43,7 +44,7 @@ export const growth = {
     { period: 'Year one', value: 130 },
     { period: 'Year two', value: 200 },
   ],
-  note: 'Same team, then a smaller one. Enterprise delivery followed the same curve, from 1 completed project to 7, with 3 more in development. I changed the systems; they did the work.',
+  note: 'Same team, then a smaller one. Enterprise delivery followed the same curve, from 1 completed project to 14 — 6 in production, 4 releasing, 4 in development. I changed the systems; they did the work.',
 } as const
 
 /** Education, kept as a compact footnote rather than a paragraph. */
