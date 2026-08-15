@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next'
 import { site } from '@/content/site'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const paths = ['', '/about', '/leadership', '/value', '/work', '/connect']
+  const paths = ['', '/about', '/leadership', '/value', '/work', '/connect', '/room']
   return paths.map((p) => ({
     url: `${site.url}${p}`,
     changeFrequency: 'monthly',

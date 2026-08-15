@@ -8,6 +8,7 @@ import { CTA } from '@/components/primitives/CTA'
 import { CountUp } from '@/components/primitives/CountUp'
 import { Portrait } from '@/components/media/Portrait'
 import { GrowthBars } from '@/components/sections/GrowthBars'
+import { Door } from '@/components/room/Door'
 import { RevealOnActive, useSceneActive } from '@/components/journey/sceneActive'
 import { hero } from '@/content/hero'
 import { journey } from '@/content/journey'
@@ -197,6 +198,9 @@ export function TalkScene() {
             or email me directly
           </a>
         </div>
+      </RevealOnActive>
+      <RevealOnActive index={3}>
+        <Door />
       </RevealOnActive>
     </div>
   )

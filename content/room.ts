@@ -36,3 +36,40 @@ export const tattooAlt: Record<string, string> = {
   tattooideabrandi:
     'A black-and-white tattoo design of an adjustable wrench entwined with daisies, engraved with a repeating placeholder date.',
 }
+
+/** Prose for the standalone /room page — the personal side of the site. */
+export const room = {
+  intro: {
+    eyebrow: 'The other room',
+    heading: 'Come in.',
+    lede: 'The rest of the site is what I do for work. This is everything else — the things I build after hours, the things I draw, and what I do when I am not doing either.',
+  },
+  projects: {
+    heading: 'Built after hours',
+    lede: 'None of these were assigned. Each one started because something was annoying me or because I wanted to find out if I could.',
+  },
+  art: {
+    heading: 'Things I draw',
+    lede: 'Digital and traditional. I have been drawing far longer than I have been writing code.',
+  },
+  tattoo: {
+    heading: 'Tattoo flash',
+    lede: 'Designs I have drawn for people who went and got them tattooed. There are several of these walking around out there, which I still find slightly unbelievable.',
+  },
+  offTheClock: {
+    heading: 'Off the clock',
+    items: [
+      { title: 'Reading and writing', body: 'Constantly reading, and always turning over story ideas. I am writing books, slowly.' },
+      { title: 'Homeschooling', body: 'I homeschool my kids, which is where Kingdoms & Crowns came from.' },
+      { title: 'Outside', body: 'Paddleboarding and hiking.' },
+      { title: 'A lot of pets', body: 'Cats, dogs and fish.' },
+      { title: 'Games', body: 'Video games, board games, and D&D.' },
+      { title: 'Anime', body: 'A long-standing habit, and it shows up in the art.' },
+      { title: 'Concerts', body: 'With my husband and my daughter, and my son when he feels like coming.' },
+    ],
+  },
+  sayHi: {
+    heading: 'Come say hi',
+    body: 'Games, art, books, tabletop, or systems. If any of this sounds fun, I want to hear from you.',
+  },
+} as const

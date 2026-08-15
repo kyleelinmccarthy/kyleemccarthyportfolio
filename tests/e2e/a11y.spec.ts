@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 
-const ROUTES = ['/', '/work', '/about', '/leadership', '/value', '/connect']
+const ROUTES = ['/', '/work', '/about', '/leadership', '/value', '/connect', '/room']
 
 test.describe('axe sweep', () => {
   for (const theme of ['light', 'dark'] as const) {

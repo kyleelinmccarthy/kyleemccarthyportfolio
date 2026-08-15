@@ -27,6 +27,7 @@ export const footer = {
     { label: 'How I create value', href: '/value' },
     { label: 'What I build', href: '/work' },
     { label: 'Let’s get to work', href: '/connect' },
+    { label: 'The other room', href: '/room' },
   ],
   copyright: '© 2026 Kylee McCarthy, MS · Saratoga Springs, UT',
   tagline: 'Every detail designed and built on purpose.',
