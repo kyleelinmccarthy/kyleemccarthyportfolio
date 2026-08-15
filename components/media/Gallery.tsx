@@ -13,8 +13,14 @@ export function Gallery({ items, label }: { items: MediaItem[]; label: string })
   const dialogRef = useRef<HTMLDialogElement>(null)
   const [index, setIndex] = useState(0)
 
-  const open = useCallback((i: number) => {
+  const open = useCallback((i: number, trigger: HTMLButtonElement) => {
     setIndex(i)
+    // Focus the invoking thumbnail explicitly before showModal(). Native
+    // <dialog> restores focus to whatever was document.activeElement when
+    // showModal() was called — that's the click target in Chrome/Firefox,
+    // but Safari has historically not focused buttons on mouse click, so
+    // without this the post-close focus target would be browser-dependent.
+    trigger.focus()
     dialogRef.current?.showModal()
   }, [])
 
@@ -44,7 +50,7 @@ export function Gallery({ items, label }: { items: MediaItem[]; label: string })
           <li key={m.src}>
             <button
               type="button"
-              onClick={() => open(i)}
+              onClick={(e) => open(i, e.currentTarget)}
               className="relative block h-20 w-32 overflow-hidden rounded-lg ring-1 ring-rule transition-shadow hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               <Image src={m.src} alt={m.alt} fill sizes="8rem" className="object-cover" />
