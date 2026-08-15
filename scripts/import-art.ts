@@ -21,6 +21,23 @@ const SOURCES = [
 /** Provenance unconfirmed and too low-res to print well. */
 const EXCLUDE = new Set(['FB_IMG_1571103383957.jpg'])
 
+/**
+ * Filename -> slug overrides for source files whose name is not safe to
+ * publish verbatim. Source filenames sometimes carry a third party's name
+ * (a tattoo client, a friend) baked in by whoever saved the photo — artSlug()
+ * only lowercases and dashes the filename, so that name would otherwise ride
+ * straight through into a public URL under /media/. Add an entry here rather
+ * than renaming the source file: the file lives in the owner's personal
+ * Pictures folder and is not ours to rename, and an explicit map keeps the
+ * fix visible and re-runnable instead of depending on someone remembering.
+ */
+const SLUG_OVERRIDE: Record<string, string> = {
+  // TattooIdeaBrandi.jpg -> published a tattoo client's first name in the
+  // URL. Renamed to describe the design itself (see tattooAlt in
+  // content/room.ts): a wrench entwined with daisies.
+  'TattooIdeaBrandi.jpg': 'wrench-and-daisies',
+}
+
 const EXTS = /\.(jpe?g|png)$/i
 
 /**
@@ -56,7 +73,7 @@ async function main() {
 
     for (const file of readdirSync(dir)) {
       if (!EXTS.test(file) || EXCLUDE.has(file)) continue
-      const slug = artSlug(file)
+      const slug = SLUG_OVERRIDE[file] ?? artSlug(file)
       if (!alt[slug]) missingAlt.push(`${out}/${slug}  (${file})`)
 
       const src = join(dir, file)

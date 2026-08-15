@@ -33,7 +33,7 @@ export const artAlt: Record<string, string> = {
 }
 
 export const tattooAlt: Record<string, string> = {
-  tattooideabrandi:
+  'wrench-and-daisies':
     'A black-and-white tattoo design of an adjustable wrench entwined with daisies, engraved with a repeating placeholder date.',
 }
 
