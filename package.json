@@ -13,6 +13,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "capture:screenshots": "tsx scripts/capture-screenshots.ts",
+    "import:art": "tsx scripts/import-art.ts",
     "process:headshot": "tsx scripts/process-headshot.ts"
   },
   "dependencies": {
