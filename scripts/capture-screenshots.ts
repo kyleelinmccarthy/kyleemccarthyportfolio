@@ -16,14 +16,14 @@ const WIDTH = 1600
 async function main() {
   const targets = projects.filter((p) => p.autoCapture && p.liveUrl)
   const browser = await chromium.launch()
-  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
+  const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } })
 
   for (const p of targets) {
     try {
       console.log(`Capturing ${p.name} -> ${p.liveUrl}`)
       await page.goto(p.liveUrl!, { waitUntil: 'networkidle', timeout: 45_000 })
       await page.waitForTimeout(1500)
-      const raw = await page.screenshot({ clip: { x: 0, y: 0, width: 1440, height: 900 } })
+      const raw = await page.screenshot({ clip: { x: 0, y: 0, width: 1600, height: 1000 } })
 
       const outDir = resolve(process.cwd(), 'public/media', p.slug)
       mkdirSync(outDir, { recursive: true })
