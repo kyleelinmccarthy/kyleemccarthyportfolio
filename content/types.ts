@@ -50,7 +50,9 @@ export interface Project {
   problem: string
   built: string
   outcome?: string // some in-progress projects have none
-  liveUrl?: string // absence => abstract palette panel, not a screenshot
+  /** Public site to link to. What the card *shows* is driven by `media`:
+   *  no media => ProjectVisual falls back to an abstract palette panel. */
+  liveUrl?: string
   /** For projects with no standalone site (e.g. embedded widgets): a short note,
    *  surfaced as an info tooltip, explaining where the work can be seen live. */
   embedNote?: string
@@ -58,13 +60,13 @@ export interface Project {
   media?: { hero: MediaItem; gallery?: MediaItem[] }
   /** Hero is Playwright-captured from liveUrl rather than imported from a repo. */
   autoCapture?: boolean
-  /** Resume-grounded tech chips. */
+  /** Resume-grounded tech chips, rendered by StackChips on the project cards. */
   stack?: string[]
   isPersonal: boolean
 }
 
 export interface Milestone {
-  /** Optional real year/label; phase label used when absent. */
+  /** Real month/year from the résumé, e.g. "Mar 2015". */
   marker: string
   title: string
   detail: string

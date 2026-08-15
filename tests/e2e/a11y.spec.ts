@@ -23,8 +23,9 @@ test.describe('axe sweep', () => {
         // false color-contrast violation unrelated to the actual, settled
         // token colors (verified AA-compliant in app/globals.css). Waiting
         // for the reveal to finish scans the steady state WCAG 1.4.3
-        // actually governs.
-        await page.waitForTimeout(1500)
+        // actually governs. 1800ms against a ~1100ms worst case leaves enough
+        // headroom for a loaded CI runner; 1500 was too thin.
+        await page.waitForTimeout(1800)
 
         const results = await new AxeBuilder({ page })
           .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])

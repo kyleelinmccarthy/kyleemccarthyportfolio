@@ -17,7 +17,7 @@ import { site } from '@/content/site'
 
 // Only projects with a public live URL become clickable bubbles. Aura has no
 // standalone site (it's embedded), so it gets an info popover instead — and
-// Tech Hub is internal-only, so it's omitted here entirely.
+// Beacon is internal-only, so it's omitted here entirely.
 const FLAGSHIP_SLUGS = ['403hq', 'nbs-website', 'ember-tattoo', 'kingdoms-and-crowns']
 
 function Eyebrow({ children }: { children: string }) {
