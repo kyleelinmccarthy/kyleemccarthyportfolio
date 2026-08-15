@@ -1,7 +1,7 @@
 # Real-Content Showcase Refresh — Design
 
 **Date:** 2026-08-15
-**Status:** Approved for planning
+**Status:** Revised after review — awaiting approval
 **Scope:** `kyleemccarthy.com` (this repo)
 
 ## Problem
@@ -27,27 +27,34 @@ it imports `sharp`, which is absent from `package.json`.
 
 Whole systems are missing: **Beacon**, **Paragon**, **External Payroll**,
 **Online Forms / Secure Upload / Onboarding**, and the entire **AI in production**
-story. Five personal projects on the resume — ChemTree Games, ChemTreeHQ,
-Eliminated, Eliminated (web), The Wretched Few — do not appear at all. These are
-exactly the projects with shareable imagery.
+story. Five personal projects on the resume do not appear at all.
+
+**There is nowhere for the person to show up.** The site presents a director of
+technology operations and nothing else. The art, the writing, the tattoo designs,
+the D&D, the homeschooling — none of it has a home.
 
 ## Goals
 
 1. Render real product and game imagery on the home page and `/work`.
 2. Bring every stat and project description in line with the resume.
-3. Keep the media pipeline reproducible and the build independent of external repos.
+3. Add `/room` — an optional personal space entered through a door.
+4. Keep the media pipeline reproducible and the build independent of external repos.
 
 ## Non-goals
 
-- No redesign of the scroll choreography in `CinematicJourney.tsx`.
+- No redesign of the scroll choreography in `CinematicJourney.tsx` beyond the
+  already-shipped timing fix.
 - No screenshots of internal NBS tools (see Confidentiality).
-- No change to the contact form or its API route. See Open Question 3.
+- No two-mode site-wide toggle. The light-switch theme control stays the only
+  switch; the room is a place, not a mode.
 
 ## Positioning
 
 The site is a **showcase**, not a funnel. Copy is declarative and leads with the
-work; contact remains available but is not the organizing goal. This decision
-retires the *Advisory* value pillar, which framed the site as consulting.
+work. This retires the *Advisory* value pillar, which framed the site as
+consulting, but contact stays — reworded warmer (see §9).
+
+---
 
 ## Design
 
@@ -58,7 +65,7 @@ is removed — it is dead today, so nothing depends on it.
 
 ```ts
 export interface MediaItem {
-  /** Path under /media/<slug>/, e.g. "/media/wretched-few/hero.avif" */
+  /** Path under /media/, e.g. "/media/wretched-few/hero.avif" */
   src: string
   /** Required. axe runs against this site in CI; a media item with no alt is a build failure. */
   alt: string
@@ -74,84 +81,89 @@ export interface Project {
   media?: { hero: MediaItem; gallery?: MediaItem[] }
   /** Hero is Playwright-captured from liveUrl rather than imported from a repo. */
   autoCapture?: boolean
-  /** Resume-grounded tech chips. */
   stack?: string[]
 }
 ```
 
 `ProjectCategory` gains `'Games'`.
 
-The existing invariant *screenshot ⇒ liveUrl* becomes **autoCapture ⇒ liveUrl**.
-This is the substantive change: bundled game art is legitimate media with no public
-URL behind it, while anything claiming to be a capture of a live site must actually
-have one.
+The existing invariant *screenshot ⇒ liveUrl* becomes **autoCapture ⇒ liveUrl**:
+bundled art is legitimate media with no public URL behind it, while anything
+claiming to be a capture of a live site must actually have one.
 
 ### 2. Components
 
 **`components/media/ProjectVisual.tsx`** — renders `media.hero` through `next/image`
-at a fixed aspect ratio with the existing rounded/ring treatment. When a project has
-no media it falls back to the current abstract panel. Every internal NBS tool takes
-the fallback path, so the fallback is a first-class state, not an edge case.
+at a fixed aspect ratio. With no media it falls back to the current abstract panel.
+Every internal NBS tool takes the fallback, so it is a first-class state.
 
-**`components/media/ProjectGallery.tsx`** — a horizontal thumbnail strip that opens a
-native `<dialog>` lightbox. Native `<dialog>` is chosen deliberately: it gives focus
-trapping, Esc-to-close, and inert background for free. Hand-rolled modals are the
-most common source of axe violations, and axe gates CI here.
+**`components/media/Gallery.tsx`** — thumbnail strip opening a native `<dialog>`
+lightbox, shared by project galleries and the room's art wall. Native `<dialog>`
+is deliberate: focus trapping, Esc-to-close and an inert background come free, and
+hand-rolled modals are the most common source of axe violations.
 
 Keyboard contract: Tab reaches each thumbnail; Enter/Space opens; Left/Right move
-between images; Esc closes and returns focus to the invoking thumbnail.
+between images; Esc closes and restores focus to the invoking thumbnail.
 
 ### 3. Asset pipeline
 
-Output lives in `public/media/<slug>/` and is **committed**. The build must not
-depend on a WSL mount or a Unity repo being present.
+Output lives in `public/media/` and is **committed** — the build must not depend on
+a WSL mount, a Unity repo, or a Pictures folder being present.
 
-Two scripts, both re-runnable and idempotent:
+Three sources, all re-runnable and idempotent:
 
-- **`scripts/capture-screenshots.ts`** (extend) — drives Playwright over projects
-  where `autoCapture` is set, writing `hero.*`.
-- **`scripts/import-assets.ts`** (new) — copies and downsizes local art from a
-  declared source manifest.
+- **`scripts/capture-screenshots.ts`** (extend) — Playwright over `autoCapture`
+  projects.
+- **`scripts/import-assets.ts`** (new) — copies and downsizes named files from
+  project repos.
+- **`scripts/import-art.ts`** (new) — **globs** `PortfolioArt/` and `TattooArt/`.
 
-Both emit AVIF + WebP with a JPEG fallback at 1600px wide. Game captures are
-~2.5 MB PNGs at source; target is ≤250 KB per image.
+Globbing is required, not a convenience: those folders are still being filled, so
+re-running must pick up whatever has been added without a code change. Filenames
+become slugs; alt text is authored in `content/room.ts` keyed by slug, so an
+unknown file gets a build-time warning rather than a silent empty `alt`.
+
+All emit AVIF + WebP with a JPEG fallback at 1600px wide, ≤250 KB per image.
+Source files run 10–15 MB, so downsizing is load-bearing.
 
 `sharp` is added to `devDependencies`, fixing the currently-broken capture script.
 
-**Source manifest:**
+**Repo art sources:**
 
-| Slug | Source | Hero | Gallery |
-| --- | --- | --- | --- |
-| `kingdoms-and-crowns` | `\\wsl.localhost\Ubuntu\home\kylee\projects\kingdoms-and-crowns\public\marketing\screens\r2\` | `hero-my-quests.jpg` | `hero-my-castle`, `hero-my-tavern`, `hero-my-trophies`, `hero-ranks`, `parent-quest-giver`, `parent-hall-of-legends` |
-| `wretched-few` | `E:\codeProjects\VillainRoguelite\harbingers-of-the-apocalypse\Screenshots\` | `screen_CharacterSelect.png` | `screen_MainMenu`, `screen_Lobby`, `screen_Gate`, `screen_Mirror`, `screen_BrokerShop`, `screen_HudLayout` |
-
-K&C has both local art and a live site; the local marketing captures are better
-composed, so it does **not** use `autoCapture`.
+| Slug | Source | Files |
+| --- | --- | --- |
+| `kingdoms-and-crowns` | `…/kingdoms-and-crowns/public/marketing/screens/r2/` | hero `hero-my-quests.jpg`; gallery: `hero-my-castle`, `hero-my-tavern`, `hero-my-trophies`, `hero-ranks`, `parent-quest-giver`, `parent-hall-of-legends` |
+| `wretched-few` | `…/harbingers-of-the-apocalypse/Screenshots/` | **`screen_MainMenu.png` only** — one image, no gallery |
 
 **Capture targets** (all verified reachable 2026-08-15):
 
-| Slug | URL | Note |
-| --- | --- | --- |
-| `403hq` | `https://403hq.nbsbenefits.com` | public sign-in surface |
-| `nbs-website` | `https://nbswebsite-release-…azurewebsites.net/` | pre-launch release slot |
-| `ember-tattoo` | `https://ember-tattoo-web.vercel.app` | |
-| `chemtree-games` | `https://chemtreegames.com` | |
-| `chemtree-hq` | `https://hq.chemtreegames.com` | sign-in screen only — see Open Question 4 |
-| `eliminated-web` | `https://www.eliminatedgame.com` | apex 308s to `www` |
+| Slug | URL |
+| --- | --- |
+| `403hq` | `https://403hq.nbsbenefits.com` |
+| `nbs-website` | `https://nbswebsite-release-…azurewebsites.net/` |
+| `ember-tattoo` | `https://ember-tattoo-web.vercel.app` |
+| `chemtree-games` | `https://chemtreegames.com` |
+| `eliminated-web` | `https://www.eliminatedgame.com` |
 
-`www.kingdomsandcrowns.com` is likewise the canonical host; the bare apex returns 308.
+`www` is canonical for both `kingdomsandcrowns.com` and `eliminatedgame.com`; the
+bare apexes 308. K&C uses its repo art rather than a capture — the marketing
+screens are better composed.
 
-### 4. Project roster — 8 professional, 9 personal
+**ChemTreeHQ is a manual capture.** `hq.chemtreegames.com` is behind auth, so an
+automated capture would yield a sign-in box. Instead: one screenshot of the
+dashboard with no project details visible, produced by hand and committed. It is
+therefore the one asset the pipeline cannot regenerate, and is marked as such in
+the manifest.
 
-**Professional.** Two consolidations, both correcting the current list rather than
-hiding anything:
+### 4. Project rosters
 
-- *Tech Hub* is renamed **Beacon**. It is the same system — `nbsStuff/beacon-main`
-  confirms the name — and the resume describes it as replacing Azure DevOps and
-  folding in GitHub Enterprise and ServiceDesk Plus.
-- *Client Portal (v2)* folds into **403HQ** as "two client deployments, ~10,000
-  employees each," matching how the resume presents it and the
-  `403HQ-main` / `403HQ-DoE-main` repo pair.
+`/work` carries the professional work. `/room` carries the personal projects,
+presented separately from it.
+
+**Professional (8).** Two consolidations, both corrections rather than omissions:
+*Tech Hub* is renamed **Beacon** (`nbsStuff/beacon-main` confirms it), and
+*Client Portal (v2)* folds into **403HQ** as "two client deployments, ~10,000
+employees each," matching the resume and the `403HQ-main` / `403HQ-DoE-main` pair.
 
 | Project | Status | Media |
 | --- | --- | --- |
@@ -164,136 +176,186 @@ hiding anything:
 | External Payroll Processing | building | none |
 | Paragon | building | none |
 
-**Personal.** Sentral is dropped: `ChemTreeHQ/CLAUDE.md` records it as
-*"forked from the Sentral codebase,"* so ChemTreeHQ supersedes it and carrying both
-would tell one story twice. *This Portfolio* is dropped as a card; its
-CI-accessibility detail moves to the About scene.
+**Personal (9), in the room.** Sentral is dropped: `ChemTreeHQ/CLAUDE.md` records it
+as *"forked from the Sentral codebase,"* so ChemTreeHQ supersedes it and carrying
+both tells one story twice. *This Portfolio* is dropped as a card.
 
 | Project | Status | Media |
 | --- | --- | --- |
 | Kingdoms & Crowns | beta | import + gallery |
-| The Wretched Few | building | import + gallery |
+| The Wretched Few | building | one image |
 | Eliminated | building | none |
 | Eliminated (web) | production | capture |
 | ChemTree Games | production | capture |
-| ChemTreeHQ | building | capture |
+| ChemTreeHQ | building | manual capture |
 | Ember Tattoo & Piercing | production | capture |
 | Family Budgeting | production | none |
 | Doing The Thing | production | none |
 
-### 5. Figures
+### 5. The room
+
+**Route:** `/room`. A real page, linkable and shareable, not a mode.
+
+**The door** is the final beat of the home-page scroll, after the Talk scene — the
+reader has finished the professional story and may choose to go further or not.
+It extends the light-switch idiom the site already owns: warm light spills from
+under a closed door. Hover brightens it; activating it navigates.
+
+Mechanically it is a `<Link href="/room">` styled as a door, so it works without
+JS, is keyboard-reachable, and is crawlable. The door art is CSS and inline SVG,
+not an image — it must theme correctly in both light and dark.
+
+**Sections:**
+
+1. **Built after hours** — the 9 personal projects, framed by why they exist rather than what they prove.
+2. **Things I draw** — the art wall from `PortfolioArt/`.
+3. **Tattoo flash** — its own section from `TattooArt/`, because *"people are walking around wearing my drawings"* is the most distinctive thing on the site.
+4. **Off the clock** — reading and writing (story ideas, books in progress), homeschooling, paddleboarding and hiking, the pets, video games, board games, D&D, anime, concerts.
+5. **Come say hi** — the room's own warmer contact close.
+
+**Privacy.** Family is referred to generically — "my husband," "my kids," "my
+daughter" — with no names, ages, or identifying detail about the children. No
+family photographs. The city is already public on the resume, so it stays.
+
+**Content lives in `content/room.ts`**, matching how every other section separates
+content from presentation.
+
+### 6. Figures
 
 `BuildScene` currently overwrites the first build figure with
 `String(projects.length)` (`components/scenes.tsx:137-139`). The intent was
 staleness-proofing, but it makes the headline number mean "cards on this page."
-After this refresh that reads **17**, presented as 2026 production apps — a claim
-the resume does not support.
+After this refresh that reads 17, presented as 2026 production apps — a claim the
+resume does not support.
 
 **The derivation is removed.** Figures become literal and resume-sourced.
 
 Staleness protection cannot simply move to the `status` field, because the card
 roster and the enterprise count measure different things. The resume's 14 breaks
 down 6 production / 4 releasing / 4 building, but the 8 professional cards
-consolidate (403HQ is two deployments; Online Forms / Secure Upload / Onboarding is
-three services in one card) and do not name all 14. The named cards account for
-5 production, 4 releasing, 2 building — 11 of the 14. **Any test asserting the
-cards sum to 6/4/4 would be false.**
+consolidate and do not name all 14 — they account for 5 production, 4 releasing,
+2 building, or 11 of 14. **Any test asserting the cards sum to 6/4/4 would be
+false.** So the invariant splits in two:
 
-So the invariant is split in two:
+- **Arithmetic of the stated claim** — `6 + 4 + 4 === 14`, `11 <= 14`.
+- **Per-bucket ceiling** — named cards in each status bucket never exceed that
+  bucket's stated total.
 
-- **Arithmetic of the stated claim** — `6 + 4 + 4 === 14`, and `builtPersonally (11)
-  <= total (14)`. Catches a figure edited in isolation.
-- **Per-bucket ceiling** — the named professional cards in each status bucket never
-  exceed that bucket's stated total. Catches adding a ninth production card without
-  revisiting the headline number.
+**Lead scene** — `200` backlog items/yr, up from ~40 · `20` people · `1 → 14`
+enterprise projects since 2023.
 
-**Lead scene** — `200` backlog items delivered per year, up from ~40 · `20` people
-in the department · `1 → 14` enterprise projects since 2023.
+**Build scene** — `11 of 14` built personally · `15+` sites on AURA · `6 weeks` to
+a live client portal.
 
-**Build scene** — `11 of 14` enterprise platforms built personally · `15+` sites on
-AURA at zero marginal cost · `6 weeks` from kickoff to a live client portal.
+### 7. Value pillars
 
-### 6. Value pillars
-
-*Advisory* is replaced, per the showcase positioning:
+*Advisory* is replaced:
 
 1. Technology leadership — operating model, design system, standards that enforce themselves in CI
 2. **AI in production, under audit** — six systems, three providers, forced tool-use against a JSON schema, confidence thresholds, per-tenant governance
 3. Product & UX/UI design — design system, WCAG 2.1 AA, light and dark theming
-4. Build over buy — project tracker, accessibility vendor and engagement tool retired and replaced; recordkeeping platform next
+4. Build over buy — project tracker, accessibility vendor and engagement tool retired and replaced; recordkeeping next
 
-Pillar 2 is the most differentiated claim on the resume and the site does not
-currently mention AI at all.
+Pillar 2 is the most differentiated claim on the resume and the site never
+mentions AI.
 
-### 7. Timeline
+### 8. Timeline
 
-`content/timeline.ts:7` carries a literal note — `Kylee: replace the markers with
-real years` — and the current markers are invented phase labels. Replaced with
-real dates from the resume:
-
-Mar 2015 Benefits Specialist → May 2016 Assistant Account Manager →
-Jul 2017 IS Analyst → Nov 2019 IS Analyst Lead → Nov 2022 Director.
+`content/timeline.ts:7` carries a literal `Kylee: replace the markers with real
+years` note and the markers are invented phase labels. Replaced with real dates:
+Mar 2015 → May 2016 → Jul 2017 → Nov 2019 → Nov 2022.
 
 The `growth` series (40 → 130 → 200) already matches the resume and is retained.
 
-### 8. Tests
+### 9. Contact
 
-`tests/unit/content.test.ts` is updated, not merely renumbered:
+Kept, reworded off the sales register. `content/contact.ts` currently opens *"I take
+on advisory engagements and contract work"* — which contradicts the showcase
+positioning.
+
+- **`/#contact`** stays the professional close, warmer and less transactional.
+- **`/room`** gets its own sign-off in the room's voice.
+- `contactOptions.ts` — *"Advisory engagement"* is reworded and the pinned test in
+  `content.test.ts` updated with it.
+
+### 10. Tests
+
+`tests/unit/content.test.ts` updated:
 
 - roster shape: 8 professional, 9 personal, unique slugs
 - **autoCapture ⇒ liveUrl** (replaces the screenshot invariant)
-- every `MediaItem` has a non-empty `alt`
-- every `media.src` resolves to a file that exists under `public/` (Node env — a
-  path typo is otherwise invisible until someone loads the page)
-- enterprise figures are self-consistent (`6 + 4 + 4 === 14`, `11 <= 14`) and no
-  status bucket's named cards exceed its stated total — see §5 for why an exact
-  6/4/4 assertion would be false
-- figures carry non-empty labels; no `projects.length` coupling
+- every `MediaItem` has non-empty `alt`
+- every `media.src` resolves to a file under `public/` (Node env — a path typo is
+  otherwise invisible until someone loads the page)
+- enterprise figures self-consistent; no `projects.length` coupling
+- every art file imported by the glob has authored alt text
 
-`tests/e2e` gains a gallery case: open the lightbox, assert focus moves into the
-dialog, Esc closes it and restores focus, and axe reports no violations with the
-dialog open.
+New `tests/e2e/room.spec.ts`: the door is keyboard-reachable and navigates to
+`/room`; the lightbox traps focus, closes on Esc, restores focus; axe clean with
+the dialog open. `/room` joins the existing a11y sweep.
+
+---
+
+## Already shipped
+
+Two defects reported during review, fixed and committed as `9bc4adc`:
+
+- **Footer misalignment** — the two footer columns had mismatched headings and no
+  cross-axis alignment, leaving the link rows **40.7px apart** (measured). Fixed
+  with `lg:items-end`; regression-tested in `tests/e2e/footer.spec.ts`.
+- **Dead lead-in scroll** — scene one dwelled for the full `HOLD`, so at
+  240vh / 0.48 it took **115vh** of scrolling before the camera moved. Scene one is
+  on screen before the reader touches the wheel and does not need an arrival dwell;
+  it now has its own `FIRST_HOLD`, cutting the lead-in to **36vh**. Constants moved
+  to `components/journey/timing.ts` and unit-tested.
 
 ## Risks
 
-**Image weight.** Nine game captures plus seven K&C screens plus six live captures
-is the first real payload this site has carried. Mitigated by the 250 KB/image
-budget, AVIF/WebP, and `next/image` lazy loading below the fold. The Build scene
+**Image weight.** This is the first real payload the site has carried. Mitigated by
+the 250 KB/image budget, AVIF/WebP, and `next/image` lazy loading. The Build scene
 heroes are above the fold on desktop and are the ones to watch.
 
 **Capture drift.** Auto-captured heroes are snapshots of sites that keep changing.
-Both scripts are idempotent and re-runnable; committed output means a stale capture
-is visible in a diff rather than silently served.
+Scripts are idempotent; committed output means a stale capture shows in a diff.
+
+**The room dilutes the professional read.** A hiring manager who opens the door
+finds D&D and anime. This is the intended trade — it is behind a door precisely so
+the professional story stands on its own first, and the reader opts in.
+
+**Art provenance.** `Pictures\Art\Digital\References\` is downloaded reference
+material and is excluded — only the curated `PortfolioArt/` and `TattooArt/`
+folders are read. Several curated pieces are fan art of copyrighted characters
+(Deku, Arcane Vi, Kaneki, Cowboy Bebop), which is ordinary for a personal site.
 
 ## Confidentiality
 
 No internal NBS tool is screenshotted. Beacon, Paragon, External Payroll, Online
-Forms, Secure Upload and Onboarding are described in resume-level terms only and
-render the abstract panel. The two professional captures — 403HQ and the NBS
-Website — are of surfaces already public today. Figures used are the ones already
-on a resume in circulation.
+Forms, Secure Upload and Onboarding are described in resume-level terms only. The
+two professional captures are of surfaces already public. Figures are the ones
+already on a resume in circulation.
 
 ## Open questions
 
-1. **The Wretched Few art.** Nine captures of an unreleased, Steam-bound game
-   co-owned with one collaborator would go permanently public on kyleemccarthy.com.
-   Not a decision this spec makes. **Blocks the `wretched-few` gallery only**;
-   everything else can ship without it.
-2. **Sentral.** Dropped, inferred from the roster selection and corroborated by the
-   ChemTreeHQ fork note. Reversible if wrong.
-3. **Contact options.** `contactOptions.ts` still offers *"Advisory engagement"* and
-   `content.test.ts` pins it, which now contradicts the retired Advisory pillar.
-   Left out of scope pending a call.
-4. **ChemTreeHQ capture.** `hq.chemtreegames.com` returns 200 but is a workspace
-   behind auth, so a capture yields a sign-in screen. Options: ship the sign-in
-   capture, substitute a local screenshot of the Yjs collaborative editor, or use
-   the abstract panel.
+1. **Pre-existing test failures.** 9 e2e tests fail on `main`, unrelated to this
+   work and confirmed pre-existing by running the suite on a clean tree. Most
+   notably `aria-prohibited-attr` (serious, hundreds of nodes) from
+   `CountUp.tsx:51`: `<span aria-label={value}>` on a bare span, whose implicit
+   `generic` role prohibits `aria-label`. One-line fix — add `role="img"`, as
+   `NameLogo.tsx:85` already does. Also failing: contact happy-path, theme-toggle
+   persistence, and the mobile résumé link. **In or out of scope?**
+2. **`FB_IMG_1571103383957.jpg`** in `PortfolioArt/` is 19 KB with a Facebook
+   download filename — likely too low-res to show well, and worth confirming it is
+   yours.
+3. **The Wretched Few** is now one main-menu image rather than a gallery, which
+   reduces but does not remove the question of publishing pre-release art from a
+   project co-owned with a collaborator.
 
 ## Implementation order
 
-1. `sharp` dependency + `types.ts` model + test scaffolding
-2. `import-assets.ts` and the extended capture script; generate and commit media
+1. `sharp` + `types.ts` model + test scaffolding
+2. `import-assets.ts`, `import-art.ts`, extended capture script; generate and commit media
 3. `ProjectVisual` + fallback, wired into `/work` and `BuildScene`
-4. `ProjectGallery` + lightbox + a11y e2e
-5. Content rewrite: `projects.ts`, `journey.ts`, `timeline.ts`, `hero.ts`, `site.ts`
-6. Full verification: `typecheck`, `test`, `test:e2e`, `build`
+4. `Gallery` + lightbox + a11y e2e
+5. Content rewrite: `projects.ts`, `journey.ts`, `timeline.ts`, `hero.ts`, `site.ts`, `contact.ts`
+6. `/room`: route, door, `content/room.ts`, sections
+7. Full verification: `typecheck`, `lint`, `test`, `test:e2e`, `build`
