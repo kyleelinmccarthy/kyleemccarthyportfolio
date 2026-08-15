@@ -8,7 +8,10 @@ export function Footer() {
   return (
     <footer className="bg-surface text-fg border-t border-rule">
       <Container className="py-16">
-        <div className="flex flex-col gap-10 lg:flex-row lg:justify-between">
+        {/* items-end: the columns have mismatched headings — a tall script
+            wordmark on the left, a small uppercase label on the right — so only
+            bottom-aligning puts the two link rows on a shared baseline. */}
+        <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <Link href="/" aria-label="Kylee McCarthy — home">
               <NameLogo size="footer" />

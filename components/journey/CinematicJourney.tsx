@@ -11,6 +11,7 @@ import {
   type MotionValue,
 } from 'framer-motion'
 import { SceneActiveContext } from './sceneActive'
+import { VH_PER_SCENE, holdFor } from './timing'
 import { BackgroundShapes } from '@/components/media/BackgroundShapes'
 
 export type Dir = 'start' | 'right' | 'left' | 'up' | 'down' | 'in'
@@ -20,9 +21,6 @@ export interface Scene {
   dir: Dir
   node: ReactNode
 }
-
-const VH_PER_SCENE = 240 // scroll distance per scene (tuning knob: higher = slower)
-const HOLD = 0.48 // fraction of each scene's scroll spent dwelling before it moves
 
 const DIR_GLYPH: Record<Dir, string> = {
   start: '↓',
@@ -72,7 +70,7 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
   const xs: number[] = []
   const ys: number[] = []
   cells.forEach((c, i) => {
-    ins.push(i * seg, i * seg + HOLD * seg)
+    ins.push(i * seg, i * seg + holdFor(i) * seg)
     xs.push(-c.x * 100, -c.x * 100)
     ys.push(-c.y * 100, -c.y * 100)
   })
@@ -129,7 +127,9 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
               z={i}
               isActive={i === active}
               zoom={cells[i]!.zoom}
-              arriveStart={(i - 1 + HOLD) * seg}
+              // Panel i starts arriving when panel i-1 stops dwelling — so this
+              // reads the *previous* scene's hold, which differs for scene 0.
+              arriveStart={(i - 1 + holdFor(i - 1)) * seg}
               arriveEnd={i * seg}
               progress={scrollYProgress}
               reduce={!!reduce}
