@@ -6,10 +6,27 @@ import { journey } from '@/content/journey'
 import { inquiryOptions, inquiryLabel } from '@/content/contactOptions'
 
 describe('projects content', () => {
-  it('has the expected 12 projects (6 work + 6 personal)', () => {
-    expect(projects).toHaveLength(12)
-    expect(projects.filter((p) => p.isPersonal)).toHaveLength(6)
-    expect(projects.filter((p) => !p.isPersonal)).toHaveLength(6)
+  it('has 8 professional and 9 personal projects', () => {
+    expect(projects.filter((p) => !p.isPersonal)).toHaveLength(8)
+    expect(projects.filter((p) => p.isPersonal)).toHaveLength(9)
+  })
+
+  it('keeps the stated enterprise counts internally consistent', () => {
+    // The résumé's 14 = 6 production + 4 releasing + 4 building, 11 built personally.
+    // The 8 cards consolidate (403HQ is two deployments; forms-suite is three
+    // services) and do not name all 14, so an exact per-bucket equality would be
+    // false. Assert the arithmetic of the claim, and that no bucket overflows it.
+    const STATED = { production: 6, releasing: 4, building: 4 } as const
+    const TOTAL = 14
+    const BUILT_PERSONALLY = 11
+    expect(STATED.production + STATED.releasing + STATED.building).toBe(TOTAL)
+    expect(BUILT_PERSONALLY).toBeLessThanOrEqual(TOTAL)
+
+    const pro = projects.filter((p) => !p.isPersonal)
+    for (const [status, stated] of Object.entries(STATED)) {
+      const named = pro.filter((p) => p.status === status).length
+      expect(named, `more ${status} cards than the stated ${stated}`).toBeLessThanOrEqual(stated)
+    }
   })
 
   it('has unique slugs', () => {

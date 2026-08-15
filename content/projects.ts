@@ -4,202 +4,290 @@ export const workIntro = {
   label: 'Work',
   heading: "What I've Built",
   subheading:
-    'Six production applications shipped in four months, alongside leading a 20+ person department. Six more built on personal time. Every one of them started with a real problem.',
+    'Fourteen enterprise platforms since 2023, eleven of them built by me, while leading the twenty-person department that ships the rest.',
 } as const
 
 export const projects: Project[] = [
   {
     slug: '403hq',
     name: '403HQ',
-    descriptor: 'Client Portal · Built in 6 Weeks',
+    descriptor: 'Client Portal · Two Deployments · ~10,000 Employees Each',
     category: 'Client Portals',
-    headline:
-      'A client posted their contract for bid. I built the portal in six weeks and kept them.',
-    problem:
-      'A high-value client posted their contract for bid. The gap: no online portal existed that met their needs. The timeline: weeks, not months.',
-    built:
-      'A full-featured client portal from scratch, five distinct user role personas, multi-factor authentication, user-managed content, modern UX, and comprehensive security architecture. Every detail designed for a client that expected enterprise-grade quality.',
-    outcome:
-      'Delivered in 6 weeks. The client stayed. The codebase became reusable infrastructure now being extended to additional clients, turning a crisis into a product.',
-    liveUrl: 'https://403hq.nbsbenefits.com',
     status: 'production',
+    headline: 'A client put their contract out to bid. I shipped the portal in six weeks and kept them.',
+    problem:
+      'A high-value client posted their contract for bid. No online portal existed that met their needs, and the timeline was weeks, not months.',
+    built:
+      'A client portal built from scratch: five user role personas, multi-factor authentication, user-managed content and a security architecture built for an employer expecting enterprise quality. A second deployment followed for another client with its own branding, plan rules and customizations.',
+    outcome:
+      'Shipped in six weeks and the client stayed. Two deployments now serve roughly 10,000 employees each, and the codebase became reusable infrastructure rather than a one-off rescue.',
+    liveUrl: 'https://403hq.nbsbenefits.com',
+    autoCapture: true,
+    media: {
+      hero: { src: '/media/403hq/hero.jpg', alt: 'The 403HQ client portal sign-in screen' },
+    },
+    stack: ['.NET', 'C#', 'Azure', 'Entra External ID', 'Step-up MFA'],
     isPersonal: false,
   },
   {
-    slug: 'client-portal-v2',
-    name: 'Client Portal (v2)',
-    descriptor: 'Client Portal · Proactive Build',
-    category: 'Client Portals',
-    headline:
-      'Nobody asked for a replacement. I built one anyway, on the 403HQ codebase.',
+    slug: 'aura',
+    name: 'AURA',
+    descriptor: 'Accessibility Compliance · One Script Tag',
+    category: 'Internal Tools',
+    status: 'production',
+    headline: 'Built the accessibility layer once, then deployed it everywhere for nothing.',
     problem:
-      'An existing client was running on an outdated portal experience. No one asked for a replacement, but the capability existed and the opportunity was obvious.',
+      'The company licensed accessiBe at $800 a year per site. Two sites at the time, with more coming — a model that got more expensive with every new web property.',
     built:
-      "A second client portal built on the 403HQ codebase, adapted for a different client's needs and proactively offered to modernize their experience.",
+      'A proprietary accessibility platform that drops into any site as a single script tag. Built once, deployed everywhere.',
     outcome:
-      'Currently in client-side testing ahead of launch. A demonstration that the instinct is proactive, not reactive, and that good infrastructure compounds.',
-    status: 'releasing',
+      'Replaced the vendor licence outright. Now running on 15+ sites at no additional cost, and the economics improve with every property added.',
+    embedNote:
+      'AURA is embedded rather than standalone. See it running on 403HQ or the NBS website.',
+    stack: ['TypeScript', 'WCAG 2.1 AA'],
     isPersonal: false,
   },
   {
-    slug: 'nbs-marketing',
-    name: 'NBS Company Website',
-    descriptor: 'External Company Site · Full Rebuild',
-    category: 'Marketing & Web',
-    headline:
-      'A full rebuild that handed content control back to the marketing team.',
+    slug: 'beacon',
+    name: 'Beacon',
+    descriptor: 'Engineering Operations Platform · Replaced Azure DevOps',
+    category: 'Internal Tools',
+    status: 'production',
+    headline: 'One platform replaced the stack the department ran on — and it reviews our pull requests.',
     problem:
-      "The company's public-facing website didn't reflect the quality of the product or the ambition of the brand. Non-technical staff couldn't update it without developer involvement.",
+      'Work lived in Azure DevOps, GitHub Enterprise and ServiceDesk Plus at once. Context-switching was constant, and leadership had no single source of truth.',
     built:
-      'A complete replacement, enhanced UX, business-user content management so marketing teams own their own content, and a modernized brand presence.',
+      'One project model spanning all three systems. Beacon shapes work before it starts, reviews every pull request against our engineering standards with AI, and feeds the results into performance scorecards. It also carries the technology asset inventory with dependency mapping and compliance scoring, generates SOC audit evidence packs per project, and scans every site for ADA compliance.',
     outcome:
-      'A site that represents the brand accurately, with content ownership returned to the people closest to the message. Aura is live here, this is one of the places to see it.',
-    liveUrl:
-      'https://nbswebsite-release-bwftcbgub8c3hzfm.westus2-01.azurewebsites.net/',
-    status: 'releasing',
+      'Retired the project tracker subscription and gave the department one source of truth. A model writing the first draft never means less scrutiny than a person writing it.',
+    stack: ['.NET', 'Next.js', 'Azure', 'GitHub Actions', 'Claude'],
     isPersonal: false,
   },
   {
     slug: 'ruckus',
     name: 'Ruckus',
-    descriptor: 'Remote Engagement Platform · Internal Tool',
+    descriptor: 'Remote Engagement Platform · Ten Multiplayer Games',
     category: 'Internal Tools',
-    headline:
-      'Replaced a paid engagement tool with one employees actually wanted to use.',
-    problem:
-      'The company was paying for AhaSlides (~$100/year), a tool with low adoption, poor access management (shared logins), and features employees didn’t find compelling. For a fully remote company, engagement tools matter.',
-    built:
-      'A custom remote engagement platform with Microsoft SSO integration, richer social features, and an experience employees actually wanted to use.',
-    outcome:
-      'Eliminated the vendor cost. Measurably higher adoption. Access managed automatically through existing identity infrastructure.',
     status: 'production',
+    headline: 'Replaced the engagement tool nobody liked with ten games people actually play.',
+    problem:
+      'A fully remote company was paying for AhaSlides — low adoption, shared logins, and nothing employees found compelling.',
+    built:
+      'Ten browser-based multiplayer games with live polls and quizzes over SignalR, behind Microsoft SSO so access follows the identity infrastructure already in place. Built in weeks.',
+    outcome: 'Retired the vendor, raised adoption, and removed shared-login access management entirely.',
+    stack: ['.NET', 'SignalR', 'Entra ID'],
     isPersonal: false,
   },
   {
-    slug: 'aura',
-    name: 'Aura Accessibility Widget',
-    descriptor: 'Proprietary Accessibility Tool · Infrastructure',
-    category: 'Internal Tools',
-    headline:
-      'Built our accessibility widget once; deployed it across 10+ sites for free.',
+    slug: 'nbs-website',
+    name: 'NBS Website',
+    descriptor: 'Company Site · 66 Pages Rebuilt',
+    category: 'Marketing & Web',
+    status: 'releasing',
+    headline: 'A dated WordPress site rebuilt around the people who actually use it.',
     problem:
-      'The company was paying $800/year per site for accessiBe, a per-site licensing model that got more expensive with every new web property. Two sites at the time, more coming.',
-    built: 'A proprietary, reusable accessibility widget, built once, deployed everywhere.',
+      "The public site was dated WordPress that didn't reflect the product or the brand, and marketing couldn't change a word without a developer.",
+    built:
+      'A full replacement in Next.js and .NET across 66 pages, restructured around participants, sponsors and advisors, with the CMS marketing had been asking for for years.',
     outcome:
-      'Eliminated $1,600+/year in licensing across 2 sites at the time of replacement. Now live on 10+ sites at zero marginal cost per deployment. The economics improve with every new property added.',
-    embedNote:
-      'Aura is embedded, not its own site. See it live on 403HQ or the NBS Company Website.',
-    status: 'production',
+      'Content ownership went back to the people closest to the message. AURA runs here too — this is one of the places to see it live.',
+    liveUrl: 'https://nbswebsite-release-bwftcbgub8c3hzfm.westus2-01.azurewebsites.net/',
+    autoCapture: true,
+    media: {
+      hero: { src: '/media/nbs-website/hero.jpg', alt: 'The rebuilt National Benefit Services home page' },
+    },
+    stack: ['Next.js', '.NET', 'Azure'],
     isPersonal: false,
   },
   {
-    slug: 'tech-hub',
-    name: 'Tech Hub',
-    descriptor: 'Internal IS Command Platform · Enterprise Tool',
+    slug: 'forms-suite',
+    name: 'Online Forms, Secure Upload & Onboarding',
+    descriptor: 'Multi-Tenant Services · Headless Packages',
     category: 'Internal Tools',
-    headline:
-      'One platform that replaced the dozen tools the IS department ran on.',
+    status: 'releasing',
+    headline: 'Three services, one implementation instead of three.',
     problem:
-      'The IS department ran on fragmented tools, separate systems for project tracking, asset management, code review, sprint coordination, PTO, and roadmapping. Context-switching was constant. Visibility was fragmented. Leadership had no single source of truth.',
+      'Forms, secure file upload and client onboarding were heading toward separate implementations in the website and in Paragon.',
     built:
-      'A unified internal platform purpose-built for how the team actually works, multi-source project and ticket aggregation, asset management, sprint demo coordination, automated pull request workflows, department-wide PTO calendar, technology roadmap, automated code standards review, executive dashboards, and an embedded UX/UI design framework.',
-    outcome:
-      'Replaced multiple paid tool subscriptions. Single source of truth for the entire IS department. The design system I built lives here, making it the foundation of every product the team ships.',
-    status: 'production',
+      'Three multi-tenant services published as headless packages, so every consumer shares one implementation rather than reinventing it.',
+    outcome: 'One codebase per capability instead of one per consumer.',
+    stack: ['.NET', 'Clean Architecture', 'Multi-tenancy'],
     isPersonal: false,
+  },
+  {
+    slug: 'external-payroll',
+    name: 'External Payroll Processing',
+    descriptor: 'Payroll Ingestion · No Per-Employer Setup',
+    category: 'Internal Tools',
+    status: 'building',
+    headline: 'Ingests any employer’s payroll file without being configured for it first.',
+    problem:
+      'Every employer sends payroll differently, and per-employer setup does not scale.',
+    built:
+      'A pipeline that ingests employer payroll files with no per-employer configuration, validates them against plan rules, resolves exceptions and exports to recordkeepers.',
+    stack: ['.NET', 'Azure', 'SQL Server'],
+    isPersonal: false,
+  },
+  {
+    slug: 'paragon',
+    name: 'Paragon',
+    descriptor: 'Recordkeeping Platform · Replacing FIS Relius',
+    category: 'Internal Tools',
+    status: 'building',
+    headline: 'Replacing the recordkeeping platform the business runs on.',
+    problem:
+      'FIS Relius is a licensed vendor platform sitting underneath 403(b), 457 and FICA Alternative administration.',
+    built:
+      'An in-house replacement spanning 616 endpoints and 194 entities, sharing the headless forms, upload and onboarding packages rather than duplicating them.',
+    stack: ['.NET', 'EF Core', 'Azure SQL', 'Clean Architecture'],
+    isPersonal: false,
+  },
+  {
+    slug: 'kingdoms-and-crowns',
+    name: 'Kingdoms & Crowns',
+    descriptor: 'Homeschool Platform · In Beta',
+    category: 'Personal',
+    status: 'beta',
+    headline: 'A homeschool hub that tracks a full week per child, and makes them want to finish it.',
+    problem:
+      'Homeschool planning is fragmented across curriculum sites and paper, and none of it is built for the person actually doing the work: the kid.',
+    built:
+      "A hub tracking a full week per child. Parents set each student's subjects, link their curriculum sites and build custom assignments; kids work through them on a timer that persists across tabs and devices, and earn rewards for staying on task.",
+    outcome: 'In beta with a small group of families.',
+    liveUrl: 'https://www.kingdomsandcrowns.com',
+    media: {
+      hero: { src: '/media/kingdoms-and-crowns/hero.jpg', alt: "A child's quest log listing today's lessons with start timers and XP rewards" },
+      gallery: [
+        { src: '/media/kingdoms-and-crowns/castle.jpg', alt: 'The castle screen, a student’s home base' },
+        { src: '/media/kingdoms-and-crowns/tavern.jpg', alt: 'The tavern screen' },
+        { src: '/media/kingdoms-and-crowns/trophies.jpg', alt: 'Earned trophies and achievements' },
+        { src: '/media/kingdoms-and-crowns/ranks.jpg', alt: 'The ranks screen showing progression tiers' },
+        { src: '/media/kingdoms-and-crowns/quest-giver.jpg', alt: 'The parent quest-giver, where assignments are created' },
+        { src: '/media/kingdoms-and-crowns/hall-of-legends.jpg', alt: 'The hall of legends, a parent view of each child’s progress' },
+      ],
+    },
+    stack: ['Next.js', 'TypeScript', 'Drizzle', 'Vercel'],
+    isPersonal: true,
+  },
+  {
+    slug: 'wretched-few',
+    name: 'The Wretched Few',
+    descriptor: 'Multiplayer Roguelite · Unity · Headed for Steam',
+    category: 'Games',
+    status: 'building',
+    headline: 'You play the monsters, hunted by humans who were told you are evil.',
+    problem: 'Built with one friend, for the pleasure of building it.',
+    built:
+      'A multiplayer roguelite in Unity. I own the story, the HUD and player UI/UX, and the art.',
+    outcome: 'In development, headed for Steam.',
+    stack: ['Unity', 'C#'],
+    isPersonal: true,
+  },
+  {
+    slug: 'eliminated',
+    name: 'Eliminated',
+    descriptor: '3D Multiplayer Party Game · Unity',
+    category: 'Games',
+    status: 'building',
+    headline: 'My first solo game project: a lobby whittled down until one player is left.',
+    problem: 'I wanted to find out whether I could build a game end to end on my own.',
+    built:
+      'A 3D multiplayer party game in Unity and C#, where a lobby is cut down through a gauntlet of playground minigames until one player remains.',
+    stack: ['Unity', 'C#'],
+    isPersonal: true,
+  },
+  {
+    slug: 'eliminated-web',
+    name: 'Eliminated (web)',
+    descriptor: 'Browser Prototype · Authoritative Server',
+    category: 'Games',
+    status: 'production',
+    headline: 'The prototype that proved the concept before the 3D build.',
+    problem: 'The 3D version was a large bet, and the core loop was unproven.',
+    built:
+      "Twelve minigames with bot AI on an authoritative WebSocket server, so the server owns state and clients can't cheat.",
+    outcome: 'Proved the loop, and is still playable.',
+    liveUrl: 'https://www.eliminatedgame.com',
+    autoCapture: true,
+    media: { hero: { src: '/media/eliminated-web/hero.jpg', alt: 'The Eliminated browser game landing screen' } },
+    stack: ['TypeScript', 'WebSockets'],
+    isPersonal: true,
+  },
+  {
+    slug: 'chemtree-games',
+    name: 'ChemTree Games',
+    descriptor: 'Indie Studio Site',
+    category: 'Games',
+    status: 'production',
+    headline: 'The studio site for the games. Branch out.',
+    problem: 'The games needed somewhere to live that was not a storefront listing.',
+    built:
+      'A single-scroll studio site with game detail pages, a mailing list and a private admin, that still renders from a code-defined fallback when the database is unreachable.',
+    liveUrl: 'https://chemtreegames.com',
+    autoCapture: true,
+    media: { hero: { src: '/media/chemtree-games/hero.jpg', alt: 'The ChemTree Games studio home page' } },
+    stack: ['Next.js', 'Drizzle', 'Postgres', 'Railway'],
+    isPersonal: true,
+  },
+  {
+    slug: 'chemtree-hq',
+    name: 'ChemTreeHQ',
+    descriptor: 'Shared Workspace · Real-Time CRDTs',
+    category: 'Personal',
+    status: 'building',
+    headline: 'A shared workspace where two people editing the same document both keep their work.',
+    problem:
+      'Running projects with a remote collaborator meant a dozen tools that did not talk to each other, and documents that overwrote each other when both of us typed.',
+    built:
+      'A shared workspace for remote projects. Documents edit live through Yjs CRDTs, so simultaneous edits merge instead of overwriting.',
+    stack: ['Next.js', 'Hono', 'Postgres', 'Redis', 'Yjs'],
+    isPersonal: true,
   },
   {
     slug: 'ember-tattoo',
-    name: 'Ember Tattoo Studio',
-    descriptor: 'Web Design · Speculative Redesign',
+    name: 'Ember Tattoo & Piercing',
+    descriptor: 'Studio Site · Booking, Artists, Gallery',
     category: 'Personal',
-    headline:
-      "A speculative redesign for a friend's studio. Nobody hired me; I saw the gap.",
+    status: 'production',
+    headline: "A friend's studio had a site that didn't match the work. Nobody hired me; I saw the gap.",
     problem:
-      "A friend owns a tattoo studio with a website that doesn't reflect the quality of the work. Nobody hired me. I just saw the gap.",
+      "A friend owns a tattoo studio whose website didn't reflect the quality of the work coming out of it.",
     built:
-      'A complete speculative redesign, modern aesthetic, improved UX, and a visual language that matches the craft.',
-    outcome: 'A pitch. And a reminder that the builder instinct doesn’t clock out.',
+      'A studio site with booking, artist profiles, a gallery and aftercare, all editable through a CMS.',
+    outcome: 'The builder instinct does not clock out.',
     liveUrl: 'https://ember-tattoo-web.vercel.app',
+    autoCapture: true,
+    media: { hero: { src: '/media/ember-tattoo/hero.jpg', alt: 'The Ember Tattoo & Piercing studio home page' } },
+    stack: ['Next.js', 'CMS', 'Vercel'],
+    isPersonal: true,
+  },
+  {
+    slug: 'family-budgeting',
+    name: 'Family Budgeting',
+    descriptor: 'Budgeting by Pay Period, Not by Month',
+    category: 'Personal',
     status: 'production',
-    isPersonal: true,
-  },
-  {
-    slug: 'budgeting-app',
-    name: 'Budgeting App',
-    descriptor: 'Personal Finance Tool',
-    category: 'Personal',
-    headline:
-      'A budgeting app that works the way I actually think about money.',
-    problem: "Existing budgeting tools didn't work the way I think about money.",
-    built:
-      'A personal budgeting application built for personal use. Same instinct that drives every product decision at work: if something could work better, build it.',
-    status: 'production',
-    isPersonal: true,
-  },
-  {
-    slug: 'homeschool-platform',
-    name: 'Kingdoms & Crowns',
-    descriptor: 'Homeschool Education Platform',
-    category: 'Personal',
-    headline:
-      'Curriculum planning with gamified progress, designed for kids.',
-    problem: 'Homeschool curriculum planning is fragmented and hard to make engaging for kids.',
-    built:
-      'A custom platform for curriculum planning with gamified progress tracking, designed to drive engagement and make learning tangible.',
-    outcome:
-      'Full product thinking applied to a personal problem. UX designed for the actual users: kids who need motivation, not spreadsheets.',
-    liveUrl: 'https://kingdomsandcrowns.com',
-    status: 'beta',
-    isPersonal: true,
-  },
-  {
-    slug: 'sentral',
-    name: 'Sentral',
-    descriptor: 'All-in-One Personal Hub · Modular Workspace',
-    category: 'Personal',
-    headline:
-      'One modular hub for everything: projects, planning, expenses, and a full Excalidraw replacement built from scratch.',
+    headline: 'Every budgeting app assumes you get paid on the first. We do not.',
     problem:
-      'The tools for running a life and its projects are scattered across a dozen apps, projects and to-dos in one, events in another, a separate whiteboard, yet another for expenses. Nothing talks to each other, and none of it works the way I think.',
+      'Budgeting tools are built around the calendar month, which is not when money actually arrives.',
     built:
-      'A modularized, all-in-one hub for tracking projects, to-dos, and events, with project planning, expense tracking, asset management, and idea buckets. At its center, a full Excalidraw replacement built from scratch: a multi-user whiteboard for sharing, presenting, and real-time collaboration, complete with a laser pointer for live presenting.',
-    outcome:
-      'A single workspace that consolidates what used to take a dozen subscriptions, with real-time multi-user collaboration as a first-class feature, not an afterthought.',
-    status: 'building',
+      'A budgeting app organised by pay period instead, covering accounts, expenses, debts and school funds.',
+    stack: ['Next.js', 'TypeScript', 'SQLite'],
     isPersonal: true,
   },
   {
-    slug: 'get-doing-the-thing',
-    name: 'Get Doing the Thing',
-    descriptor: 'Zero-Friction To-Do App · Built for My Kids',
+    slug: 'doing-the-thing',
+    name: 'Doing The Thing',
+    descriptor: 'Chore App · Built for My Kids',
     category: 'Personal',
-    headline:
-      'A to-do app that nudges my kids to do the thing, then asks what is getting in the way.',
-    problem:
-      "Helping my kids stay on top of chores and to-dos meant nagging, and most to-do apps drown the one thing that matters in features nobody needs. I wanted something zero-friction that just asks: did you do the thing?",
-    built:
-      'A simple, clean, modern to-do app that gently nudges the user to check off a task. Snooze an item only so many times before it stops asking yes-or-no and starts asking what is preventing you, surfacing the real blocker behind a stalled to-do. Lightweight prioritization and tracking, and nothing else.',
-    outcome:
-      'A tool my kids actually use to track their own chores, and a small proof that the right product removes friction instead of adding features.',
     status: 'production',
-    isPersonal: true,
-  },
-  {
-    slug: 'this-portfolio',
-    name: 'This Portfolio',
-    descriptor: 'Personal Site · You’re Looking At It',
-    category: 'Personal',
-    headline:
-      'The most honest project on this list is the one you’re reading it on.',
+    headline: 'A chore app so my kids own their list instead of being nagged about it.',
     problem:
-      'A résumé lists what you’ve done; it doesn’t show how you think or what you can build. I wanted the portfolio itself to be the proof, not a description of the proof.',
+      'Keeping kids on top of chores meant nagging, and most to-do apps bury the one question that matters under features nobody needs.',
     built:
-      'A custom Next.js site with a cinematic scroll-driven journey, hand-built animation and motion work, a typographic system, and a component architecture designed to keep content and presentation cleanly separated. No template, no page builder.',
-    outcome:
-      'The site you’re on right now. Every other project here is something you have to take my word for (or go research); this one you’re experiencing as you read.',
-    liveUrl: 'https://kyleemccarthy.com',
-    status: 'production',
+      'A zero-friction list that asks whether you did the thing. Snooze an item enough times and it stops asking yes-or-no and starts asking what is getting in the way, surfacing the real blocker behind a stalled task.',
+    outcome: 'Runs locally for my family, and they actually use it.',
+    stack: ['Next.js', 'TypeScript'],
     isPersonal: true,
   },
 ]
