@@ -1,5 +1,6 @@
 import { projects } from '@/content/projects'
 import { InfoTip } from '@/components/primitives/InfoTip'
+import { StackChips } from '@/components/primitives/StackChips'
 import { ProjectVisual } from '@/components/media/ProjectVisual'
 import { Gallery } from '@/components/media/Gallery'
 
@@ -12,29 +13,28 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   )
 }
 
+// Spec §4: /work carries the professional work; the personal projects live in
+// /room, presented separately. Rendering the full list here duplicated all nine
+// personal cards onto /work.
+const professionalProjects = projects.filter((p) => !p.isPersonal)
+
 /** Full project detail, surfaced on the standalone /work page. */
 export function ProjectDetails() {
   return (
     <div className="mt-16">
       <h2 className="font-serif text-fluid-h2 text-fg">Every build</h2>
       <div className="mt-8 grid gap-6 sm:grid-cols-2">
-        {projects.map((p) => (
+        {professionalProjects.map((p) => (
           <article key={p.slug} className="rounded-xl bg-surface-raised p-6 ring-1 ring-rule">
             <ProjectVisual media={p.media} name={p.name} className="mb-5" />
-            <div className="flex items-start justify-between gap-3">
-              <h3 className="font-serif text-2xl leading-tight text-fg">{p.name}</h3>
-              {p.isPersonal && (
-                <span className="shrink-0 rounded-full bg-accent/15 px-2.5 py-1 font-sans text-xs font-semibold uppercase tracking-wide text-accent">
-                  Personal
-                </span>
-              )}
-            </div>
+            <h3 className="font-serif text-2xl leading-tight text-fg">{p.name}</h3>
             <p className="mt-1 font-sans text-sm text-fg-muted">{p.descriptor}</p>
             <dl className="mt-4 space-y-3">
               <Field label="Problem">{p.problem}</Field>
               <Field label="What I Built">{p.built}</Field>
               {p.outcome && <Field label="Outcome">{p.outcome}</Field>}
             </dl>
+            <StackChips stack={p.stack} />
             {p.media?.gallery && <Gallery items={p.media.gallery} label={p.name} />}
             {p.liveUrl ? (
               <a

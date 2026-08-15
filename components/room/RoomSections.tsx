@@ -3,6 +3,7 @@ import { projects } from '@/content/projects'
 import { room, artAlt, tattooAlt } from '@/content/room'
 import { ProjectVisual } from '@/components/media/ProjectVisual'
 import { Gallery } from '@/components/media/Gallery'
+import { StackChips } from '@/components/primitives/StackChips'
 
 const personalProjects = projects.filter((p) => p.isPersonal)
 
@@ -59,6 +60,7 @@ export function RoomSections() {
                 <Field label="What I Built">{p.built}</Field>
                 {p.outcome && <Field label="Outcome">{p.outcome}</Field>}
               </dl>
+              <StackChips stack={p.stack} />
               {p.media?.gallery && <Gallery items={p.media.gallery} label={p.name} />}
               {p.liveUrl && (
                 <a
