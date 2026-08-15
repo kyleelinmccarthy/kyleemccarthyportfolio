@@ -17,7 +17,7 @@ import { site } from '@/content/site'
 // Only projects with a public live URL become clickable bubbles. Aura has no
 // standalone site (it's embedded), so it gets an info popover instead — and
 // Tech Hub is internal-only, so it's omitted here entirely.
-const FLAGSHIP_SLUGS = ['403hq', 'nbs-marketing', 'ember-tattoo', 'homeschool-platform']
+const FLAGSHIP_SLUGS = ['403hq', 'nbs-website', 'ember-tattoo', 'kingdoms-and-crowns']
 
 function Eyebrow({ children }: { children: string }) {
   return <p className="font-sans text-label uppercase text-accent">{children}</p>
@@ -132,11 +132,6 @@ export function BuildScene() {
   const flagships = FLAGSHIP_SLUGS.map((s) => projects.find((p) => p.slug === s)).filter(
     (p): p is NonNullable<typeof p> => Boolean(p?.liveUrl)
   )
-  // Apps-built count tracks the real project list so it never drifts when a
-  // project is added (the first build figure is the "production apps" stat).
-  const figures = journey.build.figures.map((f, i) =>
-    i === 0 ? { ...f, value: String(projects.length) } : f
-  )
   return (
     <div>
       <RevealOnActive>
@@ -145,7 +140,7 @@ export function BuildScene() {
       </RevealOnActive>
       <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)]">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-          {figures.map((f, i) => (
+          {journey.build.figures.map((f, i) => (
             <Figure key={f.label} value={f.value} label={f.label} index={i + 1} />
           ))}
         </div>

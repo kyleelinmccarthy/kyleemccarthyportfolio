@@ -84,15 +84,14 @@ describe('projects content', () => {
 })
 
 describe('journey figures', () => {
-  it('carries the apps-built-in-2026 claim, counting every project', () => {
-    const appsFigure = journey.build.figures.find((f) =>
-      f.label.toLowerCase().includes('production apps')
-    )
-    expect(appsFigure).toBeTruthy()
-    expect(appsFigure!.label.toLowerCase()).toContain('2026')
-    // BuildScene derives the displayed value from projects.length; keep the
-    // content fallback in sync so it never reads as stale on its own.
-    expect(appsFigure!.value).toBe(String(projects.length))
+  it('states build figures as literals, not as a count of cards on the page', () => {
+    // The old BuildScene overwrote this with String(projects.length), which made
+    // the headline number mean "cards on this page" — 17 after the rewrite,
+    // presented as production apps for one year.
+    for (const f of journey.build.figures) {
+      expect(f.value).not.toBe(String(projects.length))
+      expect(f.value.length).toBeGreaterThan(0)
+    }
   })
 
   it('splits lead vs build figures, all with non-empty labels', () => {
@@ -114,7 +113,7 @@ describe('journey scenes', () => {
 
 describe('inquiry options', () => {
   it('round-trips value -> label', () => {
-    expect(inquiryLabel('advisory')).toBe('Advisory engagement')
+    expect(inquiryLabel('consulting')).toBe('Consulting or advisory')
     expect(inquiryLabel('nope')).toBe('Inquiry')
   })
 

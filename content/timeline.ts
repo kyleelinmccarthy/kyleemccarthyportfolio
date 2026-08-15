@@ -3,33 +3,35 @@ import type { Milestone } from './types'
 /**
  * The career arc, as an animated timeline. Phase markers (not invented exact
  * years) keep it accurate; the growth numbers below carry the proof.
- * Kylee: replace the markers with real years if you'd like hard dates.
  */
 export const milestones: Milestone[] = [
   {
-    marker: 'The start',
-    title: 'Call-center benefits specialist',
-    detail: 'Started on the phones. Automated my way into technology.',
+    marker: 'Mar 2015',
+    title: 'Benefits specialist',
+    detail: 'Started administering benefits for employer clients.',
   },
   {
-    marker: 'Four roles up',
-    title: 'Progressive roles, one organization',
-    detail: 'Worked up through four increasingly senior roles over eleven years.',
+    marker: 'May 2016',
+    title: 'Assistant account manager',
+    detail:
+      'Taught myself VB, JavaScript and REST APIs and automated the manual parts of the job without being asked to. The automation made the role redundant.',
   },
   {
-    marker: 'In parallel',
-    title: 'Lead UX/UI designer',
-    detail: 'Built the company design system now used across every IS project.',
+    marker: 'Jul 2017',
+    title: 'Information systems analyst',
+    detail:
+      'Moved into IS and earned a project lead role within a year, owning the full lifecycle on C# MVC applications.',
   },
   {
-    marker: 'Today',
+    marker: 'Nov 2019',
+    title: 'Information systems analyst lead',
+    detail:
+      'Led a team of analysts and built the documentation and governance frameworks the department buildout was based on.',
+  },
+  {
+    marker: 'Nov 2022',
     title: 'Director of Technology Operations',
-    detail: 'Leading a 20+ person IS department, remote from Saratoga Springs, UT.',
-  },
-  {
-    marker: '2026',
-    title: 'Still shipping',
-    detail: '11 production apps this year: 6 at work in four months, 5 on personal time.',
+    detail: 'Leading a twenty-person department, remote from Saratoga Springs, UT.',
   },
 ]
 

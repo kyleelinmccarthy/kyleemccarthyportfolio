@@ -3,10 +3,10 @@ import { site } from './site'
 export const contact = {
   // The big "Let's get to work" headline is the scene just above; here we state
   // the purpose explicitly and give them the form.
-  eyebrow: 'What I’m open to',
+  eyebrow: 'Say hello',
   body: [
-    'I take on advisory engagements and contract work. I’m at my best with leaders and founders who want to get it built, not just talk about it: technology transformation, modernization, AI-enabled development, UX/UI, or a project that simply needs doing well.',
-    'Tell me what you’re trying to accomplish. It lands straight in my inbox and I reply personally.',
+    'If something here caught your interest — the platforms, the AI work, the design system, or one of the things I build after hours — I’d like to hear about it.',
+    'Tell me what you’re working on. It lands straight in my inbox and I reply personally.',
   ],
   options: {
     email: site.email,

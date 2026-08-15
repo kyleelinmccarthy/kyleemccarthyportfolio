@@ -5,13 +5,13 @@ const submission = {
   name: 'Jane Founder',
   email: 'jane@acme.com',
   company: 'Acme Inc',
-  inquiryType: 'advisory',
+  inquiryType: 'consulting',
   message: 'Line one.\nLine two.',
 }
 
 describe('buildSubject', () => {
   it('uses the site prefix + human inquiry label + name', () => {
-    expect(buildSubject(submission)).toBe('[kyleemccarthy.com] Advisory engagement — Jane Founder')
+    expect(buildSubject(submission)).toBe('[kyleemccarthy.com] Consulting or advisory — Jane Founder')
   })
 })
 
@@ -26,7 +26,7 @@ describe('buildEmail', () => {
     expect(email.text).toContain('Jane Founder')
     expect(email.text).toContain('jane@acme.com')
     expect(email.text).toContain('Acme Inc')
-    expect(email.text).toContain('Advisory engagement')
+    expect(email.text).toContain('Consulting or advisory')
     expect(email.text).toContain('Line one.')
     expect(email.text).toContain('Line two.')
   })

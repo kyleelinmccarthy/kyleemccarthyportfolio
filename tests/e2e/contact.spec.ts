@@ -19,7 +19,7 @@ async function stubTurnstile(page: Page) {
 async function fillValid(page: Page) {
   await page.getByLabel('Name').fill('Jane Founder')
   await page.getByLabel('Email').fill('jane@acme.com')
-  await page.getByLabel(/what kind of conversation/i).selectOption('advisory')
+  await page.getByLabel(/what kind of conversation/i).selectOption('consulting')
   await page.getByLabel('Message').fill('I would love to talk about an advisory engagement soon.')
 }
 

@@ -5,7 +5,7 @@ const base = {
   name: 'Jane Founder',
   email: 'jane@acme.com',
   company: 'Acme',
-  inquiryType: 'advisory',
+  inquiryType: 'consulting',
   message: 'I lead a Series B and want to talk fractional CTO engagements.',
   company_url: '',
   turnstileToken: 'tok',

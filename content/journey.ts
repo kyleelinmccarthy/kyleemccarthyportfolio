@@ -6,47 +6,45 @@ export const journey = {
   about: {
     eyebrow: 'Get to know',
     heading: 'The strategist who also builds',
-    lede: 'I started in a call center and automated my way into technology. Eleven years later I run the department, and I still write the code.',
+    lede: 'I taught myself to code by automating my own job. Eleven years later I run the department, and I still write production code.',
     milestones: [
       'Director of Technology Operations',
       'M.S. Technology Management',
       'B.S. Marketing Management',
-      '11+ years, four progressive roles, one organization',
+      '11 years, five roles, one organisation',
     ],
   },
   lead: {
     eyebrow: 'How I lead',
     statement: 'I build the systems that make great work routine.',
     context:
-      'When I became Director, I rebuilt the processes, accountability, and culture my team runs on. The numbers below are my team’s work. The systems behind them are what I changed.',
+      'Delivery is five times what it was, with a smaller team each year, and help desk volume is at its lowest recorded level while satisfaction is at its highest. The numbers are my team’s work. The operating model behind them is what I changed.',
     figures: [
-      { value: '200+', label: 'projects my team delivered in a single year' },
-      { value: '20+', label: 'people I lead as Director' },
-      { value: '2×+', label: 'team velocity, year over year, with fewer people' },
+      { value: '200', label: 'backlog items my team delivers a year, up from about 40' },
+      { value: '20', label: 'people in the department I lead' },
+      { value: '1 → 14', label: 'enterprise projects since 2023' },
     ],
   },
   value: {
     eyebrow: 'How I create value',
     statement: 'Four places I tend to be most useful.',
     items: [
-      { number: '01', title: 'Technology leadership', tag: 'Governance, accountability, and high-performing teams.' },
-      { number: '02', title: 'AI strategy & implementation', tag: 'Adopted, governed, productive AI development.' },
+      { number: '01', title: 'Technology leadership', tag: 'An operating model, a design system, and standards that enforce themselves in CI.' },
+      { number: '02', title: 'AI in production, under audit', tag: 'Structured tool-use, confidence thresholds, per-tenant governance.' },
       { number: '03', title: 'Product & UX/UI design', tag: 'I design the system and the interface to it.' },
-      { number: '04', title: 'Advisory', tag: 'Senior judgment without the full-time hire.' },
+      { number: '04', title: 'Build over buy', tag: 'Three vendor tools retired and replaced. The recordkeeping platform is next.' },
     ],
   },
   build: {
     eyebrow: 'What I build',
     statement: 'And I stay close enough to build it myself.',
     context:
-      'Every one of those is 2026 alone. One of them, Aura, is an accessibility platform I built in-house to replace per-site vendor licensing. It now runs on 10+ sites at zero marginal cost, and the savings compound with every new property the company adds.',
+      'Six systems run AI under audit across three providers. Documents are read as native PDF and image blocks and returned through forced tool-use against a JSON schema, so results are structured rather than parsed out of prose. Every extraction carries a confidence score, and thresholds decide whether work posts, queues for a human, or is rejected.',
     figures: [
-      // value is derived from projects.length in BuildScene so it can't go stale.
-      { value: '17', label: 'production apps built in 2026 so far' },
+      { value: '11 of 14', label: 'enterprise platforms I built myself' },
+      { value: '15+', label: 'sites running AURA at no extra cost' },
       { value: '6 weeks', label: 'kickoff to a live client portal that kept the contract' },
-      { value: '10+', label: 'sites on Aura, the accessibility platform I built' },
     ],
-    flagships: ['403HQ', 'Tech Hub', 'Aura', 'NBS Company Website'],
   },
   talk: {
     heading: 'Let’s get to work.',

@@ -2,7 +2,7 @@ import type { InquiryOption } from './types'
 
 /** Inquiry types — shared by the form <select> and the server-side Zod enum. */
 export const inquiryOptions = [
-  { value: 'advisory', label: 'Advisory engagement' },
+  { value: 'consulting', label: 'Consulting or advisory' },
   { value: 'project', label: 'Project / build engagement' },
   { value: 'uxui', label: 'UX/UI design' },
   { value: 'ai', label: 'AI strategy & implementation' },
