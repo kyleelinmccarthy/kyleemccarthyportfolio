@@ -203,50 +203,83 @@ click handler. The axe sweep covers seven routes and must stay green.
 
 ---
 
-## Source material
+## Source material — Kylee's answers, verbatim
 
-Kylee's interview answers. **Every placard is written from these and nothing else.** Where
-a phrase of hers is good, use her phrase. Anything not traceable to this section or to a
-repo does not go on the wall.
+**These are her words, unedited — lowercase and typos included.** An earlier version of
+this section paraphrased them, and the paraphrase silently dropped real phrases she used:
+"like a lightbulb moment", and "just like the early days of Technology with computers, the
+internet, Google". Copy written from those phrases then looked like invention to a
+reviewer, because relative to the spec it was.
+
+**Rule: every placard is written from this section.** Where she has a phrase, use her
+phrase. If something is not here and not in `content/projects.ts`, it does not ship.
+Tidying grammar and capitalisation for the page is expected. Adding a claim, a motivation,
+a comparison, a causal link or an aphorism is not.
 
 ### Beacon
-- **Hard:** capturing the needs of every role in a tech department in a single app, in a way that stays user-friendly and adaptable.
-- **Threw away:** an entire earlier app of her own — Tech Portfolio — on an old stack with limited usability. Beacon replaced it outright.
-- **Differently:** smaller features, shipped more often. It's easy to add a lot quickly, but then rollouts land on users as an overwhelming pile of new functionality at once.
-- **For:** herself, to run the IS department — and her team, and the leadership team.
+- **Hard:** "Capturing the needs of every role within a tech department in a single app in a user-friendly, adaptable way"
+- **Threw away:** "I originally wrote an entirely different app called tech portfolio that completely got replaced with Beacon because it was on an old stack and had limited usability."
+- **Differently:** "I would do smaller features more often because Beacon has a ton of features for our tech department and leadership teams and it's easy to add a lot in a small timeframe but then rollouts become more overwhelming to users with a lot of new features & functionality."
+- **For:** "it was for me to run my IS department but also for my team and for the leadership team."
 
 ### 403HQ
-- **Hard:** she and one other person were mandated to build it to retain a high-priority client. Six weeks to build, test, pen test and reach production. *"The most challenging thing I've done in my career."* They finished with a couple of days to spare.
-- **Threw away:** the original branding was a placeholder. The real name arrived mid-development, all at once.
-- **Differently:** the testing approach. There's no traditional QA, users struggle with testing, and things occasionally reach production that shouldn't.
-- **For:** a high-priority client — then a second version for another, with tweaks.
+- **Hard:** "myself and 1 other were mandated by leadership to build this for a high priority client in order to retain their contract and only had 6 weeks to build it, test it, pen test it and get it into production. this was the most challenging thing I've done in my career but we did it and actually did it with a couple of days to spare."
+- **Threw away:** "the original branding was a placeholder, but during development the brand name just sort of came to me like a lightbulb moment."
+- **Differently:** "change our testing approach because we dont have traditional qa or testing and our users struggle with testing so sometimes things get missed until production"
+- **For:** "a high priority client and then a version 2 was made for another high priority client with slight tweaks"
 
 ### AURA
-- **Hard:** a flexible, compliant ADA widget with real features that drops into any site regardless of the host's stack. She'd never built a widget before. *One of her favourites* — the colour controls, and things like ADHD mode.
-- **Threw away:** branding again; no idea what to call it until it was finished. Everything else built on day one survived.
-- **Differently:** surface its own capabilities — a first-run notification so people know what it can do.
-- **For:** requested by the SVP of Tech to replace accessiBe, which charged per site. AURA is hosted once and used as often as they like.
+- **Hard:** "creating a flexible, compliant ADA widget with robust features that can be reused on a variety of sites regardless of the hosting sites tech stack. i had never built a widget before. this is one of my favorite apps because of the color controls and other fun things it can do such as adhd mode."
+- **Threw away:** "again, branding here. i had no idea what i was going to call this widget until it was completely built. other than that i kept everything i built from day 1."
+- **Differently:** "i would add a bit more into the widget about all of its capabilities for end users to understand, perhaps a notification or pop-up when they first see it."
+- **For:** "it was requested by our SVP of tech in order to replace AccessiBe which cost the company money per site it is used on. AURA is hosted once and used as many times as we want."
 
 ### NBS Website
-- **Hard:** turning every request from the senior leadership team and the board into something clean, modern and actually usable.
-- **Threw away:** a connection to an internal app, replaced with a custom secure document-upload feature — they didn't want users bouncing between separate sites.
-- **Differently:** get end users involved earlier and start the feedback loop sooner.
-- **For:** the company, but really leadership and sales. Clients had asked for a new site for years and previous tech leaders never prioritised it. *"So I just built it."*
+- **Hard:** "Capturing all the requests of the senior leader team as well as the board in a way that translates to a clean, modern, user friendly site"
+- **Threw away:** "i built a connection to an internal app that was eventually thrown away and then replaced with a custom built feature for securely uploading documents by our users because we didn't want to have separate sites for these functions"
+- **Differently:** "get more end user involvement earlier on to start the feedback cycle sooner"
+- **For:** "it was for the company as a whole but for leadership/sales because our clients have been asking for a new website for years but prior tech leaders never prioritized it, so i just built it"
 
 ### Kingdoms & Crowns
-- **Hard:** compliance for child users, and making it usable across a wide age range.
-- **Threw away:** integrations with other curriculum platforms. Parents can share links instead of the app embedding everything — at least in iteration one.
-- **Differently:** a browser-based education game where students go on a quest to start an assignment and choose their path — learn on another platform, or learn in-app through gamified lessons for core subjects.
-- **For:** her kids and herself, to stay organised while homeschooling without it being a chore.
+- **Hard:** "compliance for child users and making it user friendly for all ages"
+- **Threw away:** "i originally built integrations for other platforms and decided against it, figuring parents can share links to other platform curriculum eithout embedding it entirely, at least in iteration 1"
+- **Differently:** "i would add a browser based education game where the students go on a quest to start their assignment and choose their path to either learn on another platform or have the option to learn within this platform itself through gamified lessons for core subjects"
+- **For:** "my kiddos and myself to stay organized in an easy, fun way while homeschooling"
 
 ### ChemTreeHQ
-- **Hard:** a multi-user whiteboard with follow-along and live saving of every user's changes.
-- **Threw away:** an earlier version built for a different company that got scrapped; she reused the concept here.
-- **Differently:** more custom brainstorming features, and prompts for prioritising and organising ideas.
-- **For:** herself and a friend who wanted to collaborate on game development.
+- **Hard:** "building a multi-user whiteboard feature with follow along and dynamic saving for all users changes"
+- **Threw away:** "i originally built another version for a different company that got scrapped and i reused the concept for this instead."
+- **Differently:** "add more custom brainstorming features and prompts for prioritizing/organizing projects/ideas"
+- **For:** "myself and a friend who wanted to collab on video game dev"
 
 ### The Wretched Few
-- **Hard:** *"Everything."* 3D modelling, the game HUD, player UX, sfx, vfx, procedural map generation, and storytelling that stays coherent with combat and gameplay. *"It's a lot but I absolutely love it."*
-- **Threw away:** a lot, deliberately. Build something simple, see it, test it, throw it out, build it better.
-- **Differently:** still in progress. She'd spend more time on animation and 3D modelling and less on in-game menu UI.
-- **For:** her friend had the initial idea; she expanded it into a full story concept and they're building it together. *"It's for gamers like us."*
+- **Hard:** "everything. all the nuances that go into video game development. 3D modeling, game HUD, player UX, sfx, vfx, procedural map generation, cohesive story telling that aligns to combat and gameplay. it's a lot but i absolutely love it."
+- **Threw away:** "a lot. a lot of early simple development for seeing, testing, and then throwing it away to build something better. iterative development."
+- **Differently:** "this is still a work in progress so I'm still learning but I would spend more time diving into animation and 3D modeling rather than focusing so hard on the in game menu UI."
+- **For:** "My friend had an inital game idea that I helped expand into a full story concept and then we decided to develop it together. it's for gamers like us."
+
+### The Window
+
+**Stuck:** "I do stream of consciousness writing when I'm stuck. with real pencil & paper.
+getting thoughts our or just writing *something* helps me get unstuck. or talk to someone
+about the project. i keep moving, basically. an object in motion stays in motion."
+
+**Killing something already built:** "i hate the concept of 'if its not broke dont fix it'
+because that is the enemy of progress. theres always a better way. its just a matter of
+prioritizing time and resources on which thing is most urgent and important in a given
+moment. but nothing is sacred. anything can be scrapped for something else if its deemed
+to be the top priorty at that time."
+
+**The opinion others disagree with:** "i really enjoy AI. i dont think AI is the problem, I
+think greedy people misusing it are. it has great potential as a tool, just like the early
+days of Technology with computers, the internet, Google, etc. It doesn't have to replace
+people. it's just another tool on the belt for people who know how to use it effectively
+and in integrity."
+
+### On `whyBuiltThisWay`
+
+**This field has no direct source** — she was never asked it. It must be assembled from
+`content/projects.ts` and the answers above, stated plainly. It must not become the place
+where invented reasoning and writerly aphorisms collect, which is exactly what happened on
+the first attempt. If a piece has nothing sourceable to say about why it is built the way
+it is, the field says less rather than more.
