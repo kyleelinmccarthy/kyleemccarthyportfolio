@@ -4,10 +4,10 @@ export const site = {
   credential: 'MS',
   title: 'Kylee McCarthy — Technology Leader, Builder & Designer',
   shortTitle: 'Kylee McCarthy',
-  // Identity first, then range. This read as résumé stats, which is not what a
-  // showcase should hand a search result or a link preview.
+  // What a search result and a link preview show. Keep it in the same voice as
+  // the landing headline — it used to be résumé statistics.
   description:
-    'Portfolio of Kylee McCarthy — a problem solver with a weakness for new technology and a stubborn streak about how things look. Platforms, games, and art.',
+    'Portfolio of Kylee McCarthy — enterprise platforms, video games, art, and whatever technology just shipped. Happiest building something she can’t build yet.',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kyleemccarthy.com',
   locale: 'en_US',
   location: 'Saratoga Springs, UT',

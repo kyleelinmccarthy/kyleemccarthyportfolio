@@ -9,7 +9,7 @@ export const journey = {
     // headline's origin story and the lead paragraph's hands-on claim; now it
     // does the one job neither of those can — telling you what this site is and
     // what the door at the end of the scroll is for.
-    lede: 'What follows is the work: the platforms my team shipped, and the things I build after hours. The door at the end opens to the second kind.',
+    lede: 'Some of it shipped to ten thousand people. Some of it runs on my kitchen table. The door at the end opens to the second kind.',
     // `heading` lived here unread — AboutScene renders the eyebrow, the logo,
     // hero.headline and hero.why, and nothing else. The career arc and degrees
     // live in content/timeline.ts and render on /about.

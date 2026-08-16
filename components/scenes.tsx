@@ -55,7 +55,11 @@ export function AboutScene() {
         <p className="mb-2 font-sans text-label uppercase text-accent">{journey.about.eyebrow}</p>
         <NameLogo size="hero" animate />
         <RevealOnActive index={1}>
-          <h1 className="mt-6 max-w-3xl font-serif text-[clamp(1.9rem,3.4vw,3.25rem)] leading-[1.12] text-fg">
+          {/* mx-auto lg:mx-0 matches the paragraphs below. Without it the
+              max-w-3xl box stays pinned left while the container is text-center,
+              so between 768px and the lg breakpoint the headline centred inside
+              its own box and visibly disagreed with the copy beneath it. */}
+          <h1 className="mx-auto mt-6 max-w-3xl font-serif text-[clamp(1.9rem,3.4vw,3.25rem)] leading-[1.12] text-fg lg:mx-0">
             {hero.headline}
           </h1>
         </RevealOnActive>

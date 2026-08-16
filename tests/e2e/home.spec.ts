@@ -29,6 +29,34 @@ test('with reduced motion, content is visible immediately (no blank reveals)', a
   await context.close()
 })
 
+// Between 768px (max-w-3xl) and the lg breakpoint the container is text-center,
+// so a max-width child without mx-auto centres inside its own left-pinned box
+// rather than the container — and disagrees with the copy beneath it.
+for (const width of [820, 900, 1000]) {
+  test(`headline and lead paragraph share a centre at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/')
+    await page.waitForTimeout(1800) // let RevealOnActive settle before measuring
+
+    const heading = await page.locator('h1').first().boundingBox()
+    const para = await page
+      .locator('main p')
+      .filter({ hasText: /that’s the good part/ })
+      .first()
+      .boundingBox()
+
+    expect(heading, 'headline should render').not.toBeNull()
+    expect(para, 'lead paragraph should render').not.toBeNull()
+
+    const headingCentre = heading!.x + heading!.width / 2
+    const paraCentre = para!.x + para!.width / 2
+    expect(
+      Math.abs(headingCentre - paraCentre),
+      `headline centre ${headingCentre} vs paragraph centre ${paraCentre}`
+    ).toBeLessThanOrEqual(2)
+  })
+}
+
 test('résumé link is present and points to the PDF', async ({ page }) => {
   await page.goto('/')
   const link = page.getByRole('link', { name: /résumé/i }).first()
