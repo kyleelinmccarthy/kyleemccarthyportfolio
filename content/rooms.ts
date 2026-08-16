@@ -24,18 +24,20 @@ export const rooms = {
       { from: 17, text: 'Evening. The door’s open, come on in.' },
       { from: 22, text: 'Up late? So am I. Come on in.' },
     ],
-    /**
-     * Kylee's own words, from the interview: "theres always a better way."
-     * Seven earlier attempts were all versions of me describing her, which is
-     * the one thing none of the portfolios she admires do — bek.is opens on an
-     * aspiration, narrowdesign on a credo, marco.fyi on a belief. This is a
-     * principle, and it also happens to explain the whole gallery: every piece
-     * on the wall exists because something already existed and wasn't good
-     * enough.
-     */
-    line: 'There’s always a better way, and I go find it.',
+    // No tagline out here. The front step is a welcome and nothing else; the
+    // line that says who she is now greets you inside, as `window.entry`.
   },
   window: {
+    /**
+     * The first thing you read once you're through the door — Kylee's own
+     * words, from the interview: "theres always a better way."
+     *
+     * It sat on the front step for a while, competing with the welcome. It
+     * lands better here: you step inside and the house tells you what it is.
+     * It also explains the gallery two rooms along, since every piece there
+     * exists because something already existed and wasn't good enough.
+     */
+    entry: 'There’s always a better way, and I go find it.',
     eyebrow: 'How I think',
     heading: 'Three things',
     lede: 'They turn up in everything else in here.',

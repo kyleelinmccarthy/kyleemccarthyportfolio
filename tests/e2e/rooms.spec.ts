@@ -63,7 +63,10 @@ test('a placard is closed until its summary is activated', async ({ browser }) =
   await context.close()
 })
 
-test('the door comes toward you as you scroll into it', async ({ page }) => {
+test('the door comes toward you as you scroll into it', async ({ page }, testInfo) => {
+  // Only the desktop camera path has scroll-driven scenery; the mobile
+  // fallback renders plain stacked sections with a static door.
+  test.skip(testInfo.project.name !== 'chromium', 'camera path is desktop only')
   await page.setViewportSize({ width: 1280, height: 900 })
   await page.goto('/')
   await page.waitForTimeout(1200)
@@ -83,4 +86,34 @@ test('the door comes toward you as you scroll into it', async ({ page }) => {
   // scale this is a static image you scroll past, which is what it was.
   expect(atRest).toBeGreaterThan(0)
   expect(approached).toBeGreaterThan(atRest * 2)
+})
+
+test('the door shuts again when you scroll back up', async ({ page }, testInfo) => {
+  // Only the desktop camera path has scroll-driven scenery; the mobile
+  // fallback renders plain stacked sections with a static door.
+  test.skip(testInfo.project.name !== 'chromium', 'camera path is desktop only')
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await page.goto('/')
+  await page.waitForTimeout(1200)
+
+  // The slab's rotateY shows up as a 3d matrix; a closed door has no transform
+  // at all. That difference is enough to tell open from shut.
+  const slabTransform = async () =>
+    page.evaluate(() => {
+      const slab = document.querySelector('[style*="perspective"] > div') as HTMLElement | null
+      return slab ? getComputedStyle(slab).transform : 'missing'
+    })
+
+  const shut = await slabTransform()
+  await page.evaluate(() => window.scrollTo(0, 1200))
+  await page.waitForTimeout(700)
+  const open = await slabTransform()
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await page.waitForTimeout(700)
+  const shutAgain = await slabTransform()
+
+  // It used to open once on mount and stay open, so the entrance only ever
+  // played forwards. Scrolling back must undo it.
+  expect(open).not.toBe(shut)
+  expect(shutAgain).toBe(shut)
 })

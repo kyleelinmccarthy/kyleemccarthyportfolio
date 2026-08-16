@@ -35,13 +35,21 @@ export function WindowRoom() {
   return (
     <Room className="mx-auto max-w-3xl">
       <RevealOnActive>
-        <p className="font-sans text-label uppercase text-accent">{rooms.window.eyebrow}</p>
-        <h2 className="mt-4 font-serif text-fluid-h2 text-fg">{rooms.window.heading}</h2>
+        {/* What the house says as you come through the door. Deliberately
+            larger than the section heading under it — this is the line, and
+            the three principles are its evidence. */}
+        <p className="max-w-2xl font-serif text-fluid-h2 leading-tight text-fg">
+          {rooms.window.entry}
+        </p>
+      </RevealOnActive>
+      <RevealOnActive index={1}>
+        <p className="mt-12 font-sans text-label uppercase text-accent">{rooms.window.eyebrow}</p>
+        <h2 className="mt-3 font-serif text-3xl text-fg">{rooms.window.heading}</h2>
         <p className="mt-4 max-w-xl font-sans leading-relaxed text-fg-muted">{rooms.window.lede}</p>
       </RevealOnActive>
       <dl className="mt-10 space-y-8">
         {rooms.window.principles.map((p, i) => (
-          <RevealOnActive key={p.title} index={i + 1}>
+          <RevealOnActive key={p.title} index={i + 2}>
             <dt className="font-serif text-2xl leading-tight text-accent">{p.title}</dt>
             <dd className="mt-2 max-w-2xl font-sans leading-relaxed text-fg">{p.body}</dd>
           </RevealOnActive>

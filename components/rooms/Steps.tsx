@@ -1,7 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { motion, useMotionValue, useReducedMotion, useTransform } from 'framer-motion'
+import {
+  animate,
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useTransform,
+  type MotionValue,
+} from 'framer-motion'
 import { Room } from './Room'
 import { useSceneProgress } from '@/components/journey/sceneActive'
 import { greetingForHour } from './greeting'
@@ -58,6 +65,18 @@ function Doorway() {
   const lift = useTransform(drive, [0, 1], ['0%', '18%'])
   const fade = useTransform(drive, [0.72, 1], [1, 0])
 
+  // The door swings on scroll, not on a timer, so scrolling back shuts it
+  // again. It used to open once on mount and stay open, which meant the
+  // entrance only ever played forwards.
+  const swingFromScroll = useTransform(drive, [0, 0.55], [0, -88], { clamp: true })
+  // Hover still opens it, but only while scroll has not already opened it
+  // further — whichever is more open wins, so the two never fight.
+  const swingFromHover = useMotionValue(0)
+  const swing = useTransform(
+    [swingFromScroll, swingFromHover] as unknown as MotionValue<number>[],
+    ([fromScroll, fromHover]: number[]) => Math.min(fromScroll!, fromHover!)
+  )
+
   return (
     <motion.div
       aria-hidden="true"
@@ -69,15 +88,20 @@ function Doorway() {
       <div
         className="pointer-events-auto relative h-[22vh] min-h-[130px] w-[15vw] min-w-[110px] rounded-t-[8rem] bg-fg/[0.12] ring-1 ring-fg/30"
         style={{ perspective: '900px' }}
+        onMouseEnter={() => {
+          if (!reduce) animate(swingFromHover, -52, { duration: 0.6, ease: [0.16, 1, 0.3, 1] })
+        }}
+        onMouseLeave={() => {
+          if (!reduce) animate(swingFromHover, 0, { duration: 0.6, ease: [0.16, 1, 0.3, 1] })
+        }}
       >
         {/* Warm light in the opening, behind the door. */}
         <span className="absolute inset-0 rounded-t-[8rem] bg-accent/25" />
         <motion.div
           className="absolute inset-0 origin-left rounded-t-[8rem] bg-fg/[0.22] ring-1 ring-fg/40"
-          initial={reduce ? { rotateY: -58 } : { rotateY: 0 }}
-          animate={{ rotateY: -58 }}
-          whileHover={reduce ? undefined : { rotateY: -88 }}
-          transition={{ delay: reduce ? 0 : 0.6, duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+          // Reduced motion gets it standing open: no swing, but the way in is
+          // still legible as a way in.
+          style={reduce ? { rotateY: -58 } : { rotateY: swing }}
         >
           {/* Window pane set into the door itself, so it swings with it. */}
           <span className="absolute inset-x-[20%] top-[12%] block h-[30%] overflow-hidden rounded-t-[4rem] bg-accent/40 ring-1 ring-rule">
@@ -135,9 +159,6 @@ export function StepsRoom() {
           says, so the greeting carries the page's single top-level heading
           (a11y.spec.ts, smoke.spec.ts both require exactly one). */}
       <Greeting className="mt-10 font-serif text-fluid-h2 text-fg" />
-      <p className="mx-auto mt-3 max-w-xl font-sans text-lg leading-relaxed text-fg-muted">
-        {rooms.steps.line}
-      </p>
     </Room>
   )
 }
