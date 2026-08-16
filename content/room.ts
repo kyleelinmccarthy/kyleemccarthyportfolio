@@ -87,9 +87,9 @@ export const artAlt: Record<string, string> = {
   stickerditto:
     'Three Pokémon stickers — Mew, Ditto, and Bulbasaur — each outlined in white against a dark background.',
   stickerdittochar:
-    'Three Pokémon stickers showing the Charmander evolutionary line — Charmander, Charmeleon, and Charizard.',
+    'Three die-cut stickers of Ditto transformed into the Charmander line — Charmander, Charmeleon and Charizard — each keeping Ditto’s dot eyes and flat little smile.',
   stickerdittoeeveelutions:
-    'A grid of nine Pokémon stickers showing Eevee and all eight of its Eeveelution forms — Leafeon, Sylveon, Glaceon, Umbreon, Espeon, Jolteon, Vaporeon, and Flareon.',
+    'Nine die-cut stickers of Ditto transformed into Eevee and all eight Eeveelutions — Leafeon, Sylveon, Glaceon, Umbreon, Espeon, Jolteon, Vaporeon and Flareon — each wearing Ditto’s dot eyes and flat smile.',
   stickerfortnitellama:
     "A cel-shaded sticker of a Loot Llama piñata from Fortnite, its fringed body striped purple and blue with a supply-crate saddlebag.",
   stickergoldenfreddy:
