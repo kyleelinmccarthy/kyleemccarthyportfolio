@@ -21,11 +21,11 @@ export const rooms = {
       },
       {
         title: 'Nothing is sacred',
-        body: '“If it isn’t broke, don’t fix it” is the enemy of progress. There is always a better way; the only question is whether it’s the most urgent thing right now. Anything can be scrapped for something better, including my own work.',
+        body: '“If it isn’t broke, don’t fix it” is the enemy of progress. There is always a better way — it’s a matter of prioritising time and resources on what’s most urgent and important right now. Nothing is sacred. Anything can be scrapped for something else if it’s the top priority at that time.',
       },
       {
         title: 'AI is a tool, not the problem',
-        body: 'I don’t think AI is the problem — I think greedy people misusing it are. It doesn’t have to replace anyone. It’s another tool on the belt for people who use it well and with integrity, the same as computers and the internet were.',
+        body: 'I don’t think AI is the problem — I think greedy people misusing it are. It has real potential as a tool, just like the early days of technology did with computers, the internet, Google. It doesn’t have to replace anyone. It’s another tool on the belt for people who use it well and with integrity.',
       },
     ],
   },
