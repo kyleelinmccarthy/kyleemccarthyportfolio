@@ -24,7 +24,16 @@ export const rooms = {
       { from: 17, text: 'Evening. The door’s open, come on in.' },
       { from: 22, text: 'Up late? So am I. Come on in.' },
     ],
-    line: 'I solve problems. I care what the answer looks like.',
+    /**
+     * Kylee's own words, from the interview: "theres always a better way."
+     * Seven earlier attempts were all versions of me describing her, which is
+     * the one thing none of the portfolios she admires do — bek.is opens on an
+     * aspiration, narrowdesign on a credo, marco.fyi on a belief. This is a
+     * principle, and it also happens to explain the whole gallery: every piece
+     * on the wall exists because something already existed and wasn't good
+     * enough.
+     */
+    line: 'There’s always a better way, and I go find it.',
   },
   window: {
     eyebrow: 'Before the work',
