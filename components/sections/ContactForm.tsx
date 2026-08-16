@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { contactClientSchema } from '@/lib/contact/schema'
-import { inquiryOptions } from '@/content/contactOptions'
 import { site } from '@/content/site'
+import { rooms } from '@/content/rooms'
 import { Turnstile } from '@/components/primitives/Turnstile'
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'
@@ -31,7 +31,6 @@ export function ContactForm() {
       name: String(fd.get('name') ?? ''),
       email: String(fd.get('email') ?? ''),
       company: String(fd.get('company') ?? ''),
-      inquiryType: String(fd.get('inquiryType') ?? ''),
       message: String(fd.get('message') ?? ''),
       company_url: String(fd.get('company_url') ?? ''),
     }
@@ -91,7 +90,7 @@ export function ContactForm() {
         role="status"
         className="rounded-xl border border-accent/40 bg-surface-raised p-8 text-center"
       >
-        <p className="font-serif text-2xl text-fg">Message sent.</p>
+        <p className="font-serif text-2xl text-fg">{rooms.wayOut.mailbox.sent}</p>
         <p className="mt-2 font-sans text-fg-muted">{serverMessage}</p>
       </div>
     )
@@ -119,16 +118,6 @@ export function ContactForm() {
       <Field id="company" label="Company" optional error={errors.company}>
         <input id="company" name="company" type="text" autoComplete="organization" className={fieldClass}
           aria-invalid={!!errors.company} aria-describedby={errors.company ? 'company-error' : undefined} />
-      </Field>
-
-      <Field id="inquiryType" label="What kind of conversation are you looking to have?" error={errors.inquiryType}>
-        <select id="inquiryType" name="inquiryType" defaultValue="" className={fieldClass}
-          aria-invalid={!!errors.inquiryType} aria-describedby={errors.inquiryType ? 'inquiryType-error' : undefined}>
-          <option value="" disabled>Select one…</option>
-          {inquiryOptions.map((o) => (
-            <option key={o.value} value={o.value}>{o.label}</option>
-          ))}
-        </select>
       </Field>
 
       <Field id="message" label="Message" error={errors.message}>

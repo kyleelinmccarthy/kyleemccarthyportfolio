@@ -5,7 +5,6 @@ import { readdirSync } from 'node:fs'
 import { projects } from '@/content/projects'
 import { journey } from '@/content/journey'
 import { artAlt, tattooAlt } from '@/content/room'
-import { inquiryOptions, inquiryLabel } from '@/content/contactOptions'
 
 describe('projects content', () => {
   it('has 8 professional and 9 personal projects', () => {
@@ -161,18 +160,5 @@ describe('journey scenes', () => {
 
   it('credits the team in the leadership context (not just Kylee)', () => {
     expect(journey.lead.context.toLowerCase()).toContain('team')
-  })
-})
-
-describe('inquiry options', () => {
-  it('round-trips value -> label', () => {
-    expect(inquiryLabel('consulting')).toBe('Consulting or advisory')
-    expect(inquiryLabel('nope')).toBe('Inquiry')
-  })
-
-  it('has five distinct options (no fractional/interim leadership)', () => {
-    expect(inquiryOptions).toHaveLength(5)
-    expect(new Set(inquiryOptions.map((o) => o.value)).size).toBe(5)
-    expect(inquiryOptions.map((o) => o.value)).not.toContain('fractional')
   })
 })

@@ -36,6 +36,12 @@ test('the floor names all seven featured pieces', async ({ browser }) => {
   await context.close()
 })
 
+test('the mailbox takes a letter and has no inquiry dropdown', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByRole('combobox', { name: /inquiry|type/i })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: /send|post/i })).toBeVisible()
+})
+
 // The jsdom unit test (tests/unit/Placard.test.tsx) checks the same disclosure,
 // but jsdom's handling of the closed-<details> UA stylesheet is not something
 // to take on faith — this is the real browser applying the real stylesheet.

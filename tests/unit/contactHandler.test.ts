@@ -6,7 +6,6 @@ const valid = {
   name: 'Jane Founder',
   email: 'jane@acme.com',
   company: 'Acme',
-  inquiryType: 'consulting',
   message: 'I lead a Series B and want to talk about a fractional CTO engagement soon.',
   company_url: '',
   turnstileToken: 'good-token',

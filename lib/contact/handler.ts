@@ -95,7 +95,6 @@ export async function handleContact(
       name: data.name,
       email: data.email,
       company: data.company,
-      inquiryType: data.inquiryType,
       message: data.message,
     },
     { meta: { ip: deps.ip, at, userAgent: deps.userAgent } }

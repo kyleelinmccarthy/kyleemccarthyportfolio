@@ -5,14 +5,13 @@ const base = {
   name: 'Jane Founder',
   email: 'jane@acme.com',
   company: 'Acme',
-  inquiryType: 'consulting',
   message: 'I lead a Series B and want to talk fractional CTO engagements.',
   company_url: '',
   turnstileToken: 'tok',
 }
 
 describe('contactSchema', () => {
-  it('accepts a well-formed inquiry', () => {
+  it('accepts a well-formed message', () => {
     expect(contactSchema.safeParse(base).success).toBe(true)
   })
 
@@ -23,10 +22,6 @@ describe('contactSchema', () => {
 
   it('rejects a filled honeypot (company_url)', () => {
     expect(contactSchema.safeParse({ ...base, company_url: 'http://x.test' }).success).toBe(false)
-  })
-
-  it('rejects an unknown inquiry type', () => {
-    expect(contactSchema.safeParse({ ...base, inquiryType: 'spam' }).success).toBe(false)
   })
 
   it('rejects an invalid email', () => {

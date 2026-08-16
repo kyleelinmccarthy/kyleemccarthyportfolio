@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import { inquiryValues } from '@/content/contactOptions'
 
 /**
  * Contact payload schema — shared by the client form and the server route.
@@ -9,9 +8,6 @@ export const contactSchema = z.object({
   name: z.string().trim().min(2, 'Please enter your name.').max(80),
   email: z.string().trim().email('Please enter a valid email address.').max(120),
   company: z.string().trim().max(120).optional(),
-  inquiryType: z.enum(inquiryValues, {
-    errorMap: () => ({ message: 'Please choose a conversation type.' }),
-  }),
   message: z
     .string()
     .trim()

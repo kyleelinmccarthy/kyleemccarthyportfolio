@@ -1,6 +1,7 @@
 import { Section } from '@/components/primitives/Section'
 import { Reveal } from '@/components/primitives/Reveal'
 import { ContactForm } from './ContactForm'
+import { Mailbox } from '@/components/rooms/Mailbox'
 import { contact } from '@/content/contact'
 
 export function Contact() {
@@ -36,7 +37,9 @@ export function Contact() {
         </Reveal>
 
         <Reveal>
-          <ContactForm />
+          <Mailbox>
+            <ContactForm />
+          </Mailbox>
         </Reveal>
       </div>
     </Section>

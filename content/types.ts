@@ -76,8 +76,3 @@ export interface Principle {
   title: string
   body: string
 }
-
-export interface InquiryOption {
-  value: string
-  label: string
-}

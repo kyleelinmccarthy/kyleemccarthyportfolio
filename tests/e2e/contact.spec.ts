@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test'
+import { rooms } from '@/content/rooms'
 
 // Stub the Turnstile widget so the form gets a token without the external
 // Cloudflare script — keeps these UI tests deterministic and offline.
@@ -19,7 +20,6 @@ async function stubTurnstile(page: Page) {
 async function fillValid(page: Page) {
   await page.getByLabel('Name').fill('Jane Founder')
   await page.getByLabel('Email').fill('jane@acme.com')
-  await page.getByLabel(/what kind of conversation/i).selectOption('consulting')
   await page.getByLabel('Message').fill('I would love to talk about an advisory engagement soon.')
 }
 
@@ -43,7 +43,7 @@ test('happy path: valid submit shows the success state', async ({ page }) => {
   await page.goto('/#contact')
   await fillValid(page)
   await page.getByRole('button', { name: 'Send' }).click()
-  await expect(page.getByText('Message sent.')).toBeVisible()
+  await expect(page.getByText(rooms.wayOut.mailbox.sent)).toBeVisible()
 })
 
 test('spam/blocked path: server 422 surfaces a "email me directly" message', async ({ page }) => {
