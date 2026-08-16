@@ -205,7 +205,10 @@ function Panel({
 
   // 'in' scenes dive in: opaque crossfade + a clear zoom over the prior scene.
   const panelOpacity = useTransform(progress, [a, b], zoom ? [0, 1] : [1, 1])
-  const panelScale = useTransform(progress, [a, b], zoom ? [1.3, 1] : [1, 1])
+  // 1.5 rather than 1.3: the two 'in' moves are both thresholds you step
+  // through — the front door and the way out — and a shallower zoom read as a
+  // crossfade rather than as movement.
+  const panelScale = useTransform(progress, [a, b], zoom ? [1.5, 1] : [1, 1])
 
   // Remount the scene's content each time it becomes active, so every reveal /
   // count-up replays when you scroll back to it (reveals-only scenes like

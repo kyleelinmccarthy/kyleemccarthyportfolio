@@ -13,7 +13,10 @@ import { WayOutRoom } from '@/components/rooms/WayOut'
 export function Journey() {
   const scenes: Scene[] = [
     { id: 'steps', dir: 'start', node: <StepsRoom />, setting: <StepsSetting /> },
-    { id: 'window', dir: 'up', node: <WindowRoom />, setting: <WindowSetting /> },
+    // 'in', not 'up': you walk THROUGH the front door, you don't pan up past
+    // it. The zoom crossfade puts the next room straight ahead of you, which
+    // is what stepping over a threshold actually feels like.
+    { id: 'window', dir: 'in', node: <WindowRoom />, setting: <WindowSetting /> },
     { id: 'floor', dir: 'right', node: <FloorRoom />, setting: <FloorSetting /> },
     { id: 'desk', dir: 'right', node: <DeskRoom />, setting: <DeskSetting /> },
     // The door is the last beat of the home scroll only (spec §5) — /connect

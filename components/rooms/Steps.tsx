@@ -24,12 +24,6 @@ export function StepsSetting() {
           come toward the viewer, which is what walking up to a house looks
           like. */}
       <div className="group absolute inset-x-0 top-[10%] flex flex-col items-center">
-        {/* Transom window over the door — the first light you see. */}
-        <div className="relative mb-1 h-[7vh] w-[22vw] min-w-[190px] overflow-hidden rounded-t-[10rem] bg-accent/25 ring-1 ring-rule">
-          <span aria-hidden="true" className="absolute inset-x-0 top-1/2 h-px bg-rule" />
-          <span aria-hidden="true" className="absolute inset-y-0 left-1/2 w-px bg-rule" />
-        </div>
-
         {/* The doorway, with the door hinged inside it. It rests ajar and
             swings the rest of the way open on hover — pointer-events are
             enabled on just this element so the decorative layer above stays
@@ -46,10 +40,21 @@ export function StepsSetting() {
             whileHover={reduce ? undefined : { rotateY: -88 }}
             transition={{ delay: reduce ? 0 : 0.6, duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
           >
+            {/* Window pane set into the upper half of the door itself, so it
+                swings with it. It was a separate transom above the frame
+                before, which read as part of the wall rather than part of the
+                door. Lit from behind — it is the first warm thing you see. */}
+            <span
+              aria-hidden="true"
+              className="absolute inset-x-[18%] top-[10%] h-[34%] overflow-hidden rounded-t-[6rem] bg-accent/30 ring-1 ring-rule"
+            >
+              <span className="absolute inset-x-0 top-1/2 block h-px bg-rule/70" />
+              <span className="absolute inset-y-0 left-1/2 block w-px bg-rule/70" />
+            </span>
             {/* handle */}
             <span
               aria-hidden="true"
-              className="absolute right-[12%] top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-accent"
+              className="absolute right-[12%] top-[68%] h-2.5 w-2.5 rounded-full bg-accent"
             />
           </motion.div>
         </div>

@@ -27,7 +27,7 @@
   /* How much of the misty-forest backdrop shows through. Dark mode can carry
      more of it: the photo is dark-based, so it reads as depth rather than as
      a picture competing with the copy. */
-  --photo-veil: 0.2;
+  --photo-veil: 0.34;
 }
 
 [data-theme='light'] {
@@ -44,7 +44,7 @@
   --decor: #d8b04a; /* gold — background geometric shapes (light) */
   /* Much fainter on light: a dark photo under dark text destroys contrast, so
      here it is barely more than a texture. */
-  --photo-veil: 0.07;
+  --photo-veil: 0.14;
 }
 
 @layer base {
