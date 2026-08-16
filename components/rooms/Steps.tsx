@@ -23,18 +23,35 @@ export function StepsSetting() {
           front door. The steps now start AT the threshold and widen as they
           come toward the viewer, which is what walking up to a house looks
           like. */}
-      <div className="absolute inset-x-0 top-[10%] flex flex-col items-center">
-        {/* the doorway, with the door hinged inside it */}
+      <div className="group absolute inset-x-0 top-[10%] flex flex-col items-center">
+        {/* Transom window over the door — the first light you see. */}
+        <div className="relative mb-1 h-[7vh] w-[22vw] min-w-[190px] overflow-hidden rounded-t-[10rem] bg-accent/25 ring-1 ring-rule">
+          <span aria-hidden="true" className="absolute inset-x-0 top-1/2 h-px bg-rule" />
+          <span aria-hidden="true" className="absolute inset-y-0 left-1/2 w-px bg-rule" />
+        </div>
+
+        {/* The doorway, with the door hinged inside it. It rests ajar and
+            swings the rest of the way open on hover — pointer-events are
+            enabled on just this element so the decorative layer above stays
+            inert. Hover is an embellishment, never the way in: the welcome is
+            plain DOM and the door is ajar from the start. */}
         <div
-          className="relative h-[40vh] w-[22vw] min-w-[190px] rounded-t-[10rem] bg-surface-raised ring-1 ring-rule"
+          className="pointer-events-auto relative h-[40vh] w-[22vw] min-w-[190px] rounded-t-[10rem] bg-surface-raised ring-1 ring-rule"
           style={{ perspective: '900px' }}
         >
           <motion.div
             className="absolute inset-0 origin-left rounded-t-[10rem] bg-surface ring-1 ring-rule"
-            initial={reduce ? { rotateY: -78 } : { rotateY: 0 }}
-            animate={{ rotateY: -78 }}
-            transition={{ delay: 0.6, duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
-          />
+            initial={reduce ? { rotateY: -55 } : { rotateY: 0 }}
+            animate={{ rotateY: -55 }}
+            whileHover={reduce ? undefined : { rotateY: -88 }}
+            transition={{ delay: reduce ? 0 : 0.6, duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {/* handle */}
+            <span
+              aria-hidden="true"
+              className="absolute right-[12%] top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-accent"
+            />
+          </motion.div>
         </div>
         {/* steps descending from the threshold toward the viewer, each one
             wider and a shade brighter as it gets nearer */}

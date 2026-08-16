@@ -13,6 +13,7 @@ import {
 import { SceneActiveContext } from './sceneActive'
 import { VH_PER_SCENE, holdFor } from './timing'
 import { BackgroundShapes } from '@/components/media/BackgroundShapes'
+import { Backdrop } from '@/components/media/Backdrop'
 
 export type Dir = 'start' | 'right' | 'left' | 'up' | 'down' | 'in'
 
@@ -100,6 +101,7 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
             className="relative flex min-h-[100svh] items-center overflow-hidden bg-surface py-24"
             aria-label={s.id}
           >
+            <Backdrop />
             {s.setting ?? <BackgroundShapes />}
             <div className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">{s.node}</div>
           </section>
@@ -231,6 +233,7 @@ function Panel({
         pointerEvents: isActive ? 'auto' : 'none',
       }}
     >
+      <Backdrop />
       {setting ?? <BackgroundShapes />}
       {/* The scene's own content animates on arrival via SceneActiveContext. */}
       <SceneActiveContext.Provider value={isActive}>
