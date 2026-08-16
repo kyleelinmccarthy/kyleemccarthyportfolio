@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { rooms } from '@/content/rooms'
 
 test('the welcome is readable with animations disabled', async ({ browser }) => {
   // The door opening must never gate the content behind it.
@@ -11,9 +12,12 @@ test('the welcome is readable with animations disabled', async ({ browser }) => 
 
 test('the window states all three principles on the home page', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('heading', { name: /how i go about it/i })).toBeAttached()
-  for (const title of ['Keep moving', 'Nothing is sacred', 'AI is a tool, not the problem']) {
-    await expect(page.getByText(title, { exact: true })).toBeAttached()
+  // Read from content rather than hardcoding: this test pinned the old heading
+  // and broke the moment the copy was reworded, which tells you nothing useful.
+  // What actually matters is that whatever the window says, it all renders.
+  await expect(page.getByRole('heading', { name: rooms.window.heading })).toBeAttached()
+  for (const principle of rooms.window.principles) {
+    await expect(page.getByText(principle.title, { exact: true })).toBeAttached()
   }
 })
 

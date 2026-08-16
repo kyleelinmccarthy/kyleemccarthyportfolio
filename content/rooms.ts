@@ -36,9 +36,9 @@ export const rooms = {
     line: 'There’s always a better way, and I go find it.',
   },
   window: {
-    eyebrow: 'Before the work',
-    heading: 'How I go about it',
-    lede: 'Three things that are true of everything on the other side of this room.',
+    eyebrow: 'How I think',
+    heading: 'Three things',
+    lede: 'They turn up in everything else in here.',
     principles: [
       {
         title: 'Keep moving',
