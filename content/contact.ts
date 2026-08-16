@@ -1,8 +1,8 @@
 import { site } from './site'
 
 export const contact = {
-  // The big "Let's get to work" headline is the scene just above; here we state
-  // the purpose explicitly and give them the form.
+  // The closing scene above points at the work; this is where someone who
+  // wants to reach her actually does it.
   eyebrow: 'Say hello',
   body: [
     'If something here caught your interest — the platforms, the AI work, the design system, or one of the things I build after hours — I’d like to hear about it.',
@@ -18,7 +18,7 @@ export const contact = {
 export const footer = {
   nav: [
     { label: 'Start over', href: '/' },
-    { label: 'Let’s get to work', href: '/#contact' },
+    { label: 'Say hello', href: '/#contact' },
   ],
   // Standalone, directly-linkable pages for each journey scene.
   pages: [
@@ -26,7 +26,7 @@ export const footer = {
     { label: 'How I lead', href: '/leadership' },
     { label: 'How I create value', href: '/value' },
     { label: 'What I build', href: '/work' },
-    { label: 'Let’s get to work', href: '/connect' },
+    { label: 'Say hello', href: '/connect' },
     { label: 'The other room', href: '/room' },
   ],
   copyright: '© 2026 Kylee McCarthy, MS · Saratoga Springs, UT',

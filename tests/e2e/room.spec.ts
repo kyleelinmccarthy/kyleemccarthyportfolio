@@ -14,7 +14,9 @@ test('the door is the last beat of the home scroll only, not part of /connect', 
   await expect(page.getByRole('link', { name: /another room/i })).toHaveCount(1)
 
   await page.goto('/connect')
-  await expect(page.getByRole('heading', { name: /let’s get to work/i })).toBeVisible()
+  // Proxy for "TalkScene did render here" — so the assertion below proves the
+  // door is absent, not merely that the whole scene failed to mount.
+  await expect(page.getByRole('heading', { name: /go poke around/i })).toBeVisible()
   await expect(page.getByRole('link', { name: /another room/i })).toHaveCount(0)
 })
 

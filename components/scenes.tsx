@@ -13,7 +13,6 @@ import { RevealOnActive, useSceneActive } from '@/components/journey/sceneActive
 import { hero } from '@/content/hero'
 import { journey } from '@/content/journey'
 import { projects } from '@/content/projects'
-import { site } from '@/content/site'
 
 // Only projects with a public live URL become clickable bubbles. Aura has no
 // standalone site (it's embedded), so it gets an info popover instead — and
@@ -193,16 +192,15 @@ export function TalkScene({ showDoor = false }: { showDoor?: boolean }) {
         <p className="mt-6 font-sans text-xl leading-relaxed text-fg-muted">{journey.talk.body}</p>
       </RevealOnActive>
       <RevealOnActive index={2}>
+        {/* Showcase, not a funnel: the work is the primary action and saying
+            hello is secondary. This used to lead with "Send a note". */}
         <div className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-          <CTA href="#contact" variant="primary" arrow="down">
-            Send a note
+          <CTA href="/work" variant="primary" arrow="right">
+            See the work
           </CTA>
-          <a
-            href={`mailto:${site.email}`}
-            className="font-sans font-semibold text-accent underline-offset-4 hover:underline"
-          >
-            or email me directly
-          </a>
+          <CTA href="#contact" variant="secondary" arrow="down">
+            Say hello
+          </CTA>
         </div>
       </RevealOnActive>
       {showDoor && (

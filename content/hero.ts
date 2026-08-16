@@ -1,13 +1,13 @@
 /**
  * The landing scene's headline and lead paragraph (also the OG image headline).
  *
- * These two blocks plus journey.about.lede are the whole first screen, so each
- * has to earn its place. They previously said the same two things three times
- * over — "I'm hands-on" and "I set the standard" — which is why the copy read
- * as filler. Now: the headline is the origin, this paragraph is the argument,
- * and the lede orients you in the site.
+ * The headline says who she is; the paragraph says what she's done. That order
+ * is deliberate — this is a showcase, not a résumé, and the site introduced
+ * itself by job title and delivery stats everywhere else. The origin story
+ * still carries the credibility, it just doesn't lead.
  */
 export const hero = {
-  headline: 'I automated my own job out of existence. Eleven years later, I run the department.',
-  why: 'I still write production code, and that’s deliberate. The engineering standards, the design system, the project template every new codebase starts from — I set them, and then I have to build inside them. That’s what keeps them honest, and why they fit how the work actually happens instead of fighting it.',
+  headline:
+    'I’m a problem solver with a weakness for new technology and a stubborn streak about how things look.',
+  why: 'I automated my own job out of existence and ended up running the department. I still write production code, and that’s deliberate: the standards, the design system, the template every new codebase starts from — I set them, and then I have to build inside them. It’s what keeps them honest.',
 } as const

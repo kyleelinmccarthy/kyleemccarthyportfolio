@@ -49,8 +49,11 @@ export const journey = {
       { value: '6 weeks', label: 'kickoff to a live client portal that kept the contract' },
     ],
   },
+  // The closing scene. It used to be a hiring-funnel close ("Let's get to work")
+  // on a site that is a showcase — so it now points at the work instead of
+  // asking for a meeting, and the door sits directly beneath it.
   talk: {
-    heading: 'Let’s get to work.',
-    body: 'I’d rather build it than just talk about it.',
+    heading: 'Go poke around.',
+    body: 'That was the summary. The actual work is all here to look at — client portals and an accessibility platform at the day job, games and art and half-finished experiments after hours.',
   },
 } as const

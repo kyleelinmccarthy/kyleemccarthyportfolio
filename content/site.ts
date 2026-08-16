@@ -4,8 +4,10 @@ export const site = {
   credential: 'MS',
   title: 'Kylee McCarthy — Technology Leader, Builder & Designer',
   shortTitle: 'Kylee McCarthy',
+  // Identity first, then range. This read as résumé stats, which is not what a
+  // showcase should hand a search result or a link preview.
   description:
-    'Director of Technology Operations who still writes production code. Fourteen enterprise platforms since 2023, eleven built personally, and a department delivering five times what it used to.',
+    'Portfolio of Kylee McCarthy — a problem solver with a weakness for new technology and a stubborn streak about how things look. Platforms, games, and art.',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kyleemccarthy.com',
   locale: 'en_US',
   location: 'Saratoga Springs, UT',

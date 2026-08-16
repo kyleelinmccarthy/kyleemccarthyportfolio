@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { contactClientSchema } from '@/lib/contact/schema'
 import { inquiryOptions } from '@/content/contactOptions'
+import { site } from '@/content/site'
 import { Turnstile } from '@/components/primitives/Turnstile'
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'
@@ -79,7 +80,8 @@ export function ContactForm() {
       setServerMessage(data.message ?? 'Something went wrong. Please try again.')
     } catch {
       setStatus('error')
-      setServerMessage('Network error — please try again, or email me directly.')
+      // The mailto fallback is appended to every error message at render time.
+      setServerMessage('Network error — please try again.')
     }
   }
 
@@ -138,8 +140,20 @@ export function ContactForm() {
 
       {/* Live region for non-field-level status. */}
       <div aria-live="polite" className="min-h-[1.5rem]">
+        {/* Every failure path offers a way through. A spam-blocked (422)
+            submission previously ended at "Something went wrong" with no route
+            to a human — the e2e test that claimed to cover this was passing off
+            a static mailto link that happened to sit elsewhere on the page. */}
         {status === 'error' && serverMessage && (
-          <p className="font-sans text-sm text-accent">{serverMessage}</p>
+          <p role="alert" className="font-sans text-sm text-accent">
+            {serverMessage}{' '}
+            <a
+              href={`mailto:${site.email}`}
+              className="font-semibold underline underline-offset-4"
+            >
+              Or email me directly.
+            </a>
+          </p>
         )}
       </div>
 
