@@ -20,6 +20,8 @@ export interface Scene {
   id: string
   dir: Dir
   node: ReactNode
+  /** The room's environment, rendered behind its content. */
+  setting?: ReactNode
 }
 
 const DIR_GLYPH: Record<Dir, string> = {
@@ -32,7 +34,7 @@ const DIR_GLYPH: Record<Dir, string> = {
 }
 
 /** Lay scenes out on a 2D grid following each scene's entry direction. */
-function layout(scenes: Scene[]) {
+export function layout(scenes: Scene[]) {
   let x = 0
   let y = 0
   return scenes.map((s, i) => {
@@ -99,7 +101,7 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
             className="relative flex min-h-[100svh] items-center overflow-hidden bg-surface py-24"
             aria-label={s.id}
           >
-            <BackgroundShapes />
+            {s.setting ?? <BackgroundShapes />}
             <div className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">{s.node}</div>
           </section>
         ))}
@@ -127,6 +129,7 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
               z={i}
               isActive={i === active}
               zoom={cells[i]!.zoom}
+              setting={s.setting}
               // Panel i starts arriving when panel i-1 stops dwelling — so this
               // reads the *previous* scene's hold, which differs for scene 0.
               arriveStart={(i - 1 + holdFor(i - 1)) * seg}
@@ -177,6 +180,7 @@ function Panel({
   z,
   isActive,
   zoom,
+  setting,
   arriveStart,
   arriveEnd,
   progress,
@@ -188,6 +192,7 @@ function Panel({
   z: number
   isActive: boolean
   zoom: boolean
+  setting?: ReactNode
   arriveStart: number
   arriveEnd: number
   progress: MotionValue<number>
@@ -227,7 +232,7 @@ function Panel({
         pointerEvents: isActive ? 'auto' : 'none',
       }}
     >
-      <BackgroundShapes />
+      {setting ?? <BackgroundShapes />}
       {/* The scene's own content animates on arrival via SceneActiveContext. */}
       <SceneActiveContext.Provider value={isActive}>
         <div key={enterKey} className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
