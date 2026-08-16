@@ -5,11 +5,14 @@
 export const journey = {
   about: {
     eyebrow: 'Get to know',
-    heading: 'The strategist who also builds',
-    lede: 'I taught myself to code by automating my own job. Eleven years later I run the department, and I still write production code.',
-    // The career arc and the degrees live in content/timeline.ts (milestones,
-    // education) and render on /about. They were duplicated here as four
-    // undated labels; one source of truth is enough.
+    // Third and last block on the first screen. It used to restate the
+    // headline's origin story and the lead paragraph's hands-on claim; now it
+    // does the one job neither of those can — telling you what this site is and
+    // what the door at the end of the scroll is for.
+    lede: 'What follows is the work: the platforms my team shipped, and the things I build after hours. The door at the end opens to the second kind.',
+    // `heading` lived here unread — AboutScene renders the eyebrow, the logo,
+    // hero.headline and hero.why, and nothing else. The career arc and degrees
+    // live in content/timeline.ts and render on /about.
   },
   lead: {
     eyebrow: 'How I lead',
@@ -34,7 +37,10 @@ export const journey = {
   },
   build: {
     eyebrow: 'What I build',
-    statement: 'And I stay close enough to build it myself.',
+    // Was "And I stay close enough to build it myself" — the fourth restatement
+    // of the hands-on claim the landing scene now makes once, properly. This
+    // instead sets up the paragraph underneath it.
+    statement: 'Six of these platforms run AI in production, under audit.',
     context:
       'Six systems run AI under audit across three providers. Documents are read as native PDF and image blocks and returned through forced tool-use against a JSON schema, so results are structured rather than parsed out of prose. Every extraction carries a confidence score, and thresholds decide whether work posts, queues for a human, or is rejected.',
     figures: [
