@@ -1,15 +1,18 @@
 /**
  * The landing scene's headline and lead paragraph (also the OG image headline).
  *
- * Conversational, and about the things themselves — not statistics. Earlier
- * passes kept reaching back into the résumé for numbers (retired vendor tools,
- * six-week delivery, employee counts), which is the one thing this page should
- * not be. The scenes below already carry the figures; this is the part where
- * she just tells you what she makes.
+ * Register borrowed from the portfolios Kylee pointed at — bek.is, marco.fyi,
+ * destroytoday, joelcalifa. They all open with one or two short sentences: a
+ * descriptor or a conviction, never a résumé, never a number. Elaboration comes
+ * after, and stays brief.
  *
- * Every item named here is real and checkable against content/projects.ts.
+ * The voice is hers, from her own prose: short declaratives, concrete, no
+ * throat-clearing, willing to state a plain conclusion without hedging it.
+ * Grown up, not changed.
+ *
+ * Do not put statistics here. The scenes below carry them.
  */
 export const hero = {
-  headline: 'I make things. Some of it’s my job, plenty of it isn’t.',
-  why: 'On the clock that means benefits portals, an accessibility platform, and the tooling my department runs on. Off it: a homeschool RPG for my kids, a chore app they actually use, a party game, a studio site for a friend’s tattoo shop. I work across the whole stack, but design is the part I keep going back to — it isn’t finished when it works, it’s finished when it looks right.',
+  headline: 'I make things. I don’t stop when they work.',
+  why: 'Full-stack, with design as the specialty — I’ll write the schema and then spend just as long getting the screen right. Some of it is my job: benefits portals, an accessibility platform. The rest is games, art, and apps for my kids.',
 } as const
