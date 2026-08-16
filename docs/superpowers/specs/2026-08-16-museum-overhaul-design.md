@@ -76,10 +76,31 @@ delay, no content gated behind an animation.
 The first room inside. Quiet. A window on one wall with daylight coming through, and the
 light shifts across the floor as the reader scrolls.
 
-This holds **how Kylee thinks** — a small number of named principles in her own words,
-drawn from the interview (below), not invented. Short. This is the room that makes the
-rest of the site mean something, and it is also the room most likely to sound like a
-LinkedIn post if it is written carelessly, so it stays brief and concrete.
+This holds **how Kylee thinks** — three principles, in her words, from the interview. Not
+invented, not expanded into thought-leadership. This room is the one most likely to sound
+like a LinkedIn post if written carelessly, so it stays short and keeps her phrasing.
+
+**1. Keep moving.** Stuck means stream-of-consciousness writing, on real pencil and
+paper — or talking it through with someone. Writing *something* is what breaks it.
+> "I keep moving, basically. An object in motion stays in motion."
+
+**2. Nothing is sacred.** She rejects "if it's not broke don't fix it" outright. There is
+always a better way; the only real question is what deserves the time right now.
+> "That is the enemy of progress. Nothing is sacred. Anything can be scrapped for
+> something else if it's the top priority at that time."
+
+This is the principle the whole Floor demonstrates — Beacon replaced her own earlier app,
+ChemTreeHQ reused a concept from a scrapped build, The Wretched Few is built by throwing
+work away on purpose.
+
+**3. AI is a tool, and the people are the problem.** The one opinion she holds that others
+argue with.
+> "I don't think AI is the problem, I think greedy people misusing it are. It doesn't have
+> to replace people. It's just another tool on the belt for people who know how to use it
+> effectively and in integrity."
+
+Worth siting here rather than burying: she runs six systems on AI under audit, so this is
+a practitioner's position, not a take.
 
 ### 3. The Floor
 
@@ -93,18 +114,20 @@ Beside each piece is a placard. Lifting it reveals the part that didn't work —
 thrown away, what would be done differently. Every featured piece must have one. A
 gallery where nothing ever failed is a brochure.
 
-**Proposed six**, chosen to span range rather than rank importance:
+**The seven, chosen by Kylee.** Deliberately mixed — four on the clock, three off it —
+so the wall reads as one person rather than as a work history with a hobby appendix.
 
-| Piece | Why it earns a wall |
-| --- | --- |
-| 403HQ | Six weeks, real stakes, a client already leaving |
-| AURA | Build-over-buy at its cleanest — a vendor licence replaced by one script tag |
-| Beacon | The operating model, and AI running under audit |
-| Kingdoms & Crowns | Design-led, and built for her own kids |
-| The Wretched Few | Story, HUD, UI/UX and art — all hers |
-| Ember Tattoo | Pure design. Nobody asked. |
+| Piece | | Why it earns a wall |
+| --- | --- | --- |
+| Beacon | work | Every role in a tech department, one adaptable app |
+| 403HQ | work | Two people, six weeks, a contract on the line |
+| AURA | work | Had never built a widget; it has to work on any host stack |
+| NBS Website | work | Years of asking, never prioritised, so she just built it |
+| Kingdoms & Crowns | personal | Child-user compliance, usable at every age |
+| ChemTreeHQ | personal | Multi-user whiteboard with follow-along and live saving |
+| The Wretched Few | personal | 3D, HUD, UX, sfx, vfx, procedural maps, story |
 
-Swappable. The constraint is range, not seniority.
+Ember Tattoo and Eliminated move to The Desk.
 
 ### 4. The Desk
 
@@ -117,8 +140,14 @@ overflow rather than the exhibition — which is the point.
 
 ### 5. The Way Out
 
-The close and the existing door to `/room`. Contact sits below as a guestbook rather than
-a lead-capture form: the inquiry-type dropdown is the most corporate object on the site.
+The close and the existing door to `/room`.
+
+Contact becomes **a mailbox** — you send a digital letter, not a lead-capture submission.
+The inquiry-type dropdown is the most corporate object on the site and it goes. The form
+underneath keeps its validation, Turnstile and error handling, including the mailto
+fallback on every failure path; only the framing and the fields change.
+
+Success state is the letter going in, not "Message sent."
 
 ## Voice
 
@@ -150,10 +179,10 @@ pages, which become where the résumé-shaped facts live.
 
 ## Risks
 
-**The interview is the critical path.** The Window and every placard need Kylee's actual
-reasoning. Drafting them from repos would reproduce exactly the failure this overhaul
-exists to fix. Structure and interaction can be built in parallel; the writing cannot
-start without her answers.
+~~**The interview is the critical path.**~~ Done — see Source material. The writing is
+unblocked. The remaining risk is the opposite one: the answers are better than anything
+written for this site so far, and the temptation will be to smooth them into house style.
+Don't. Where she has a phrase, keep her phrase.
 
 **Five hand-built scene environments is a lot of surface.** Stairs, window light, placards,
 sticky notes and the existing door each need to work in both themes, at every width, and
@@ -166,16 +195,58 @@ click handler. The axe sweep covers seven routes and must stay green.
 
 ## Open questions
 
-1. Are those the right six pieces?
-2. Does the guestbook framing survive, or does the contact form stay as it is?
-3. Do the standalone pages (`/about`, `/leadership`, `/value`, `/connect`) keep their
-   current names once the scenes they mirror are gone?
+1. ~~Are those the right pieces?~~ Resolved: Kylee's seven, four work and three personal.
+2. ~~Guestbook or form?~~ Resolved: a mailbox you post a digital letter into.
+3. The standalone pages (`/about`, `/leadership`, `/value`, `/connect`) mirror scenes that
+   will no longer exist under those names, and `/about` and `/leadership` become where the
+   moved statistics live. Renaming and rehoming is a planning decision.
 
-## The interview
+---
 
-Blocking. Per featured piece: what was actually hard — the part you'd warn someone about?
-What did you build and throw away? What would you do differently now? Who was it for?
+## Source material
 
-For The Window: What do you do when you're stuck? What makes you kill something you have
-already built? What is a strong opinion you hold about software that other people
-disagree with?
+Kylee's interview answers. **Every placard is written from these and nothing else.** Where
+a phrase of hers is good, use her phrase. Anything not traceable to this section or to a
+repo does not go on the wall.
+
+### Beacon
+- **Hard:** capturing the needs of every role in a tech department in a single app, in a way that stays user-friendly and adaptable.
+- **Threw away:** an entire earlier app of her own — Tech Portfolio — on an old stack with limited usability. Beacon replaced it outright.
+- **Differently:** smaller features, shipped more often. It's easy to add a lot quickly, but then rollouts land on users as an overwhelming pile of new functionality at once.
+- **For:** herself, to run the IS department — and her team, and the leadership team.
+
+### 403HQ
+- **Hard:** she and one other person were mandated to build it to retain a high-priority client. Six weeks to build, test, pen test and reach production. *"The most challenging thing I've done in my career."* They finished with a couple of days to spare.
+- **Threw away:** the original branding was a placeholder. The real name arrived mid-development, all at once.
+- **Differently:** the testing approach. There's no traditional QA, users struggle with testing, and things occasionally reach production that shouldn't.
+- **For:** a high-priority client — then a second version for another, with tweaks.
+
+### AURA
+- **Hard:** a flexible, compliant ADA widget with real features that drops into any site regardless of the host's stack. She'd never built a widget before. *One of her favourites* — the colour controls, and things like ADHD mode.
+- **Threw away:** branding again; no idea what to call it until it was finished. Everything else built on day one survived.
+- **Differently:** surface its own capabilities — a first-run notification so people know what it can do.
+- **For:** requested by the SVP of Tech to replace accessiBe, which charged per site. AURA is hosted once and used as often as they like.
+
+### NBS Website
+- **Hard:** turning every request from the senior leadership team and the board into something clean, modern and actually usable.
+- **Threw away:** a connection to an internal app, replaced with a custom secure document-upload feature — they didn't want users bouncing between separate sites.
+- **Differently:** get end users involved earlier and start the feedback loop sooner.
+- **For:** the company, but really leadership and sales. Clients had asked for a new site for years and previous tech leaders never prioritised it. *"So I just built it."*
+
+### Kingdoms & Crowns
+- **Hard:** compliance for child users, and making it usable across a wide age range.
+- **Threw away:** integrations with other curriculum platforms. Parents can share links instead of the app embedding everything — at least in iteration one.
+- **Differently:** a browser-based education game where students go on a quest to start an assignment and choose their path — learn on another platform, or learn in-app through gamified lessons for core subjects.
+- **For:** her kids and herself, to stay organised while homeschooling without it being a chore.
+
+### ChemTreeHQ
+- **Hard:** a multi-user whiteboard with follow-along and live saving of every user's changes.
+- **Threw away:** an earlier version built for a different company that got scrapped; she reused the concept here.
+- **Differently:** more custom brainstorming features, and prompts for prioritising and organising ideas.
+- **For:** herself and a friend who wanted to collaborate on game development.
+
+### The Wretched Few
+- **Hard:** *"Everything."* 3D modelling, the game HUD, player UX, sfx, vfx, procedural map generation, and storytelling that stays coherent with combat and gameplay. *"It's a lot but I absolutely love it."*
+- **Threw away:** a lot, deliberately. Build something simple, see it, test it, throw it out, build it better.
+- **Differently:** still in progress. She'd spend more time on animation and 3D modelling and less on in-game menu UI.
+- **For:** her friend had the initial idea; she expanded it into a full story concept and they're building it together. *"It's for gamers like us."*
