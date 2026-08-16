@@ -25,16 +25,6 @@ export const journey = {
       { value: '1 → 14', label: 'enterprise projects since 2023' },
     ],
   },
-  value: {
-    eyebrow: 'How I create value',
-    statement: 'Four places I tend to be most useful.',
-    items: [
-      { number: '01', title: 'Technology leadership', tag: 'An operating model, a design system, and standards that enforce themselves in CI.' },
-      { number: '02', title: 'AI in production, under audit', tag: 'Structured tool-use, confidence thresholds, per-tenant governance.' },
-      { number: '03', title: 'Product & UX/UI design', tag: 'I design the system and the interface to it.' },
-      { number: '04', title: 'Build over buy', tag: 'Three vendor tools retired and replaced. The recordkeeping platform is next.' },
-    ],
-  },
   build: {
     eyebrow: 'What I build',
     // Was "And I stay close enough to build it myself" — the fourth restatement

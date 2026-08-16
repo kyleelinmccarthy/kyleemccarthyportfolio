@@ -154,10 +154,6 @@ describe('journey figures', () => {
 })
 
 describe('journey scenes', () => {
-  it('has four numbered value items in order', () => {
-    expect(journey.value.items.map((i) => i.number)).toEqual(['01', '02', '03', '04'])
-  })
-
   it('credits the team in the leadership context (not just Kylee)', () => {
     expect(journey.lead.context.toLowerCase()).toContain('team')
   })

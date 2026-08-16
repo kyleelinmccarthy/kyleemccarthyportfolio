@@ -24,7 +24,6 @@ export const footer = {
   pages: [
     { label: 'About', href: '/about' },
     { label: 'How I lead', href: '/leadership' },
-    { label: 'How I create value', href: '/value' },
     { label: 'What I build', href: '/work' },
     { label: 'Say hello', href: '/connect' },
     { label: 'The other room', href: '/room' },

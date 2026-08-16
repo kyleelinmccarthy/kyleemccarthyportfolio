@@ -7,15 +7,15 @@ test('the door is a real link and reaches the room', async ({ page }) => {
 })
 
 test('the door is the last beat of the home scroll only, not part of /connect', async ({ page }) => {
-  // TalkScene is shared by the home journey and the standalone /connect route.
-  // The door belongs to the home scroll (spec §5); on /connect it landed
-  // mid-page between the copy and the contact form.
+  // The home journey's WayOutRoom and the standalone /connect route both
+  // render journey.talk's copy, but only WayOutRoom includes the door (spec
+  // §5) — on /connect it would land mid-page between the copy and the form.
   await page.goto('/')
   await expect(page.getByRole('link', { name: /another room/i })).toHaveCount(1)
 
   await page.goto('/connect')
-  // Proxy for "TalkScene did render here" — so the assertion below proves the
-  // door is absent, not merely that the whole scene failed to mount.
+  // Proxy for "the talk copy did render here" — so the assertion below proves
+  // the door is absent, not merely that the whole page failed to render.
   await expect(page.getByRole('heading', { name: /go poke around/i })).toBeVisible()
   await expect(page.getByRole('link', { name: /another room/i })).toHaveCount(0)
 })
