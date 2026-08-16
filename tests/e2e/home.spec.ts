@@ -24,8 +24,14 @@ test('with reduced motion, content is visible immediately (no blank reveals)', a
   const context = await browser.newContext({ reducedMotion: 'reduce' })
   const page = await context.newPage()
   await page.goto('/')
-  // Reduced motion falls back to stacked scenes; their content must be visible.
-  await expect(page.getByText(/I build the systems that make great work routine/)).toBeVisible()
+  // Reduced motion falls back to stacked scenes; their content must be
+  // visible without scrolling to trigger it, deep into the journey and not
+  // just the first screen. "I build the systems that make great work
+  // routine" was the old lead scene's statement — the museum overhaul moved
+  // the desk scene (id: 'desk') off LeadScene onto DeskRoom, so that copy no
+  // longer renders on the home page at all. The floor room's heading is a
+  // stand-in that's still genuinely several scenes deep.
+  await expect(page.getByText(/Seven things worth walking past/)).toBeVisible()
   await context.close()
 })
 

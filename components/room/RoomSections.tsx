@@ -1,18 +1,20 @@
 import type { ReactNode } from 'react'
 import { projects } from '@/content/projects'
 import { room, artAlt, tattooAlt } from '@/content/room'
+import { groupArt } from '@/lib/artGroups'
 import { ProjectVisual } from '@/components/media/ProjectVisual'
 import { Gallery } from '@/components/media/Gallery'
 import { StackChips } from '@/components/primitives/StackChips'
 
 const personalProjects = projects.filter((p) => p.isPersonal)
 
-// Built from the alt maps so a new import needs no component change — drop a
-// file in public/media/art (or /tattoo) with a matching artAlt/tattooAlt
-// entry and it shows up here automatically.
-const artItems = Object.entries(artAlt).map(([slug, alt]) => ({
-  src: `/media/art/${slug}.jpg`,
-  alt,
+// Grouped by medium, derived from the filename prefix scripts/import-art.ts
+// already bakes into every slug — no per-entry field to maintain by hand. A
+// new import needs no component change: drop a file in public/media/art with
+// a matching artAlt entry and it lands in the right cluster automatically.
+const artGroups = groupArt(artAlt).map((g) => ({
+  label: g.label,
+  items: g.items.map(({ slug, alt }) => ({ src: `/media/art/${slug}.jpg`, alt })),
 }))
 
 const tattooItems = Object.entries(tattooAlt).map(([slug, alt]) => ({
@@ -84,7 +86,16 @@ export function RoomSections() {
           {room.art.heading}
         </h2>
         <p className="mt-3 max-w-2xl font-sans text-fg-muted">{room.art.lede}</p>
-        <Gallery items={artItems} label={room.art.heading} />
+        <div className="mt-8 space-y-10">
+          {artGroups
+            .filter((group) => group.items.length > 0)
+            .map((group) => (
+              <div key={group.label}>
+                <h3 className="font-serif text-xl leading-tight text-fg">{group.label}</h3>
+                <Gallery items={group.items} label={group.label} />
+              </div>
+            ))}
+        </div>
       </section>
 
       <section aria-labelledby="room-tattoo-heading">
