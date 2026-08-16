@@ -31,12 +31,21 @@ export const staggerContainer = (stagger = 0.06, delayChildren = 0): Variants =>
 })
 
 /** Per-character "write-in" for the NameLogo signature. */
+/**
+ * Each letter of the signature fades and rises into place.
+ *
+ * No blur. The hidden state used to carry `filter: blur(4px)`, which was a
+ * 4px blur on 96px script — a visible halo for the whole first half-second,
+ * and a *permanent* one any time the animation failed to reach `visible`
+ * (which happens: framer's useReducedMotion cannot resolve during SSR, and a
+ * stalled hook left the wordmark fully opaque and permanently smeared).
+ * Opacity and a small rise read just as well and cannot fail that way.
+ */
 export const signatureChar: Variants = {
-  hidden: { opacity: 0, y: '0.35em', filter: 'blur(4px)' },
+  hidden: { opacity: 0, y: '0.35em' },
   visible: {
     opacity: 1,
     y: 0,
-    filter: 'blur(0px)',
     transition: { duration: 0.5, ease: ease.out },
   },
 }

@@ -84,6 +84,14 @@ export function NameLogo({
     <motion.span
       role="img"
       aria-label="Kylee McCarthy"
+      // Hook for the reduced-motion safety net in globals.css. useReducedMotion
+      // does not resolve during SSR, so the server always emits this animated
+      // branch — and if the hook never settles on the client, every letter is
+      // left at the "hidden" variant's opacity 0 and the name silently
+      // disappears. Observed for real: the hero signature rendered at
+      // opacity 0 while the nav and footer copies were fine. A CSS rule cannot
+      // be defeated by a hook that failed to resolve.
+      data-signature=""
       className={baseClass}
       variants={staggerContainer(0.055)}
       initial="hidden"

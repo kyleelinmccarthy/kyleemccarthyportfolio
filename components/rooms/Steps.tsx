@@ -8,77 +8,82 @@ import { NameLogo } from '@/components/primitives/NameLogo'
 import { rooms } from '@/content/rooms'
 
 /**
- * Outside, at dusk. The door opens by itself a beat after you arrive and light
- * spreads down the steps. Purely decorative — the welcome underneath is in the
- * DOM and readable whether or not the door ever moves.
+ * Outside, at dusk: a low pool of light on the ground and the sky darkening
+ * toward the top.
+ *
+ * The doorway itself is NOT here — it lives in the room's normal flow (see
+ * StepsRoom) so it cannot land on top of the copy. When it was absolutely
+ * positioned, the panel centred the text vertically while the scenery was
+ * pinned from the top, and at some viewport ratios the steps cut straight
+ * through the tagline. Flow layout makes that impossible at any height.
+ *
+ * What stays here is only what is safe to sit behind text: soft light, no
+ * hard edges, and nothing bright enough for the nav's backdrop-blur to smear.
  */
 export function StepsSetting() {
   const reduce = useReducedMotion()
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-      {/* Doorway and steps are one stack, so the top step meets the threshold.
-          They used to be positioned independently: the door ended around 64%
-          and the steps sat at the very bottom of the viewport, leaving a gap
-          that read as descending into a basement rather than climbing to a
-          front door. The steps now start AT the threshold and widen as they
-          come toward the viewer, which is what walking up to a house looks
-          like. */}
-      <div className="group absolute inset-x-0 top-[10%] flex flex-col items-center">
-        {/* The doorway, with the door hinged inside it. It rests ajar and
-            swings the rest of the way open on hover — pointer-events are
-            enabled on just this element so the decorative layer above stays
-            inert. Hover is an embellishment, never the way in: the welcome is
-            plain DOM and the door is ajar from the start. */}
-        <div
-          className="pointer-events-auto relative h-[40vh] w-[22vw] min-w-[190px] rounded-t-[10rem] bg-surface-raised ring-1 ring-rule"
-          style={{ perspective: '900px' }}
-        >
-          <motion.div
-            className="absolute inset-0 origin-left rounded-t-[10rem] bg-surface ring-1 ring-rule"
-            initial={reduce ? { rotateY: -55 } : { rotateY: 0 }}
-            animate={{ rotateY: -55 }}
-            whileHover={reduce ? undefined : { rotateY: -88 }}
-            transition={{ delay: reduce ? 0 : 0.6, duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-          >
-            {/* Window pane set into the upper half of the door itself, so it
-                swings with it. It was a separate transom above the frame
-                before, which read as part of the wall rather than part of the
-                door. Lit from behind — it is the first warm thing you see. */}
-            <span
-              aria-hidden="true"
-              className="absolute inset-x-[18%] top-[10%] h-[34%] overflow-hidden rounded-t-[6rem] bg-accent/30 ring-1 ring-rule"
-            >
-              <span className="absolute inset-x-0 top-1/2 block h-px bg-rule/70" />
-              <span className="absolute inset-y-0 left-1/2 block w-px bg-rule/70" />
-            </span>
-            {/* handle */}
-            <span
-              aria-hidden="true"
-              className="absolute right-[12%] top-[68%] h-2.5 w-2.5 rounded-full bg-accent"
-            />
-          </motion.div>
-        </div>
-        {/* steps descending from the threshold toward the viewer, each one
-            wider and a shade brighter as it gets nearer */}
-        {[0, 1, 2, 3, 4].map((i) => (
-          <span
-            key={i}
-            className="block border-t border-rule bg-surface-raised"
-            style={{
-              width: `${24 + i * 9}%`,
-              height: '2.6vh',
-              opacity: 0.45 + i * 0.09,
-            }}
-          />
-        ))}
-      </div>
-      {/* light spilling out of the open doorway and down over the steps */}
+      {/* Ground light, low and wide. Kept in the lower half deliberately: when
+          this glow sat behind the wordmark it haloed the letters, and the
+          fixed nav's backdrop-blur sampled it and turned the header yellow. */}
       <motion.div
-        className="absolute left-1/2 top-[16%] h-[64vh] w-[40vw] -translate-x-1/2 rounded-full bg-accent blur-3xl"
-        initial={reduce ? { opacity: 0.26 } : { opacity: 0 }}
-        animate={{ opacity: 0.26 }}
+        className="absolute left-1/2 top-[82%] h-[46vh] w-[85vw] -translate-x-1/2 rounded-[50%] bg-accent blur-3xl"
+        initial={reduce ? { opacity: 0.12 } : { opacity: 0 }}
+        animate={{ opacity: 0.12 }}
         transition={{ delay: 1.1, duration: 1.8 }}
       />
+      {/* Darken the top so the sky recedes and the nav has a calm ground. */}
+      <div className="absolute inset-x-0 top-0 h-[38vh] bg-gradient-to-b from-surface to-transparent" />
+    </div>
+  )
+}
+
+/**
+ * The doorway, the door hinged inside it, and the steps coming down toward
+ * the viewer. Decorative — hidden from assistive tech — but laid out in normal
+ * flow above the copy so the two can never overlap.
+ */
+function Doorway() {
+  const reduce = useReducedMotion()
+  return (
+    <div aria-hidden="true" className="flex flex-col items-center">
+      <div
+        className="pointer-events-auto relative h-[22vh] min-h-[130px] w-[15vw] min-w-[110px] rounded-t-[8rem] bg-fg/[0.12] ring-1 ring-fg/30"
+        style={{ perspective: '900px' }}
+      >
+        {/* Warm light in the opening, behind the door. */}
+        <span className="absolute inset-0 rounded-t-[8rem] bg-accent/25" />
+        <motion.div
+          className="absolute inset-0 origin-left rounded-t-[8rem] bg-fg/[0.22] ring-1 ring-fg/40"
+          initial={reduce ? { rotateY: -58 } : { rotateY: 0 }}
+          animate={{ rotateY: -58 }}
+          whileHover={reduce ? undefined : { rotateY: -88 }}
+          transition={{ delay: reduce ? 0 : 0.6, duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {/* Window pane set into the door itself, so it swings with it. */}
+          <span className="absolute inset-x-[20%] top-[12%] block h-[30%] overflow-hidden rounded-t-[4rem] bg-accent/40 ring-1 ring-rule">
+            <span className="absolute inset-x-0 top-1/2 block h-px bg-rule/60" />
+            <span className="absolute inset-y-0 left-1/2 block w-px bg-rule/60" />
+          </span>
+          <span className="absolute right-[14%] top-[66%] block h-2 w-2 rounded-full bg-accent" />
+        </motion.div>
+      </div>
+
+      {/* Steps down from the threshold, each wider and a shade brighter as it
+          comes nearer. Widths are of this centred column, not the viewport. */}
+      {[0, 1, 2, 3, 4].map((i) => (
+        <span
+          key={i}
+          className="block border-t border-fg/40 bg-fg/[0.17]"
+          style={{
+            width: `${110 + i * 46}px`,
+            height: '1.5vh',
+            minHeight: '9px',
+            opacity: 0.72 + i * 0.07,
+          }}
+        />
+      ))}
     </div>
   )
 }
@@ -89,7 +94,7 @@ export function StepsSetting() {
  * The neutral welcome renders on the server and on the first client paint —
  * their timezone isn't knowable until we're running in their browser, and
  * guessing would mean a hydration mismatch. The time-aware greeting swaps in
- * after mount. With JS off, the neutral one simply stays, which is why it has
+ * after mount. With JS off the neutral one simply stays, which is why it has
  * to read well on its own rather than being a placeholder.
  */
 function Greeting({ className }: { className?: string }) {
@@ -104,13 +109,14 @@ function Greeting({ className }: { className?: string }) {
 
 export function StepsRoom() {
   return (
-    <Room className="mx-auto max-w-3xl text-center">
+    <Room className="mx-auto flex max-w-3xl flex-col items-center text-center">
+      <Doorway />
       <NameLogo size="hero" animate />
       {/* The building's only h1: this room is the first thing the home page
           says, so the greeting carries the page's single top-level heading
           (a11y.spec.ts, smoke.spec.ts both require exactly one). */}
-      <Greeting className="mt-8 font-serif text-fluid-h2 text-fg" />
-      <p className="mx-auto mt-4 max-w-xl font-sans text-lg leading-relaxed text-fg-muted">
+      <Greeting className="mt-5 font-serif text-fluid-h2 text-fg" />
+      <p className="mx-auto mt-3 max-w-xl font-sans text-lg leading-relaxed text-fg-muted">
         {rooms.steps.line}
       </p>
     </Room>

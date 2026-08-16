@@ -98,6 +98,32 @@
     color: var(--fg);
   }
 
+  /*
+   * Reduced-motion safety net for the signature.
+   *
+   * NameLogo animates each letter in from the "hidden" variant (opacity 0).
+   * framer-motion's useReducedMotion cannot resolve during SSR, so the server
+   * always emits the animated branch; if the hook then fails to settle on the
+   * client, the letters stay hidden and the name is simply gone. That happened
+   * for real — the hero signature measured opacity 0 while the nav and footer
+   * copies were fine.
+   *
+   * The rule below cannot be defeated by a hook that never resolved, which is
+   * the point: someone who asked for less motion must not be the one person
+   * who cannot see whose site this is.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    [data-signature],
+    [data-signature] > * {
+      opacity: 1 !important;
+      transform: none !important;
+      /* filter too: an earlier version reset only opacity and transform, and
+         the variant's blur survived — the name rendered fully opaque and
+         permanently smeared. Reset everything the hidden state can set. */
+      filter: none !important;
+    }
+  }
+
   /* Skip-to-content link — visible only when focused. */
   .skip-link {
     position: fixed;
