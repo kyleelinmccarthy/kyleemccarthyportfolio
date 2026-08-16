@@ -7,7 +7,7 @@ export const site = {
   // What a search result and a link preview show. Keep it in the same voice as
   // the landing headline — it used to be résumé statistics.
   description:
-    'Portfolio of Kylee McCarthy — full-stack engineer with a design specialty. Enterprise platforms, client portals, video games, and art.',
+    'Portfolio of Kylee McCarthy — full-stack engineer with a design specialty who takes things from nothing to shipped. Platforms, portals, games, and art.',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kyleemccarthy.com',
   locale: 'en_US',
   location: 'Saratoga Springs, UT',

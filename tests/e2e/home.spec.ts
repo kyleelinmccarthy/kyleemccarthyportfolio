@@ -43,7 +43,7 @@ for (const width of [820, 900, 1000]) {
     // there is no stable structural selector for "the lead paragraph".
     const para = await page
       .locator('main p')
-      .filter({ hasText: /design as the specialty/i })
+      .filter({ hasText: /nobody asked for/i })
       .first()
       .boundingBox()
 

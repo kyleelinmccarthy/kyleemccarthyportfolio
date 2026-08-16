@@ -1,16 +1,20 @@
 /**
  * The landing scene's headline and lead paragraph (also the OG image headline).
  *
- * The positioning, from Kylee: a true full-stack engineer whose specialty is
- * UI/UX and creativity. She explores new things and stays current, but that is
- * a habit, not the identity — the identity is solving problems and building
- * good-looking things.
+ * Drawn from what the portfolio actually shows rather than from self-
+ * description. The consistent pattern across both halves is zero-to-one: four
+ * licensed vendor tools retired and replaced, a portal built in six weeks
+ * because none existed, a job automated away without being asked to — and on
+ * the personal side a homeschool hub, a chore app, a studio site for a friend
+ * nobody hired her to redesign. Something should exist and doesn't, or exists
+ * badly, and then it exists properly. Usually unasked, usually fast, always
+ * end to end down to the art.
  *
- * Earlier passes missed by being too formal, too listy, too precious, and then
- * by making emerging tech the whole personality. Credentials arrive one scroll
- * down in the leadership scene; the origin story lives on /about.
+ * Earlier passes missed by leading with career history, a list of traits,
+ * curiosity, and then new technology. The specialty in UI/UX carries in the
+ * paragraph's last line; credentials arrive one scroll down.
  */
 export const hero = {
-  headline: 'I build the whole thing, and I care most about the part you actually see.',
-  why: 'Full-stack in the real sense — schema, API, deployment — with design as the specialty. I keep up with what’s new because it’s useful, not because novelty is the point. Mostly I just like solving problems and making things that are good to look at.',
+  headline: 'I’m the person who says we should just build it. Then I build it.',
+  why: 'Four licensed tools retired and replaced so far. A client portal shipped in six weeks to keep an account that was already walking. And a long tail of things nobody asked for — a homeschool app for my kids, a studio site for a friend, a game about monsters. End to end, every layer, and I care what it looks like when it’s finished.',
 } as const
