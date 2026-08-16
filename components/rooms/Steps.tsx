@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { Room } from './Room'
 import { greetingForHour } from './greeting'
-import { NameLogo } from '@/components/primitives/NameLogo'
 import { rooms } from '@/content/rooms'
 
 /**
@@ -111,11 +110,12 @@ export function StepsRoom() {
   return (
     <Room className="mx-auto flex max-w-3xl flex-col items-center text-center">
       <Doorway />
-      <NameLogo size="hero" animate />
+      {/* No signature here — the nav carries the name on every page, and
+          repeating it at 96px directly beneath it was saying it twice. */}
       {/* The building's only h1: this room is the first thing the home page
           says, so the greeting carries the page's single top-level heading
           (a11y.spec.ts, smoke.spec.ts both require exactly one). */}
-      <Greeting className="mt-5 font-serif text-fluid-h2 text-fg" />
+      <Greeting className="mt-10 font-serif text-fluid-h2 text-fg" />
       <p className="mx-auto mt-3 max-w-xl font-sans text-lg leading-relaxed text-fg-muted">
         {rooms.steps.line}
       </p>
