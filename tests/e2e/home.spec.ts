@@ -32,13 +32,18 @@ test('with reduced motion, content is visible immediately (no blank reveals)', a
 // Between 768px (max-w-3xl) and the lg breakpoint the container is text-center,
 // so a max-width child without mx-auto centres inside its own left-pinned box
 // rather than the container — and disagrees with the copy beneath it.
+// AboutScene (the component this regression guards) moved off the home
+// journey to /about-only in the museum overhaul; the check follows it there.
 for (const width of [820, 900, 1000]) {
   test(`headline and lead paragraph share a centre at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
-    await page.goto('/')
+    await page.goto('/about')
     await page.waitForTimeout(1800) // let RevealOnActive settle before measuring
 
-    const heading = await page.locator('h1').first().boundingBox()
+    // SectionPage (used by every standalone route, including /about) renders
+    // its own sr-only <h1>{title}</h1> ahead of the scene's content, so the
+    // *visible* headline is the last h1 in DOM order, not the first.
+    const heading = await page.locator('h1').last().boundingBox()
     // Copy-coupled by necessity: every scene renders into the DOM at once, so
     // there is no stable structural selector for "the lead paragraph".
     const para = await page
