@@ -1,14 +1,15 @@
 /**
  * The landing scene's headline and lead paragraph (also the OG image headline).
  *
- * Deliberately not a résumé. Two earlier passes led with career history and
- * then with a list of traits; both introduced Kylee the way a CV does. This
- * leads with what actually pulls her in, which is also the honest explanation
- * for why this site has so much on it. The credentials arrive one scroll later
- * in the leadership scene, and the origin story lives on /about in the dated
- * timeline, where it belongs.
+ * The sentiment, in Kylee's words: "Why not? I like to keep busy and do
+ * interesting things that solve real problems. And I think tech is cool."
+ *
+ * Earlier passes missed by being too formal (career history), too listy (a
+ * string of traits), and then too precious. The register here is plain and a
+ * little wry — enthusiasm without a pitch. Credentials arrive one scroll down
+ * in the leadership scene; the origin story lives on /about in the timeline.
  */
 export const hero = {
-  headline: 'I’m happiest building something I don’t know how to build yet.',
-  why: 'A framework that shipped last month, a model nobody has figured out yet, a game engine I’ve never opened — that’s the good part. I learn things by making something real with them, which is why there’s so much on this site. Half of it started as “I wonder if I could.”',
+  headline: 'I stay busy solving real problems, usually with technology I’m a little too excited about.',
+  why: 'Something interesting turns up — a framework that shipped last month, a game engine I’ve never opened, an app my kids would actually use — and I’d rather build it than read about it. Usually the whole reasoning is “why not.” That accounts for most of what’s here.',
 } as const

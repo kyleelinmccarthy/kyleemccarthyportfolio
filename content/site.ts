@@ -7,7 +7,7 @@ export const site = {
   // What a search result and a link preview show. Keep it in the same voice as
   // the landing headline — it used to be résumé statistics.
   description:
-    'Portfolio of Kylee McCarthy — enterprise platforms, video games, art, and whatever technology just shipped. Happiest building something she can’t build yet.',
+    'Portfolio of Kylee McCarthy — enterprise platforms, video games, art, and whatever technology just shipped. Likes to keep busy and solve real problems.',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kyleemccarthy.com',
   locale: 'en_US',
   location: 'Saratoga Springs, UT',

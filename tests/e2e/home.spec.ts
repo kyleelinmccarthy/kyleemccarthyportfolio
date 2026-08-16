@@ -39,9 +39,11 @@ for (const width of [820, 900, 1000]) {
     await page.waitForTimeout(1800) // let RevealOnActive settle before measuring
 
     const heading = await page.locator('h1').first().boundingBox()
+    // Copy-coupled by necessity: every scene renders into the DOM at once, so
+    // there is no stable structural selector for "the lead paragraph".
     const para = await page
       .locator('main p')
-      .filter({ hasText: /that’s the good part/ })
+      .filter({ hasText: /rather build it than read about it/ })
       .first()
       .boundingBox()
 
