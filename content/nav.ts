@@ -1,9 +1,10 @@
 import type { NavItem } from './types'
 
-// The site is a single scroll journey, so nav stays light: the work, a way to
-// say hello, the résumé, and the theme switch. The work leads — on a showcase,
-// a nav whose only destination is a contact form has the priority backwards.
+// The home page is a building you walk through; these are the two ways out of
+// it. "Plain view" is doing real work — /work is the same projects without the
+// scroll journey, and someone who wants to skim needs to know that exists.
+// "Send a letter" matches the mailbox it lands on.
 export const navItems: NavItem[] = [
-  { label: 'The work', href: '/work' },
-  { label: 'Say hello', href: '/#contact' },
+  { label: 'Portfolio — plain view', href: '/work' },
+  { label: 'Send a letter', href: '/#contact' },
 ]

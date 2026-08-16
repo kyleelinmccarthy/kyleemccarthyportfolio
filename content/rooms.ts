@@ -7,8 +7,24 @@
  */
 export const rooms = {
   steps: {
-    welcome: 'Come in.',
-    line: 'I make things. I don’t stop when they work.',
+    /**
+     * Rendered on the server and whenever JS is off. Always correct, never
+     * wrong — the visitor's local hour isn't knowable until we're in their
+     * browser, so guessing here would mean a hydration mismatch.
+     */
+    welcome: 'Come on in — the door’s open.',
+    /**
+     * Swapped in on the client once the local hour is known. `from` is the
+     * first hour of each band; anything before the earliest band wraps round
+     * to the last one, so the small hours get the late-night greeting.
+     */
+    greetings: [
+      { from: 5, text: 'Morning. Come on in — the door’s open.' },
+      { from: 12, text: 'Afternoon. Come on in — the door’s open.' },
+      { from: 17, text: 'Evening. The door’s open, come on in.' },
+      { from: 22, text: 'Up late? So am I. Come on in.' },
+    ],
+    line: 'I solve problems. I care what the answer looks like.',
   },
   window: {
     eyebrow: 'Before the work',

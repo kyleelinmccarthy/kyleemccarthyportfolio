@@ -5,7 +5,7 @@ test('the welcome is readable with animations disabled', async ({ browser }) => 
   const context = await browser.newContext({ reducedMotion: 'reduce' })
   const page = await context.newPage()
   await page.goto('/')
-  await expect(page.getByText(/come in/i)).toBeVisible()
+  await expect(page.getByText(/come on in/i).first()).toBeVisible()
   await context.close()
 })
 

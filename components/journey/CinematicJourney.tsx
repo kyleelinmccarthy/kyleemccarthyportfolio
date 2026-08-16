@@ -24,14 +24,13 @@ export interface Scene {
   setting?: ReactNode
 }
 
-const DIR_GLYPH: Record<Dir, string> = {
-  start: '↓',
-  right: '→',
-  left: '←',
-  up: '↑',
-  down: '↓',
-  in: '⤢',
-}
+/**
+ * The cue tells the reader what to DO, and the answer is always the same:
+ * scroll down. It used to show the camera's direction instead, which meant the
+ * first room — where the camera climbs the stairs — displayed an up arrow next
+ * to the word "scroll" and told people to do the opposite of the right thing.
+ */
+const SCROLL_GLYPH = '↓'
 
 /** Lay scenes out on a 2D grid following each scene's entry direction. */
 export function layout(scenes: Scene[]) {
@@ -166,7 +165,7 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
             animate={{ x: [0, 5, 0] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
           >
-            {nextDir ? DIR_GLYPH[nextDir] : '↓'}
+            {SCROLL_GLYPH}
           </motion.span>
         </motion.div>
       </div>

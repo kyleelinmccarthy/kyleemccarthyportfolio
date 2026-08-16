@@ -18,14 +18,14 @@ export const contact = {
 export const footer = {
   nav: [
     { label: 'Start over', href: '/' },
-    { label: 'Say hello', href: '/#contact' },
+    { label: 'Send a letter', href: '/#contact' },
   ],
   // Standalone, directly-linkable pages for each journey scene.
   pages: [
     { label: 'About', href: '/about' },
     { label: 'How I lead', href: '/leadership' },
-    { label: 'What I build', href: '/work' },
-    { label: 'Say hello', href: '/connect' },
+    { label: 'Portfolio — plain view', href: '/work' },
+    { label: 'Send a letter', href: '/connect' },
     { label: 'The other room', href: '/room' },
   ],
   copyright: '© 2026 Kylee McCarthy, MS · Saratoga Springs, UT',

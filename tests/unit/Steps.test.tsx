@@ -4,10 +4,22 @@ import { StepsRoom } from '@/components/rooms/Steps'
 import { rooms } from '@/content/rooms'
 
 describe('The Steps', () => {
-  it('shows the welcome and the one line', () => {
+  it('greets the visitor and shows the one line', () => {
     render(<StepsRoom />)
-    expect(screen.getByText(rooms.steps.welcome)).toBeInTheDocument()
+    // The greeting swaps to a time-of-day one once mounted, so pinning a single
+    // string here would pass or fail depending on the hour the suite runs.
+    const allowed: string[] = [
+      rooms.steps.welcome,
+      ...rooms.steps.greetings.map((g) => g.text),
+    ]
+    expect(allowed).toContain(screen.getByRole('heading', { level: 1 }).textContent)
     expect(screen.getByText(rooms.steps.line)).toBeInTheDocument()
+  })
+
+  it('falls back to a greeting that reads fine with no JS', () => {
+    // The neutral welcome is what the server sends and what a no-JS visitor
+    // keeps. It has to stand on its own, not read as a placeholder.
+    expect(rooms.steps.welcome).toMatch(/come on in/i)
   })
 
   it('puts no statistic on the front door', () => {

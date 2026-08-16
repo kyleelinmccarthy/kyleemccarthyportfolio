@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { NameLogo } from '@/components/primitives/NameLogo'
 import { ThemeToggle } from '@/components/primitives/ThemeToggle'
 import { navItems } from '@/content/nav'
@@ -48,7 +49,23 @@ export function Nav() {
         aria-label="Primary"
         className="mx-auto flex h-20 max-w-6xl items-center justify-between px-6 sm:px-8 lg:px-12"
       >
-        <Link href="/" className="rounded focus-visible:outline-none" aria-label="Kylee McCarthy — home">
+        <Link
+          href="/"
+          className="flex items-center gap-3 rounded focus-visible:outline-none"
+          aria-label="Kylee McCarthy — home"
+        >
+          {/* Decorative here: the link is already named by its aria-label, and
+              a second announcement of her name would just be noise. */}
+          <Image
+            src="/kylee-portrait-6.png"
+            alt=""
+            aria-hidden="true"
+            width={80}
+            height={80}
+            priority
+            sizes="40px"
+            className="h-10 w-10 shrink-0 rounded-full object-cover object-top ring-1 ring-rule"
+          />
           <NameLogo size="nav" />
         </Link>
 
