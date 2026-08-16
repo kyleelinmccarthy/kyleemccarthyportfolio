@@ -1,15 +1,16 @@
 /**
  * The landing scene's headline and lead paragraph (also the OG image headline).
  *
- * The sentiment, in Kylee's words: "Why not? I like to keep busy and do
- * interesting things that solve real problems. And I think tech is cool."
+ * The positioning, from Kylee: a true full-stack engineer whose specialty is
+ * UI/UX and creativity. She explores new things and stays current, but that is
+ * a habit, not the identity — the identity is solving problems and building
+ * good-looking things.
  *
- * Earlier passes missed by being too formal (career history), too listy (a
- * string of traits), and then too precious. The register here is plain and a
- * little wry — enthusiasm without a pitch. Credentials arrive one scroll down
- * in the leadership scene; the origin story lives on /about in the timeline.
+ * Earlier passes missed by being too formal, too listy, too precious, and then
+ * by making emerging tech the whole personality. Credentials arrive one scroll
+ * down in the leadership scene; the origin story lives on /about.
  */
 export const hero = {
-  headline: 'I stay busy solving real problems, usually with technology I’m a little too excited about.',
-  why: 'Something interesting turns up — a framework that shipped last month, a game engine I’ve never opened, an app my kids would actually use — and I’d rather build it than read about it. Usually the whole reasoning is “why not.” That accounts for most of what’s here.',
+  headline: 'I build the whole thing, and I care most about the part you actually see.',
+  why: 'Full-stack in the real sense — schema, API, deployment — with design as the specialty. I keep up with what’s new because it’s useful, not because novelty is the point. Mostly I just like solving problems and making things that are good to look at.',
 } as const
