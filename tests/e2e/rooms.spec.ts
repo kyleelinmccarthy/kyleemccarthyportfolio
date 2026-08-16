@@ -62,3 +62,25 @@ test('a placard is closed until its summary is activated', async ({ browser }) =
   await expect(threwAway).toBeVisible()
   await context.close()
 })
+
+test('the door comes toward you as you scroll into it', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await page.goto('/')
+  await page.waitForTimeout(1200)
+
+  const doorWidth = async () =>
+    page.evaluate(() => {
+      const el = document.querySelector('[style*="perspective"]')
+      return el ? Math.round(el.getBoundingClientRect().width) : 0
+    })
+
+  const atRest = await doorWidth()
+  await page.evaluate(() => window.scrollTo(0, 1400))
+  await page.waitForTimeout(700)
+  const approached = await doorWidth()
+
+  // Walking up to a door means it gets bigger. Without the scene-progress
+  // scale this is a static image you scroll past, which is what it was.
+  expect(atRest).toBeGreaterThan(0)
+  expect(approached).toBeGreaterThan(atRest * 2)
+})

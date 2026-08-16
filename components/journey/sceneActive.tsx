@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useRef, type ReactNode } from 'react'
-import { motion, useInView, useReducedMotion } from 'framer-motion'
+import { motion, useInView, useReducedMotion, type MotionValue } from 'framer-motion'
 
 /**
  * Whether the enclosing journey scene is currently centered.
@@ -11,6 +11,19 @@ import { motion, useInView, useReducedMotion } from 'framer-motion'
 export const SceneActiveContext = createContext<boolean | null>(null)
 export function useSceneActive() {
   return useContext(SceneActiveContext)
+}
+
+/**
+ * How far the reader has scrolled through THIS scene's own slice of the
+ * journey, 0 to 1. Lets a room drive its own scenery off the scroll — the
+ * front door growing as you approach it, for instance — without needing to
+ * know where its slice sits in the whole track.
+ *
+ * null outside the journey (standalone pages), where there is no camera.
+ */
+export const SceneProgressContext = createContext<MotionValue<number> | null>(null)
+export function useSceneProgress() {
+  return useContext(SceneProgressContext)
 }
 
 /** Rise + fade a block in when its scene becomes active (or scrolls into view). */

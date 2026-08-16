@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion, useMotionValue, useReducedMotion, useTransform } from 'framer-motion'
 import { Room } from './Room'
+import { useSceneProgress } from '@/components/journey/sceneActive'
 import { greetingForHour } from './greeting'
 import { rooms } from '@/content/rooms'
 
@@ -45,8 +46,26 @@ export function StepsSetting() {
  */
 function Doorway() {
   const reduce = useReducedMotion()
+
+  // Walk toward it. As you scroll through this room's slice of the track the
+  // doorway grows and lifts, so by the time the next room zooms in over the
+  // top you have effectively arrived at the threshold and stepped through.
+  // Reduced motion holds it still — the room still reads, it just doesn't move.
+  const scene = useSceneProgress()
+  const still = useMotionValue(0)
+  const drive = scene ?? still
+  const scale = useTransform(drive, [0, 1], [1, 3.6])
+  const lift = useTransform(drive, [0, 1], ['0%', '18%'])
+  const fade = useTransform(drive, [0.72, 1], [1, 0])
+
   return (
-    <div aria-hidden="true" className="flex flex-col items-center">
+    <motion.div
+      aria-hidden="true"
+      className="flex flex-col items-center"
+      style={
+        reduce ? undefined : { scale, y: lift, opacity: fade, transformOrigin: '50% 62%' }
+      }
+    >
       <div
         className="pointer-events-auto relative h-[22vh] min-h-[130px] w-[15vw] min-w-[110px] rounded-t-[8rem] bg-fg/[0.12] ring-1 ring-fg/30"
         style={{ perspective: '900px' }}
@@ -83,7 +102,7 @@ function Doorway() {
           }}
         />
       ))}
-    </div>
+    </motion.div>
   )
 }
 

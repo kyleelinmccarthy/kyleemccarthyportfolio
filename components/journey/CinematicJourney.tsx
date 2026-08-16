@@ -10,7 +10,7 @@ import {
   useReducedMotion,
   type MotionValue,
 } from 'framer-motion'
-import { SceneActiveContext } from './sceneActive'
+import { SceneActiveContext, SceneProgressContext } from './sceneActive'
 import { VH_PER_SCENE, holdFor } from './timing'
 import { BackgroundShapes } from '@/components/media/BackgroundShapes'
 import { Backdrop } from '@/components/media/Backdrop'
@@ -135,6 +135,8 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
               // reads the *previous* scene's hold, which differs for scene 0.
               arriveStart={(i - 1 + holdFor(i - 1)) * seg}
               arriveEnd={i * seg}
+              segStart={i * seg}
+              segEnd={(i + 1) * seg}
               progress={scrollYProgress}
               reduce={!!reduce}
             >
@@ -184,6 +186,8 @@ function Panel({
   setting,
   arriveStart,
   arriveEnd,
+  segStart,
+  segEnd,
   progress,
   reduce,
   children,
@@ -196,6 +200,8 @@ function Panel({
   setting?: ReactNode
   arriveStart: number
   arriveEnd: number
+  segStart: number
+  segEnd: number
   progress: MotionValue<number>
   reduce: boolean
   children: ReactNode
@@ -209,6 +215,10 @@ function Panel({
   // through — the front door and the way out — and a shallower zoom read as a
   // crossfade rather than as movement.
   const panelScale = useTransform(progress, [a, b], zoom ? [1.5, 1] : [1, 1])
+
+  // 0 -> 1 across this scene's own slice of the track, so a room can drive its
+  // scenery off the scroll (the front door growing as you walk up to it).
+  const sceneProgress = useTransform(progress, [segStart, segEnd], [0, 1], { clamp: true })
 
   // Remount the scene's content each time it becomes active, so every reveal /
   // count-up replays when you scroll back to it (reveals-only scenes like
@@ -240,9 +250,11 @@ function Panel({
       {setting ?? <BackgroundShapes />}
       {/* The scene's own content animates on arrival via SceneActiveContext. */}
       <SceneActiveContext.Provider value={isActive}>
+        <SceneProgressContext.Provider value={sceneProgress}>
         <div key={enterKey} className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
           {children}
         </div>
+        </SceneProgressContext.Provider>
       </SceneActiveContext.Provider>
     </motion.div>
   )
