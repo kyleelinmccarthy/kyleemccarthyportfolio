@@ -13,7 +13,7 @@ import {
 import { SceneActiveContext, SceneProgressContext } from './sceneActive'
 import { VH_PER_SCENE, holdFor } from './timing'
 import { BackgroundShapes } from '@/components/media/BackgroundShapes'
-import { Backdrop } from '@/components/media/Backdrop'
+import { Backdrop, type BackdropVariant } from '@/components/media/Backdrop'
 
 export type Dir = 'start' | 'right' | 'left' | 'up' | 'down' | 'in'
 
@@ -23,6 +23,8 @@ export interface Scene {
   node: ReactNode
   /** The room's environment, rendered behind its content. */
   setting?: ReactNode
+  /** Which side of the front door this room is on. Defaults to inside. */
+  backdrop?: BackdropVariant
 }
 
 /**
@@ -123,6 +125,7 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
               isActive={i === active}
               zoom={cells[i]!.zoom}
               setting={s.setting}
+              backdrop={s.backdrop}
               // Panel i starts arriving when panel i-1 stops dwelling — so this
               // reads the *previous* scene's hold, which differs for scene 0.
               arriveStart={(i - 1 + holdFor(i - 1)) * seg}
@@ -199,7 +202,7 @@ function StackedScene({ scene }: { scene: Scene }) {
       className="relative flex min-h-[100svh] items-center overflow-hidden bg-surface py-24"
       aria-label={scene.id}
     >
-      <Backdrop />
+      <Backdrop variant={scene.backdrop} />
       {scene.setting ?? <BackgroundShapes />}
       <SceneProgressContext.Provider value={scrollYProgress}>
         <div className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
@@ -217,6 +220,7 @@ function Panel({
   isActive,
   zoom,
   setting,
+  backdrop,
   arriveStart,
   arriveEnd,
   segStart,
@@ -231,6 +235,7 @@ function Panel({
   isActive: boolean
   zoom: boolean
   setting?: ReactNode
+  backdrop?: BackdropVariant
   arriveStart: number
   arriveEnd: number
   segStart: number
@@ -279,7 +284,7 @@ function Panel({
         pointerEvents: isActive ? 'auto' : 'none',
       }}
     >
-      <Backdrop />
+      <Backdrop variant={backdrop} />
       {setting ?? <BackgroundShapes />}
       {/* The scene's own content animates on arrival via SceneActiveContext. */}
       <SceneActiveContext.Provider value={isActive}>
