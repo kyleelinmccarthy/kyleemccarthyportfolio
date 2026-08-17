@@ -180,6 +180,12 @@ export const projects: Project[] = [
     built:
       'A multiplayer roguelite in Unity. I own the story, the HUD and player UI/UX, and the art.',
     outcome: 'In development, headed for Steam.',
+    media: {
+      hero: {
+        src: '/media/wretched-few/hero.jpg',
+        alt: 'The Wretched Few title screen: a gothic mansion under a red crescent moon, with the tagline "Survive the hunt. Become the reckoning." and a Single Player, Multiplayer, Settings, Quit menu',
+      },
+    },
     stack: ['Unity', 'C#'],
     isPersonal: true,
   },
@@ -240,6 +246,12 @@ export const projects: Project[] = [
       'Running projects with a remote collaborator meant a dozen tools that did not talk to each other, and documents that overwrote each other when both of us typed.',
     built:
       'A shared workspace for remote projects. Documents edit live through Yjs CRDTs, so simultaneous edits merge instead of overwriting.',
+    media: {
+      hero: {
+        src: '/media/chemtree-hq/hero.jpg',
+        alt: 'The ChemTreeHQ dashboard: a project board of in-progress game ideas as colour-coded cards, quick stats, a team panel and a shared calendar',
+      },
+    },
     stack: ['Next.js', 'Hono', 'Postgres', 'Redis', 'Yjs'],
     isPersonal: true,
   },

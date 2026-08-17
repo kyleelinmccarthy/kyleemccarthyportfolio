@@ -17,6 +17,11 @@ interface Source {
 
 const KC = '//wsl.localhost/Ubuntu/home/kylee/projects/kingdoms-and-crowns/public/marketing/screens/r2'
 
+// Screenshots Kylee dropped in by hand rather than pulled from a sibling repo
+// checkout. The Wretched Few's is her own approval to publish pre-release art
+// from a project with a co-owner — see the museum-overhaul spec.
+const SCREENSHOTS = 'C:/Users/kylee/Pictures/Art/PortfolioSite'
+
 const SOURCES: Source[] = [
   {
     slug: 'kingdoms-and-crowns',
@@ -31,8 +36,16 @@ const SOURCES: Source[] = [
       ['parent-hall-of-legends.jpg', 'hall-of-legends'],
     ],
   },
-  // The Wretched Few is added in Task 11, gated on approval to publish
-  // pre-release art from a project with a co-owner.
+  {
+    slug: 'chemtree-hq',
+    dir: SCREENSHOTS,
+    files: [['chemTreeHQ.png', 'hero']],
+  },
+  {
+    slug: 'wretched-few',
+    dir: SCREENSHOTS,
+    files: [['theWretchedFew.png', 'hero']],
+  },
 ]
 
 async function main() {
