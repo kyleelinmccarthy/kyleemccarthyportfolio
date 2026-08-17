@@ -63,11 +63,7 @@ test('a placard is closed until its summary is activated', async ({ browser }) =
   await context.close()
 })
 
-test('the door comes toward you as you scroll into it', async ({ page }, testInfo) => {
-  // Only the desktop camera path has scroll-driven scenery; the mobile
-  // fallback renders plain stacked sections with a static door.
-  test.skip(testInfo.project.name !== 'chromium', 'camera path is desktop only')
-  await page.setViewportSize({ width: 1280, height: 900 })
+test('the door comes toward you as you scroll into it', async ({ page }) => {
   await page.goto('/')
   await page.waitForTimeout(1200)
 
@@ -78,7 +74,7 @@ test('the door comes toward you as you scroll into it', async ({ page }, testInf
     })
 
   const atRest = await doorWidth()
-  await page.evaluate(() => window.scrollTo(0, 1400))
+  await page.evaluate(() => window.scrollTo(0, window.innerHeight * 0.9))
   await page.waitForTimeout(700)
   const approached = await doorWidth()
 
@@ -88,11 +84,7 @@ test('the door comes toward you as you scroll into it', async ({ page }, testInf
   expect(approached).toBeGreaterThan(atRest * 2)
 })
 
-test('the door shuts again when you scroll back up', async ({ page }, testInfo) => {
-  // Only the desktop camera path has scroll-driven scenery; the mobile
-  // fallback renders plain stacked sections with a static door.
-  test.skip(testInfo.project.name !== 'chromium', 'camera path is desktop only')
-  await page.setViewportSize({ width: 1280, height: 900 })
+test('the door shuts again when you scroll back up', async ({ page }) => {
   await page.goto('/')
   await page.waitForTimeout(1200)
 
@@ -105,7 +97,7 @@ test('the door shuts again when you scroll back up', async ({ page }, testInfo) 
     })
 
   const shut = await slabTransform()
-  await page.evaluate(() => window.scrollTo(0, 1200))
+  await page.evaluate(() => window.scrollTo(0, window.innerHeight * 0.9))
   await page.waitForTimeout(700)
   const open = await slabTransform()
   await page.evaluate(() => window.scrollTo(0, 0))

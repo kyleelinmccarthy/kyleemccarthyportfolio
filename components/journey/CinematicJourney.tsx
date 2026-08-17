@@ -96,15 +96,7 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
     return (
       <div id="top">
         {scenes.map((s) => (
-          <section
-            key={s.id}
-            className="relative flex min-h-[100svh] items-center overflow-hidden bg-surface py-24"
-            aria-label={s.id}
-          >
-            <Backdrop />
-            {s.setting ?? <BackgroundShapes />}
-            <div className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">{s.node}</div>
-          </section>
+          <StackedScene key={s.id} scene={s} />
         ))}
       </div>
     )
@@ -173,6 +165,47 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
           </motion.span>
         </motion.div>
       </div>
+    </section>
+  )
+}
+
+/**
+ * One room in the stacked layout — mobile, and the reduced-motion and no-JS
+ * output.
+ *
+ * There is no camera here, but the rooms' scenery does not actually need one:
+ * it only needs to know how far you have scrolled through THIS room. So each
+ * section measures its own pass and publishes it on the same context the
+ * camera path uses, and a room like the entrance gets its door approaching and
+ * swinging on mobile exactly as it does on desktop.
+ *
+ * The offsets run from "this section's top reaches the top of the viewport" to
+ * "its bottom does" — one viewport of scrolling, which is the same span a
+ * scene owns on the camera track.
+ *
+ * Reduced motion still gets stillness: every consumer checks that itself, so
+ * publishing progress here costs those users nothing.
+ */
+function StackedScene({ scene }: { scene: Scene }) {
+  const ref = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start start', 'end start'],
+  })
+
+  return (
+    <section
+      ref={ref}
+      className="relative flex min-h-[100svh] items-center overflow-hidden bg-surface py-24"
+      aria-label={scene.id}
+    >
+      <Backdrop />
+      {scene.setting ?? <BackgroundShapes />}
+      <SceneProgressContext.Provider value={scrollYProgress}>
+        <div className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
+          {scene.node}
+        </div>
+      </SceneProgressContext.Provider>
     </section>
   )
 }
