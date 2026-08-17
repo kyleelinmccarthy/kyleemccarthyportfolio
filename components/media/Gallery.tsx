@@ -9,7 +9,21 @@ import type { MediaItem } from '@/content/types'
  * trapping, Esc-to-close and an inert background for free — the three things
  * hand-rolled modals get wrong.
  */
-export function Gallery({ items, label }: { items: MediaItem[]; label: string }) {
+/**
+ * `strip` is the default: a compact row of thumbnails under a project.
+ * `wall` hangs the same pictures as framed work — a mount, a frame and a
+ * shadow, bigger. The library is a room you walk into, and art in a room is on
+ * the wall, not in a filmstrip. Both open the same lightbox.
+ */
+export function Gallery({
+  items,
+  label,
+  variant = 'strip',
+}: {
+  items: MediaItem[]
+  label: string
+  variant?: 'strip' | 'wall'
+}) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const [index, setIndex] = useState(0)
 
@@ -42,23 +56,38 @@ export function Gallery({ items, label }: { items: MediaItem[]; label: string })
 
   if (!items.length) return null
   const current = items[index]!
+  const wall = variant === 'wall'
 
   return (
     <>
-      <ul className="mt-4 flex flex-wrap gap-3">
+      <ul className={wall ? 'mt-4 flex flex-wrap gap-5' : 'mt-4 flex flex-wrap gap-3'}>
         {items.map((m, i) => (
           <li key={m.src}>
             <button
               type="button"
               onClick={(e) => open(i, e.currentTarget)}
-              className="relative block h-24 w-24 overflow-hidden rounded-lg bg-surface-raised p-1 ring-1 ring-rule transition-shadow hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className={[
+                'relative block overflow-hidden bg-surface-raised ring-1 ring-rule',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
+                wall
+                  ? // A frame: a deep mount, a heavier edge, and a shadow so it
+                    // sits off the wall. Lifts a touch when you go to look.
+                    'h-36 w-36 rounded-sm p-3 shadow-lg shadow-black/25 ring-4 transition-transform duration-200 ease-out hover:-translate-y-1 hover:ring-accent focus-visible:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+                  : 'h-24 w-24 rounded-lg p-1 transition-shadow hover:ring-accent',
+              ].join(' ')}
             >
               {/* Square and contained. These were 2:1 and object-cover, which
                   centre-cropped every portrait piece into a letterbox of its
                   own middle — beheading the tattoo flash and half the
                   drawings. A gallery thumbnail may shrink a picture; it may
                   not decide which part of it you get to see. */}
-              <Image src={m.src} alt={m.alt} fill sizes="6rem" className="object-contain" />
+              <Image
+                src={m.src}
+                alt={m.alt}
+                fill
+                sizes={wall ? '9rem' : '6rem'}
+                className="object-contain"
+              />
             </button>
           </li>
         ))}

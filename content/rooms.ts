@@ -63,15 +63,22 @@ export const rooms = {
     ],
   },
   floor: {
-    eyebrow: 'The work',
-    heading: 'Seven things I made',
-    lede: 'Four at work, three after hours.',
+    /**
+     * The gallery has no visible heading. It used to open with an eyebrow, a
+     * heading and a count of the pieces, which is three lines telling you that
+     * work is coming instead of showing you the work. The room is a wall of
+     * pieces; the pieces introduce themselves.
+     *
+     * `label` is still the section's accessible name — a landmark with no name
+     * is worse than one with a plain one.
+     */
+    label: 'The work',
     placardHint: 'More about this one',
   },
   desk: {
     eyebrow: 'The desk',
-    heading: 'Everything else',
-    lede: 'The rest of the work — smaller builds, older ones, and whatever is currently half-finished. The after-hours projects are in the library.',
+    heading: 'Also on the go',
+    lede: 'Other recent work, and what’s in progress right now.',
   },
   wayOut: {
     heading: 'Thanks for stopping by.',

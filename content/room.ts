@@ -138,13 +138,14 @@ export const tattooAlt: Record<string, string> = {
 /** Prose for the standalone /room page — the personal side of the site. */
 export const room = {
   intro: {
-    eyebrow: 'The other room',
+    // No eyebrow. "The other room" was a label for a room you are standing in.
     heading: 'Welcome to the library.',
-    lede: 'The rest of the site is what I do for work. This is everything else — the things I build after hours, the things I draw, and what I do when I am not doing either.',
+    lede: 'The rest of the site is what I do for work. This is everything else — the apps I have built, the games I am making, some of my art, and a little of what the rest of my life looks like when I am not building, developing or drawing.',
   },
   projects: {
     heading: 'Built after hours',
-    lede: 'Nobody assigned these. Each one started as a question I wanted the answer to, and building the thing was the fastest way to get it.',
+    // No lede. The shelf is right underneath it and every book says what it is.
+    hint: 'Pull one off the shelf.',
   },
   art: {
     // Not "things I draw": there is paint in here, and ink, and stickers.

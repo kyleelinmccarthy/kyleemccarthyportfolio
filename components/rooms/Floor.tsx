@@ -87,8 +87,8 @@ function FloorPiece({
  */
 function FloorStack() {
   return (
-    <RevealOnActive index={1}>
-      <div className="mt-10 grid gap-x-10 gap-y-16 lg:grid-cols-2">
+    <RevealOnActive>
+      <div className="grid gap-x-10 gap-y-16 lg:grid-cols-2">
         {pieces.map(({ project, study }) => (
           <FloorPiece key={project.slug} project={project} study={study} />
         ))}
@@ -116,7 +116,7 @@ function FloorWall() {
   const current = pieces[active]!
 
   return (
-    <div className="mt-8">
+    <div>
       <div className="relative min-h-[48vh]">
         <AnimatePresence mode="wait">
           <motion.div
@@ -155,12 +155,10 @@ export function FloorRoom() {
 
   return (
     <Room className="mx-auto max-w-6xl">
-      <RevealOnActive>
-        <p className="font-sans text-label uppercase text-accent">{rooms.floor.eyebrow}</p>
-        <h2 className="mt-4 font-serif text-fluid-h2 text-fg">{rooms.floor.heading}</h2>
-        <p className="mt-4 max-w-2xl font-sans leading-relaxed text-fg-muted">{rooms.floor.lede}</p>
-      </RevealOnActive>
-
+      {/* No visible heading: three lines announcing that work is coming, above
+          the work. The name is here for the landmark and for screen readers,
+          and the wall speaks for itself. */}
+      <h2 className="sr-only">{rooms.floor.label}</h2>
       {inPanel ? <FloorWall /> : <FloorStack />}
     </Room>
   )

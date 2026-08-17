@@ -44,7 +44,7 @@ describe('room copy', () => {
     const prose = [
       rooms.steps.welcome,
       rooms.window.entry, ...rooms.window.principles.flatMap((p) => [p.title, p.body]),
-      rooms.floor.lede, rooms.desk.lede, rooms.wayOut.body,
+      rooms.floor.label, rooms.desk.lede, ...rooms.wayOut.body,
     ].join(' ')
     expect(prose).not.toMatch(/\d+\s*(%|\+|x|×)/i)
     expect(prose).not.toMatch(/\b\d{3,}\b/)

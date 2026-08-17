@@ -44,6 +44,16 @@ const config: Config = {
         'note-5': 'rgb(var(--note-5) / <alpha-value>)',
         'note-6': 'rgb(var(--note-6) / <alpha-value>)',
         'note-ink': 'rgb(var(--note-ink) / <alpha-value>)',
+        'book-1': 'rgb(var(--book-1) / <alpha-value>)',
+        'book-2': 'rgb(var(--book-2) / <alpha-value>)',
+        'book-3': 'rgb(var(--book-3) / <alpha-value>)',
+        'book-4': 'rgb(var(--book-4) / <alpha-value>)',
+        'book-5': 'rgb(var(--book-5) / <alpha-value>)',
+        'book-6': 'rgb(var(--book-6) / <alpha-value>)',
+        'book-foil': 'rgb(var(--book-foil) / <alpha-value>)',
+        card: 'rgb(var(--card) / <alpha-value>)',
+        'card-ink': 'rgb(var(--card-ink) / <alpha-value>)',
+        'card-rule': 'rgb(var(--card-rule) / <alpha-value>)',
       },
       fontFamily: {
         // Wired by next/font in app/layout.tsx -> CSS variables

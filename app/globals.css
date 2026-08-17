@@ -39,6 +39,24 @@
   --note-5: 216 148 92;  /* orange */
   --note-6: 168 142 206; /* violet */
   --note-ink: 27 33 28;
+  /* Cloth book bindings for the library's shelf. Deliberately the same in both
+     themes — a book is the same colour whichever room's lights are on — and
+     all dark enough to carry --book-foil at 8:1 or better. */
+  --book-1: 90 42 46;   /* oxblood */
+  --book-2: 46 70 50;   /* forest */
+  --book-3: 43 58 85;   /* navy */
+  --book-4: 107 82 32;  /* ochre */
+  --book-5: 74 47 82;   /* plum */
+  --book-6: 31 74 74;   /* teal */
+  --book-foil: 233 213 189; /* cream, stamped into the spine */
+  /* Index cards, for the library's card-catalogue drawer. Also the same in
+     both themes, and for the same reason as the books: a card is an object
+     being depicted, not a surface. The site's own greens sat too close to the
+     veiled backdrop and the cards read as translucent panels rather than as
+     things lying on a table. --card-ink on --card is 14:1. */
+  --card: 238 231 216;      /* warm off-white stock */
+  --card-ink: 43 43 40;     /* pencil */
+  --card-rule: 150 168 196; /* the printed blue rule */
 }
 
 [data-theme='light'] {

@@ -1,14 +1,21 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { ProjectDetails } from '@/components/ProjectDetails'
-import { RoomSections } from '@/components/room/RoomSections'
+import { ShelfRoom } from '@/components/room/libraryRooms'
+import { Bookshelf } from '@/components/room/Bookshelf'
 import { projects } from '@/content/projects'
+
+const personal = projects.filter((p) => p.isPersonal)
 
 /**
  * Spec §4 splits the roster: /work carries the 8 professional builds, /room
  * carries the 9 personal ones. ProjectDetails used to map the unfiltered list,
  * so all 17 rendered on /work and the 9 personal cards appeared on both pages.
  * These pin the rendered counts, not just the data.
+ *
+ * The library shows its nine as books on a shelf rather than as cards, so the
+ * room side counts spines. The detail is the same content, in the dialog a
+ * spine opens.
  */
 describe('project rosters are split between /work and /room', () => {
   it('renders only the 8 professional projects on /work', () => {
@@ -16,7 +23,7 @@ describe('project rosters are split between /work and /room', () => {
     const cards = container.querySelectorAll('article')
     expect(cards).toHaveLength(8)
 
-    for (const p of projects.filter((x) => x.isPersonal)) {
+    for (const p of personal) {
       expect(
         screen.queryByRole('heading', { name: p.name, level: 3 }),
         `${p.slug} is personal and must not appear on /work`
@@ -24,26 +31,27 @@ describe('project rosters are split between /work and /room', () => {
     }
   })
 
-  it('renders only the 9 personal projects in the room', () => {
-    const { container } = render(<RoomSections />)
-    const cards = container.querySelectorAll('article')
-    expect(cards).toHaveLength(9)
-
+  it('shelves only the 9 personal projects in the library', () => {
+    render(<ShelfRoom />)
+    for (const p of personal) {
+      expect(
+        screen.getByRole('button', { name: p.name }),
+        `${p.slug} should be on the shelf`
+      ).toBeInTheDocument()
+    }
     for (const p of projects.filter((x) => !x.isPersonal)) {
       expect(
-        screen.queryByRole('heading', { name: p.name, level: 3 }),
-        `${p.slug} is professional and must not appear in the room`
+        screen.queryByRole('button', { name: p.name }),
+        `${p.slug} is professional and must not appear in the library`
       ).toBeNull()
     }
   })
 
   it('shows no project on both pages', () => {
     const work = render(<ProjectDetails />).container
-    const names = (root: ParentNode) =>
-      Array.from(root.querySelectorAll('article h3')).map((h) => h.textContent)
-    const workNames = names(work)
-    const roomNames = names(render(<RoomSections />).container)
-    expect(workNames.filter((n) => roomNames.includes(n))).toEqual([])
+    const workNames = Array.from(work.querySelectorAll('article h3')).map((h) => h.textContent)
+    const shelfNames = personal.map((p) => p.name)
+    expect(workNames.filter((n) => shelfNames.includes(n!))).toEqual([])
   })
 })
 
@@ -55,9 +63,9 @@ describe('stack chips', () => {
     for (const tech of hq.stack!) expect(chipText).toContain(tech)
   })
 
-  it('renders the résumé tech chips on a personal card', () => {
-    const { container } = render(<RoomSections />)
+  it('renders the résumé tech chips inside a personal project’s book', () => {
     const kc = projects.find((p) => p.slug === 'kingdoms-and-crowns')!
+    const { container } = render(<Bookshelf projects={[kc]} />)
     const chipText = Array.from(container.querySelectorAll('li')).map((li) => li.textContent)
     for (const tech of kc.stack!) expect(chipText).toContain(tech)
   })

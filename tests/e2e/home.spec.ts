@@ -34,7 +34,9 @@ test('with reduced motion, content is visible immediately (no blank reveals)', a
   // stand-in that's still genuinely several scenes deep — read from content,
   // not hardcoded, because this exact assertion has now broken twice on a
   // copy edit and a test that does that is protecting nothing.
-  await expect(page.getByText(rooms.floor.heading)).toBeVisible()
+  // The gallery has no heading of its own any more — it opens straight onto
+  // the work — so the thing to prove visible is a piece on the wall.
+  await expect(page.getByRole('heading', { name: 'Beacon', level: 3 })).toBeVisible()
   await context.close()
 })
 

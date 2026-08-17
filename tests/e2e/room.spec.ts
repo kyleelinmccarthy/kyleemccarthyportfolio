@@ -44,9 +44,11 @@ test('/work shows the 8 professional builds and /room the 9 personal ones', asyn
   await expect(page.locator('main article')).toHaveCount(8)
   await expect(page.getByRole('heading', { name: 'Kingdoms & Crowns', level: 3 })).toHaveCount(0)
 
+  // The library shelves its nine as books rather than laying them out as
+  // cards, so the count here is spines, not articles.
   await page.goto('/room')
-  await expect(page.locator('main article')).toHaveCount(9)
-  await expect(page.getByRole('heading', { name: '403HQ', level: 3 })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Kingdoms & Crowns' })).toBeVisible()
+  await expect(page.getByRole('button', { name: '403HQ' })).toHaveCount(0)
 })
 
 test('the room renders its sections', async ({ page }) => {
