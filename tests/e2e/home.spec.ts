@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { rooms } from '@/content/rooms'
 
 test('the journey and contact anchors render', async ({ page }) => {
   await page.goto('/')
@@ -30,8 +31,10 @@ test('with reduced motion, content is visible immediately (no blank reveals)', a
   // routine" was the old lead scene's statement — the museum overhaul moved
   // the desk scene (id: 'desk') off LeadScene onto DeskRoom, so that copy no
   // longer renders on the home page at all. The floor room's heading is a
-  // stand-in that's still genuinely several scenes deep.
-  await expect(page.getByText(/Seven things worth walking past/)).toBeVisible()
+  // stand-in that's still genuinely several scenes deep — read from content,
+  // not hardcoded, because this exact assertion has now broken twice on a
+  // copy edit and a test that does that is protecting nothing.
+  await expect(page.getByText(rooms.floor.heading)).toBeVisible()
   await context.close()
 })
 
