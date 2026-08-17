@@ -21,10 +21,10 @@
   --accent: #e9d5bd; /* cream — accent text role; yellow stays a sparing pop */
   --accent-strong: #e9d5bd;
   --rule: #2c2b37;
-  --fill: #ffe676; /* yellow — sparing pop: buttons; ink text for contrast */
+  --fill: #ccc2b8; /* warm taupe — buttons; ink text for contrast, 10.61:1 */
   --fill-fg: #12121c;
-  --decor: #ffe676; /* yellow — background line-work (dark) */
-  /* How much of the misty-forest backdrop shows through. Dark mode can carry
+  --decor: #ccc2b8; /* warm taupe — background line-work (dark) */
+  /* How much of the library backdrop shows through. Dark mode can carry
      more of it: the photo is dark-based, so it reads as depth rather than as
      a picture competing with the copy. */
   --photo-veil: 0.34;
@@ -36,11 +36,11 @@
   --surface-raised: #ffffff;
   --fg: #12121c; /* ink — 13.04:1 */
   --fg-muted: #4a4640; /* muted ink — ~6.6:1 on surface */
-  --accent: #1e3a5f; /* deep navy — ~12:1 on surface; primary accent text/borders/rings/dots */
-  --accent-strong: #1e3a5f;
+  --accent: #2f3b31; /* deep green — 10.75:1 on surface; primary accent text/borders/rings/dots */
+  --accent-strong: #2f3b31;
   --rule: #e2e2e0;
   --fill: #d8b04a; /* gold — all buttons + decorative accents */
-  --fill-fg: #1e3a5f; /* navy text on gold; ~5.6:1 (AA) */
+  --fill-fg: #2f3b31; /* green text on gold; 5.71:1 (AA) */
   --decor: #d8b04a; /* gold — background geometric shapes (light) */
   /* Much fainter on light: a dark photo under dark text destroys contrast, so
      here it is barely more than a texture. */
@@ -91,9 +91,9 @@
     --accent: #e9d5bd; /* cream — accent text role; yellow stays a sparing pop */
     --accent-strong: #e9d5bd;
     --rule: #2c2b37;
-    --fill: #ffe676;
+    --fill: #ccc2b8;
     --fill-fg: #12121c;
-    --decor: #ffe676;
+    --decor: #ccc2b8;
     background-color: var(--surface);
     color: var(--fg);
   }
