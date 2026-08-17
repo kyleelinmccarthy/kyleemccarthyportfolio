@@ -15,7 +15,11 @@ export function WayOutRoom() {
         <h2 className="font-serif text-fluid-hero text-fg">{rooms.wayOut.heading}</h2>
       </RevealOnActive>
       <RevealOnActive index={1}>
-        <p className="mt-6 font-sans text-xl leading-relaxed text-fg-muted">{rooms.wayOut.body}</p>
+        {rooms.wayOut.body.map((line) => (
+          <p key={line} className="mt-6 max-w-2xl font-sans text-xl leading-relaxed text-fg-muted">
+            {line}
+          </p>
+        ))}
       </RevealOnActive>
       <RevealOnActive index={2}>
         <Door />

@@ -8,8 +8,15 @@ import { Room } from './Room'
 import { StickyNote, tiltForIndex } from './StickyNote'
 import { RevealOnActive } from '@/components/journey/sceneActive'
 
-/** Everything not hung on the wall — the overflow, not the exhibition. */
-const onDesk = projects.filter((p) => !FEATURED.includes(p.slug as never))
+/**
+ * The professional work that isn't hung on the wall — the overflow, not the
+ * exhibition.
+ *
+ * Personal builds are excluded on purpose. This room sits between the gallery
+ * and the way out, on the working side of the house; the after-hours projects
+ * have their own room at the back and were being shown twice.
+ */
+const onDesk = projects.filter((p) => !p.isPersonal && !FEATURED.includes(p.slug as never))
 
 /** A desk surface and a lamp pool of accent light. Decorative only. */
 export function DeskSetting() {
@@ -39,7 +46,7 @@ export function DeskSetting() {
  */
 function NoteGrid() {
   return (
-    <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+    <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
       {onDesk.map((p, i) => (
         <li key={p.slug}>
           <StickyNote project={p} tilt={tiltForIndex(i)} index={i} />

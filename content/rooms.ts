@@ -12,17 +12,22 @@ export const rooms = {
      * wrong — the visitor's local hour isn't knowable until we're in their
      * browser, so guessing here would mean a hydration mismatch.
      */
-    welcome: 'Welcome. The door’s open.',
+    welcome: 'Come on in, the door’s open.',
     /**
-     * Swapped in on the client once the local hour is known. `from` is the
-     * first hour of each band; anything before the earliest band wraps round
-     * to the last one, so the small hours get the late-night greeting.
+     * The salutation only, swapped in on the client once the local hour is
+     * known, and set on its own line above the welcome.
+     *
+     * It used to be baked into each greeting as a full sentence, which meant
+     * the same eight words were written out four times and the whole thing
+     * arrived as one line that wrapped wherever the viewport put it. `from` is
+     * the first hour of each band; anything before the earliest band wraps
+     * round to the last one, so the small hours get the late-night greeting.
      */
     greetings: [
-      { from: 5, text: 'Morning. Welcome — the door’s open.' },
-      { from: 12, text: 'Afternoon. Welcome — the door’s open.' },
-      { from: 17, text: 'Evening. Welcome — the door’s open.' },
-      { from: 22, text: 'Up late? So am I. Welcome.' },
+      { from: 5, text: 'Morning.' },
+      { from: 12, text: 'Afternoon.' },
+      { from: 17, text: 'Evening.' },
+      { from: 22, text: 'Up late? So am I.' },
     ],
     // No tagline out here. The front step is a welcome and nothing else; the
     // line that says who she is now greets you inside, as `window.entry`.
@@ -66,11 +71,16 @@ export const rooms = {
   desk: {
     eyebrow: 'The desk',
     heading: 'Everything else',
-    lede: 'Side quests, older things, and whatever is currently half-finished.',
+    lede: 'The rest of the work — smaller builds, older ones, and whatever is currently half-finished. The after-hours projects are in the library.',
   },
   wayOut: {
     heading: 'Thanks for stopping by.',
-    body: 'Come back and see what’s new — there usually is something. And there’s one more room at the back: my personal library.',
+    // Two paragraphs, not one: the invitation to come back and the pointer to
+    // the library are separate thoughts and were running together.
+    body: [
+      'Come back and see what’s new — there usually is something.',
+      'And there’s one more room at the back: my personal library.',
+    ],
     door: {
       /**
        * The visible words on the door at the end of the tour. The aria-label

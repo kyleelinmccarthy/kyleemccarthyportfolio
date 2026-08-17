@@ -139,14 +139,33 @@ function Doorway() {
  * after mount. With JS off the neutral one simply stays, which is why it has
  * to read well on its own rather than being a placeholder.
  */
+/**
+ * Greets by the visitor's local time of day.
+ *
+ * Two lines, always. The salutation sits on its own row and the welcome sits
+ * under it — they are two separate things to say and running them together
+ * gave one long line that wrapped wherever the viewport happened to put it.
+ *
+ * Only the salutation depends on the clock. The welcome renders on the server
+ * and on the first client paint; the visitor's timezone isn't knowable until
+ * we're running in their browser, and guessing would mean a hydration
+ * mismatch. With JS off the welcome simply stands alone, which is why it has
+ * to read as a complete greeting by itself.
+ *
+ * The salutation's row is held open from the first paint (min-h-[1em]) so the
+ * line appearing after mount doesn't shove the door down the screen.
+ */
 function Greeting({ className }: { className?: string }) {
-  // Explicit string: `rooms` is `as const`, so inference would pin this to the
-  // neutral welcome's literal type and reject every real greeting.
-  const [text, setText] = useState<string>(rooms.steps.welcome)
+  const [salutation, setSalutation] = useState('')
   useEffect(() => {
-    setText(greetingForHour(new Date().getHours()))
+    setSalutation(greetingForHour(new Date().getHours()))
   }, [])
-  return <h1 className={className}>{text}</h1>
+  return (
+    <h1 className={className}>
+      <span className="block min-h-[1em]">{salutation}</span>{' '}
+      <span className="block">{rooms.steps.welcome}</span>
+    </h1>
+  )
 }
 
 export function StepsRoom() {

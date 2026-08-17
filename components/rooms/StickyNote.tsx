@@ -57,10 +57,13 @@ function sizeFor(index: number): string {
 /**
  * One project, pinned to the desk. A note with somewhere to send you renders
  * as a real link; one without renders as a plain, non-interactive card —
- * never an anchor with no destination. Lifts on hover and on focus, so the
- * affordance isn't mouse-only. The top-right corner is peeled back a touch —
- * the bit of "underneath" showing through is the desk surface, not the note's
- * own colour — and lifts further when the note itself lifts.
+ * never an anchor with no destination.
+ *
+ * Only the link lifts. The lift and the peeling corner used to be on every
+ * note, which promised a click that most of them could not honour — the
+ * cursor said "this goes somewhere" and then nothing happened. A note that is
+ * just a note now sits still. On the ones that do lift, the affordance is on
+ * hover and on focus both, so it isn't mouse-only.
  */
 export function StickyNote({
   project,
@@ -72,23 +75,40 @@ export function StickyNote({
   index: number
 }) {
   const note = noteFor(index)
-  const className = [
+  const base = [
     'group relative block h-full overflow-hidden rounded-md shadow-md ring-1',
     note.bg,
     note.ring,
-    'transition-transform duration-200 ease-out',
-    'hover:-translate-y-1 hover:shadow-md',
-    'focus-visible:-translate-y-1 focus-visible:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
     sizeFor(index),
+  ]
+  const className = [
+    ...base,
+    ...(project.liveUrl
+      ? [
+          'transition-transform duration-200 ease-out',
+          'hover:-translate-y-1 hover:shadow-md',
+          'focus-visible:-translate-y-1 focus-visible:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
+        ]
+      : []),
   ].join(' ')
   const style = { transform: `rotate(${tilt}deg)` }
 
+  // The peeled corner: the bit of "underneath" showing through is the desk
+  // surface, not the note's own colour. It peels back further on the notes
+  // that lift, and stays put on the ones that don't.
+  const corner = [
+    'pointer-events-none absolute right-0 top-0 h-4 w-4 bg-surface shadow-sm [clip-path:polygon(100%_0,0_0,100%_100%)]',
+    ...(project.liveUrl
+      ? [
+          'transition-all duration-200',
+          'group-hover:h-6 group-hover:w-6 group-focus-visible:h-6 group-focus-visible:w-6',
+        ]
+      : []),
+  ].join(' ')
+
   const body = (
     <>
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute right-0 top-0 h-4 w-4 bg-surface shadow-sm transition-all duration-200 [clip-path:polygon(100%_0,0_0,100%_100%)] group-hover:h-6 group-hover:w-6 group-focus-visible:h-6 group-focus-visible:w-6"
-      />
+      <span aria-hidden="true" className={corner} />
       <p className="relative font-serif text-lg leading-tight text-note-ink">{project.name}</p>
       <p className="relative mt-1 font-sans text-xs text-note-ink/70">{project.descriptor}</p>
       <p className="relative mt-2 font-sans text-sm leading-snug text-note-ink/70">{project.headline}</p>

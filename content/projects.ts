@@ -44,6 +44,12 @@ export const projects: Project[] = [
       'Replaced the vendor licence outright. Now running on 15+ sites at no additional cost, and the economics improve with every property added.',
     embedNote:
       'AURA is embedded rather than standalone. See it running on 403HQ or the NBS website.',
+    media: {
+      hero: {
+        src: '/media/aura/hero.jpg',
+        alt: 'The AURA accessibility panel open on the National Benefit Services site, with the ADHD Friendly Profile switched on',
+      },
+    },
     stack: ['TypeScript', 'WCAG 2.1 AA'],
     isPersonal: false,
   },

@@ -7,20 +7,32 @@ export type BackdropVariant =
   | 'endoftour'
   | 'library'
 
-const SOURCES: Record<BackdropVariant, string> = {
-  // Outside: gothic brick, gables, a turret. Cropped to the upper facade so the
-  // photo's own porch does not compete with the door the room draws.
-  exterior: '/media/backdrop/exterior.jpg',
+interface Source {
+  src: string
+  /** background-size. Anything but `cover` is a deliberate crop. */
+  size?: string
+  /** background-position. Which part of the photograph survives that crop. */
+  position?: string
+}
+
+const SOURCES: Record<BackdropVariant, Source> = {
+  // Outside: gothic brick, gables, a turret.
+  //
+  // Zoomed and anchored to the bottom of the frame on purpose. At `cover` the
+  // photo's upper storey sat right where the room draws its door, so the door
+  // read as hung on a window two floors up. Pushing the image down brings the
+  // ground floor's brickwork up behind it, which is where a door belongs.
+  exterior: { src: '/media/backdrop/exterior.jpg', size: 'auto 165%', position: '50% 100%' },
   // Just inside: a dark entry hall, gallery wall, stairs.
-  entrance: '/media/backdrop/entrance.jpg',
+  entrance: { src: '/media/backdrop/entrance.jpg' },
   // The gallery: panelled walls hung with framed work.
-  showcase: '/media/backdrop/showcase.jpg',
+  showcase: { src: '/media/backdrop/showcase.jpg' },
   // The study: a wooden desk, a green wingback, bookshelves.
-  desk: '/media/backdrop/desk.jpg',
+  desk: { src: '/media/backdrop/desk.jpg' },
   // The way out: a glass conservatory with a woodstove.
-  endoftour: '/media/backdrop/endoftour.jpg',
+  endoftour: { src: '/media/backdrop/endoftour.jpg' },
   // The personal library at the back.
-  library: '/media/backdrop/library.jpg',
+  library: { src: '/media/backdrop/library.jpg' },
 }
 
 /**
@@ -64,9 +76,11 @@ export function Backdrop({
       className={`pointer-events-none inset-0 z-0 overflow-hidden ${anchor === 'fixed' ? 'fixed' : 'absolute'}`}
     >
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-no-repeat"
         style={{
-          backgroundImage: `url(${SOURCES[variant]})`,
+          backgroundImage: `url(${SOURCES[variant].src})`,
+          backgroundSize: SOURCES[variant].size ?? 'cover',
+          backgroundPosition: SOURCES[variant].position ?? 'center',
           opacity: 'var(--photo-veil)',
         }}
       />

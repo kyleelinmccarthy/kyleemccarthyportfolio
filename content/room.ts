@@ -139,7 +139,7 @@ export const tattooAlt: Record<string, string> = {
 export const room = {
   intro: {
     eyebrow: 'The other room',
-    heading: 'You found the library.',
+    heading: 'Welcome to the library.',
     lede: 'The rest of the site is what I do for work. This is everything else — the things I build after hours, the things I draw, and what I do when I am not doing either.',
   },
   projects: {
@@ -158,17 +158,17 @@ export const room = {
   offTheClock: {
     heading: 'Off the clock',
     items: [
-      { title: 'Reading and writing', body: 'Constantly reading, and always turning over story ideas. I am writing books.' },
+      { title: 'Reading and writing', body: 'I read constantly, and I love to write. There’s a book in progress right now and a whole queue of other ideas I can’t wait to get to.' },
       { title: 'Homeschooling', body: 'I homeschool my kids, which is where Kingdoms & Crowns came from.' },
       { title: 'Outside', body: 'Paddleboarding and hiking.' },
       { title: 'A lot of pets', body: 'Cats, dogs and fish.' },
       { title: 'Games', body: 'Video games, board games, and D&D.' },
-      { title: 'Anime', body: 'A long-standing habit, and it shows up in the art.' },
-      { title: 'Concerts', body: 'With my husband and my daughter, and my son when he feels like coming.' },
+      { title: 'Anime', body: 'I’ve watched it for years, and it turns up in my art whether I plan it or not.' },
+      { title: 'Concerts', body: 'With my husband and my daughter — and my son whenever he wants to join in.' },
     ],
   },
   sayHi: {
     heading: 'Say hi',
-    body: 'Games, art, books, tabletop, or systems. If any of this sounds fun, I want to hear from you — the mailbox works from in here too.',
+    body: 'Games, art, books, tabletop, or anything tech. If any of this sounds fun, I want to hear from you — the mailbox works from in here too.',
   },
 } as const

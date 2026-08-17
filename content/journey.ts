@@ -3,22 +3,22 @@
  * static sections. Directions choreograph the camera (see Journey.tsx).
  */
 export const journey = {
+  // /about. Written as Kylee talking about herself, not as a résumé with
+  // paragraphs around it — the facts and figures are all still here, but they
+  // arrive as things she is telling you rather than as achievements listed.
   about: {
-    eyebrow: 'Get to know',
-    // Third and last block on the first screen. It used to restate the
-    // headline's origin story and the lead paragraph's hands-on claim; now it
-    // does the one job neither of those can — telling you what this site is and
-    // what the door at the end of the scroll is for.
-    lede: 'The professional work is on the work page. Everything else is through the door at the end.',
-    // `heading` lived here unread — AboutScene renders the eyebrow, the logo,
-    // hero.headline and hero.why, and nothing else. The career arc and degrees
-    // live in content/timeline.ts and render on /about.
+    eyebrow: 'Hello',
+    lede: 'The work itself is on the portfolio page, and the personal side is in the library. This is the background behind both.',
+    arc: {
+      heading: 'How I ended up here',
+      lede: 'I did not set out to be an engineer. I started in benefits administration, got annoyed at how much of the job was copying things between systems, and taught myself enough to stop doing that by hand. The automation made my own role redundant, which turned out to be the best thing that could have happened.',
+    },
   },
   lead: {
-    eyebrow: 'How I lead',
-    statement: 'I build the systems that make great work routine.',
+    eyebrow: 'The day job',
+    statement: 'Most of what I do now is clear the way for twenty other people.',
     context:
-      'Delivery is five times what it was, with a smaller team each year, and help desk volume is at its lowest recorded level while satisfaction is at its highest. The numbers are my team’s work. The operating model behind them is what I changed.',
+      'My team delivers about five times what it used to, and there are fewer of us every year. Help desk volume is the lowest we have on record and satisfaction is the highest. Those numbers are the team’s — what I changed is how the work moves through us.',
     figures: [
       { value: '200', label: 'backlog items my team delivers a year, up from about 40' },
       { value: '20', label: 'people in the department I lead' },
@@ -26,13 +26,12 @@ export const journey = {
     ],
   },
   build: {
-    eyebrow: 'What I build',
-    // Was "And I stay close enough to build it myself" — the fourth restatement
-    // of the hands-on claim the landing scene now makes once, properly. This
-    // instead sets up the paragraph underneath it.
-    statement: 'Six of these platforms run AI in production, under audit.',
+    eyebrow: 'Still building',
+    // Directing a department has not stopped her writing the code — that is the
+    // point of this block, and the figures underneath are the evidence.
+    statement: 'I never stopped building the things I ask other people to build.',
     context:
-      'Six systems run AI under audit across three providers. Documents are read as native PDF and image blocks and returned through forced tool-use against a JSON schema, so results are structured rather than parsed out of prose. Every extraction carries a confidence score, and thresholds decide whether work posts, queues for a human, or is rejected.',
+      'Six of these run AI in production, and every one of them has to survive an audit. Documents go in as native PDF and image blocks and come back through forced tool-use against a JSON schema, so what I get is structured data rather than prose I have to pick apart. Every extraction carries a confidence score, and the score decides whether the work posts, waits for a person, or gets thrown out. I like that part — the whole trick is deciding what the machine is allowed to be sure about.',
     figures: [
       { value: '11 of 14', label: 'enterprise platforms I built myself' },
       { value: '15+', label: 'sites running AURA at no extra cost' },

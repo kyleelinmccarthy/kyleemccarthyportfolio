@@ -39,30 +39,39 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* The résumé-grounded arc from content/timeline.ts — dated roles with
-          what changed at each, rather than four undated role labels. */}
-      <ol className="mx-auto mt-12 grid max-w-xl gap-8 sm:max-w-none sm:grid-cols-2">
-        {milestones.map((m) => (
-          <li key={m.marker} className="border-l-2 border-accent pl-5">
-            <p className="font-sans text-label uppercase text-accent">{m.marker}</p>
-            <h2 className="mt-1 font-serif text-2xl leading-tight text-fg">{m.title}</h2>
-            <p className="mt-2 font-sans leading-relaxed text-fg-muted">{m.detail}</p>
-          </li>
-        ))}
-      </ol>
-      <p className="mt-10 font-sans text-sm text-fg-muted">
-        <span className="font-semibold uppercase tracking-wide text-accent">Education</span>
-        <span className="mx-2 text-rule" aria-hidden="true">
-          |
-        </span>
-        {education.join(' · ')}
-      </p>
+      {/* The career arc from content/timeline.ts. It used to open cold — five
+          dated roles in a two-column grid, which is a CV whatever you set it
+          in. The lede in front of it is Kylee saying how she got from the
+          first one to the last, so the dates read as a story with receipts
+          rather than as the story itself. */}
+      <div className="mt-20 border-t border-rule pt-12">
+        <h2 className="font-serif text-fluid-h2 text-fg">{journey.about.arc.heading}</h2>
+        <p className="mt-4 max-w-2xl font-sans text-lg leading-relaxed text-fg-muted">
+          {journey.about.arc.lede}
+        </p>
+        <ol className="mx-auto mt-10 grid max-w-xl gap-8 sm:max-w-none sm:grid-cols-2">
+          {milestones.map((m) => (
+            <li key={m.marker} className="border-l-2 border-accent pl-5">
+              <p className="font-sans text-label uppercase text-accent">{m.marker}</p>
+              <h3 className="mt-1 font-serif text-2xl leading-tight text-fg">{m.title}</h3>
+              <p className="mt-2 font-sans leading-relaxed text-fg-muted">{m.detail}</p>
+            </li>
+          ))}
+        </ol>
+        <p className="mt-10 font-sans text-sm text-fg-muted">
+          <span className="font-semibold uppercase tracking-wide text-accent">Education</span>
+          <span className="mx-2 text-rule" aria-hidden="true">
+            |
+          </span>
+          {education.join(' · ')}
+        </p>
+      </div>
 
       {/* Everything résumé-shaped lives on this one page now. /leadership was
           a second home for half of it and a fifth footer link nobody needed;
           its content is folded in below rather than orphaned behind a dead
           route. */}
-      <div className="mt-16 border-t border-rule pt-12">
+      <div className="mt-20 border-t border-rule pt-12">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
           <div>
             <p className="font-sans text-label uppercase text-accent">{journey.lead.eyebrow}</p>
@@ -80,7 +89,7 @@ export default function AboutPage() {
 
       {/* The delivery figures that used to sit on /work — moved here per the
           museum overhaul: no metric in the building itself. */}
-      <div className="mt-16 border-t border-rule pt-12">
+      <div className="mt-20 border-t border-rule pt-12">
         <p className="font-sans text-label uppercase text-accent">{journey.build.eyebrow}</p>
         <h2 className="mt-4 max-w-2xl font-serif text-fluid-h2 text-fg">{journey.build.statement}</h2>
         <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)]">
