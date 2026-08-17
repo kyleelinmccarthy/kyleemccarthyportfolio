@@ -112,3 +112,24 @@ test('the door shuts again when you scroll back up', async ({ page }) => {
     .poll(slabTransform, { timeout: 5000, message: 'door should shut again on scroll back' })
     .toBe(shut)
 })
+
+test('the door has a door’s proportions, not the viewport’s', async ({ page }) => {
+  // Width used to come from vw and height from vh, so the ratio between them
+  // changed with the window and came out square on a wide-ish screen. Deriving
+  // width from height fixes it; this pins that it stays fixed.
+  for (const [w, h] of [
+    [1141, 885],
+    [1440, 900],
+    [1280, 1400],
+  ] as const) {
+    await page.setViewportSize({ width: w, height: h })
+    await page.goto('/')
+    await page.waitForTimeout(900)
+    const ratio = await page.evaluate(() => {
+      const r = document.querySelector('[style*="perspective"]')!.getBoundingClientRect()
+      return r.height / r.width
+    })
+    expect(ratio, `at ${w}x${h} the door is ${ratio.toFixed(2)}:1 tall`).toBeGreaterThan(2)
+    expect(ratio, `at ${w}x${h} the door is ${ratio.toFixed(2)}:1 tall`).toBeLessThan(2.6)
+  }
+})

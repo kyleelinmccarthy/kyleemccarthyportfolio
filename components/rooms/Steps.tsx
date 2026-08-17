@@ -86,7 +86,7 @@ function Doorway() {
       }
     >
       <div
-        className="pointer-events-auto relative h-[22vh] min-h-[130px] w-[15vw] min-w-[110px] rounded-t-[8rem] bg-surface ring-1 ring-fg/35 shadow-2xl shadow-black/40"
+        className="pointer-events-auto relative aspect-[1/2.3] h-[32vh] min-h-[210px] max-h-[380px] rounded-t-[8rem] bg-surface ring-1 ring-fg/35 shadow-2xl shadow-black/40"
         style={{ perspective: '900px' }}
         onMouseEnter={() => {
           if (!reduce) animate(swingFromHover, -52, { duration: 0.6, ease: [0.16, 1, 0.3, 1] })
@@ -119,7 +119,7 @@ function Doorway() {
           key={i}
           className="block border-t border-fg/45 bg-surface"
           style={{
-            width: `${110 + i * 46}px`,
+            width: `${96 + i * 44}px`,
             height: '1.5vh',
             minHeight: '9px',
             opacity: 0.72 + i * 0.07,
