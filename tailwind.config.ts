@@ -26,16 +26,16 @@ const config: Config = {
           300: '#D87F63', // derived — dark-mode accent TEXT (6.32:1 on blackberry)
         },
         // Semantic, theme-aware (resolved in globals.css)
-        surface: 'var(--surface)',
-        'surface-raised': 'var(--surface-raised)',
-        fg: 'var(--fg)',
-        'fg-muted': 'var(--fg-muted)',
-        accent: 'var(--accent)',
-        'accent-strong': 'var(--accent-strong)',
-        rule: 'var(--rule)',
-        fill: 'var(--fill)',
-        'fill-fg': 'var(--fill-fg)',
-        decor: 'var(--decor)',
+        surface: 'rgb(var(--surface) / <alpha-value>)',
+        'surface-raised': 'rgb(var(--surface-raised) / <alpha-value>)',
+        fg: 'rgb(var(--fg) / <alpha-value>)',
+        'fg-muted': 'rgb(var(--fg-muted) / <alpha-value>)',
+        accent: 'rgb(var(--accent) / <alpha-value>)',
+        'accent-strong': 'rgb(var(--accent-strong) / <alpha-value>)',
+        rule: 'rgb(var(--rule) / <alpha-value>)',
+        fill: 'rgb(var(--fill) / <alpha-value>)',
+        'fill-fg': 'rgb(var(--fill-fg) / <alpha-value>)',
+        decor: 'rgb(var(--decor) / <alpha-value>)',
       },
       fontFamily: {
         // Wired by next/font in app/layout.tsx -> CSS variables
@@ -56,7 +56,7 @@ const config: Config = {
         prose: '68ch',
       },
       ringColor: {
-        focus: 'var(--accent)',
+        focus: 'rgb(var(--accent) / <alpha-value>)',
       },
       transitionTimingFunction: {
         out: 'cubic-bezier(0.16, 1, 0.3, 1)',
