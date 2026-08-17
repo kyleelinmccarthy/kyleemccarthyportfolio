@@ -39,7 +39,7 @@ describe('featured work', () => {
 
 describe('room copy', () => {
   it('keeps statistics out of the building', () => {
-    // Figures live on /about and /leadership. A room that quotes a delivery
+    // Figures live on /about. A room that quotes a delivery
     // number has slipped back into being a résumé.
     const prose = [
       rooms.steps.welcome,

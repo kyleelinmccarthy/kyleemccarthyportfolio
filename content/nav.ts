@@ -6,5 +6,5 @@ import type { NavItem } from './types'
 // "Send a letter" matches the mailbox it lands on.
 export const navItems: NavItem[] = [
   { label: 'Portfolio — plain view', href: '/work' },
-  { label: 'Send a letter', href: '/#contact' },
+  { label: 'Send me a letter', href: '/#contact' },
 ]

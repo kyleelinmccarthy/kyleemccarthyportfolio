@@ -7,7 +7,7 @@ import { RevealOnActive, useSceneActive } from '@/components/journey/sceneActive
 
 /**
  * A single stat: value counts up when the block enters view. Used on the
- * standalone /about and /leadership pages, which have no journey scene
+ * standalone /about page, which has no journey scene
  * context, so this drives off a reliable block-level in-view trigger rather
  * than CountUp's own (flakier, inline-span) observer.
  */

@@ -3,6 +3,7 @@ import { SectionPage } from '@/components/SectionPage'
 import { NameLogo } from '@/components/primitives/NameLogo'
 import { Portrait } from '@/components/media/Portrait'
 import { Figure } from '@/components/primitives/Figure'
+import { GrowthBars } from '@/components/sections/GrowthBars'
 import { RevealOnActive } from '@/components/journey/sceneActive'
 import { hero } from '@/content/hero'
 import { journey } from '@/content/journey'
@@ -56,6 +57,26 @@ export default function AboutPage() {
         </span>
         {education.join(' · ')}
       </p>
+
+      {/* Everything résumé-shaped lives on this one page now. /leadership was
+          a second home for half of it and a fifth footer link nobody needed;
+          its content is folded in below rather than orphaned behind a dead
+          route. */}
+      <div className="mt-16 border-t border-rule pt-12">
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+          <div>
+            <p className="font-sans text-label uppercase text-accent">{journey.lead.eyebrow}</p>
+            <h2 className="mt-4 max-w-xl font-serif text-fluid-h2 text-fg">{journey.lead.statement}</h2>
+            <p className="mt-5 max-w-xl font-sans leading-relaxed text-fg-muted">{journey.lead.context}</p>
+            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
+              {journey.lead.figures.map((f, i) => (
+                <Figure key={f.label} value={f.value} label={f.label} index={i} />
+              ))}
+            </div>
+          </div>
+          <GrowthBars />
+        </div>
+      </div>
 
       {/* The delivery figures that used to sit on /work — moved here per the
           museum overhaul: no metric in the building itself. */}

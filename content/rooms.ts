@@ -3,7 +3,7 @@
  * prose in one place and reviewed without opening a component.
  *
  * No statistics in this file. Delivery figures, headcounts and platform counts
- * belong on /about and /leadership.
+ * belong on /about, which is where everything résumé-shaped lives.
  */
 export const rooms = {
   steps: {
@@ -38,9 +38,9 @@ export const rooms = {
      * exists because something already existed and wasn't good enough.
      */
     entry: 'There’s always a better way, and I go find it.',
-    eyebrow: 'How I think',
+    eyebrow: 'My process',
     heading: 'Three things',
-    lede: 'They turn up in everything else in here.',
+    lede: 'Build it, look at it, throw it out, build it better. That’s most of it.',
     principles: [
       {
         title: 'Keep moving',
@@ -57,10 +57,10 @@ export const rooms = {
     ],
   },
   floor: {
-    eyebrow: 'Selected work',
-    heading: 'Seven things worth walking past',
-    lede: 'Four from the day job, three from after it. Every placard says what went wrong.',
-    placardHint: 'What went wrong',
+    eyebrow: 'The work',
+    heading: 'Seven things I made',
+    lede: 'Four at work, three after hours.',
+    placardHint: 'More about this one',
   },
   desk: {
     eyebrow: 'The desk',
@@ -68,8 +68,8 @@ export const rooms = {
     lede: 'Side quests, older things, and whatever is currently half-finished.',
   },
   wayOut: {
-    heading: 'That’s the tour.',
-    body: 'There’s another room, if you want to know what I’m like when I’m not working.',
+    heading: 'Thanks for stopping by.',
+    body: 'Come back and see what’s new — there usually is something. And there’s one more room at the back: my personal library, for the things I make when nobody’s paying me to.',
     mailbox: {
       label: 'Send me a letter',
       hint: 'It goes straight to my inbox and I reply myself.',

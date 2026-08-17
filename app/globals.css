@@ -14,15 +14,15 @@
 :root,
 [data-theme='dark'] {
   color-scheme: dark;
-  --surface: #12121c; /* blackberry */
-  --surface-raised: #1c1b27;
-  --fg: #e9d5bd; /* cream — 13.04:1 */
-  --fg-muted: #c2b29a; /* muted cream — ~9:1 on blackberry */
-  --accent: #e9d5bd; /* cream — accent text role; yellow stays a sparing pop */
+  --surface: #1b211c; /* green-black, derived from #2f3b31 */
+  --surface-raised: #2f3b31; /* the green itself — cards and raised panels */
+  --fg: #e9d5bd; /* cream — 11.49:1 on surface */
+  --fg-muted: #c2b29a; /* muted cream — 7.91:1 on surface */
+  --accent: #e9d5bd; /* cream — accent text role */
   --accent-strong: #e9d5bd;
-  --rule: #2c2b37;
+  --rule: #3f4d41; /* green rule, visible against both greens */
   --fill: #ccc2b8; /* warm taupe — buttons; ink text for contrast, 10.61:1 */
-  --fill-fg: #12121c;
+  --fill-fg: #1b211c;
   --decor: #ccc2b8; /* warm taupe — background line-work (dark) */
   /* How much of the library backdrop shows through. Dark mode can carry
      more of it: the photo is dark-based, so it reads as depth rather than as
@@ -84,15 +84,15 @@
    * text-fg / text-accent stay AA-correct on blackberry regardless of theme.
    */
   .section-dark {
-    --surface: #12121c;
-    --surface-raised: #1c1b27;
+    --surface: #1b211c;
+    --surface-raised: #2f3b31;
     --fg: #e9d5bd;
     --fg-muted: #c2b29a;
-    --accent: #e9d5bd; /* cream — accent text role; yellow stays a sparing pop */
+    --accent: #e9d5bd;
     --accent-strong: #e9d5bd;
-    --rule: #2c2b37;
+    --rule: #3f4d41;
     --fill: #ccc2b8;
-    --fill-fg: #12121c;
+    --fill-fg: #1b211c;
     --decor: #ccc2b8;
     background-color: var(--surface);
     color: var(--fg);

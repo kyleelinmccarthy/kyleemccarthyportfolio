@@ -18,15 +18,14 @@ export const contact = {
 export const footer = {
   nav: [
     { label: 'Start over', href: '/' },
-    { label: 'Send a letter', href: '/#contact' },
+    { label: 'Send me a letter', href: '/#contact' },
   ],
   // Standalone, directly-linkable pages for each journey scene.
   pages: [
     { label: 'About', href: '/about' },
-    { label: 'How I lead', href: '/leadership' },
     { label: 'Portfolio — plain view', href: '/work' },
-    { label: 'Send a letter', href: '/connect' },
-    { label: 'The other room', href: '/room' },
+    { label: 'Send me a letter', href: '/connect' },
+    { label: 'My personal library', href: '/room' },
   ],
   copyright: '© 2026 Kylee McCarthy, MS · Saratoga Springs, UT',
   tagline: 'Every detail designed and built on purpose.',

@@ -56,7 +56,7 @@ test('a placard is closed until its summary is activated', async ({ browser }) =
   const placard = page.locator('details').first()
   const summary = placard.locator('summary')
   const threwAway = placard.locator('dd').nth(1)
-  await expect(summary).toHaveText(/what went wrong/i)
+  await expect(summary).toHaveText(new RegExp(rooms.floor.placardHint, 'i'))
   await expect(threwAway).toBeHidden()
   await summary.click()
   await expect(threwAway).toBeVisible()
