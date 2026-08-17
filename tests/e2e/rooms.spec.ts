@@ -97,15 +97,18 @@ test('the door shuts again when you scroll back up', async ({ page }) => {
     })
 
   const shut = await slabTransform()
-  await page.evaluate(() => window.scrollTo(0, window.innerHeight * 0.9))
-  await page.waitForTimeout(700)
-  const open = await slabTransform()
-  await page.evaluate(() => window.scrollTo(0, 0))
-  await page.waitForTimeout(700)
-  const shutAgain = await slabTransform()
 
-  // It used to open once on mount and stay open, so the entrance only ever
-  // played forwards. Scrolling back must undo it.
-  expect(open).not.toBe(shut)
-  expect(shutAgain).toBe(shut)
+  // Poll rather than sleeping a fixed 700ms. The swing is scroll-linked and
+  // settles a frame or two after the scroll, and under parallel workers that
+  // took longer than the sleep allowed — the test failed in a full run and
+  // passed three times out of three on its own, which is a flake, not a bug.
+  await page.evaluate(() => window.scrollTo(0, window.innerHeight * 0.9))
+  await expect
+    .poll(slabTransform, { timeout: 5000, message: 'door should swing open on scroll' })
+    .not.toBe(shut)
+
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await expect
+    .poll(slabTransform, { timeout: 5000, message: 'door should shut again on scroll back' })
+    .toBe(shut)
 })
