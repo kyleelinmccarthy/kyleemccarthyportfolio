@@ -139,12 +139,12 @@ export const tattooAlt: Record<string, string> = {
 export const room = {
   intro: {
     eyebrow: 'The other room',
-    heading: 'Come in.',
+    heading: 'You found the library.',
     lede: 'The rest of the site is what I do for work. This is everything else — the things I build after hours, the things I draw, and what I do when I am not doing either.',
   },
   projects: {
     heading: 'Built after hours',
-    lede: 'None of these were assigned. Each one started because something was annoying me or because I wanted to find out if I could.',
+    lede: 'Nobody assigned these. Each one started as a question I wanted the answer to, and building the thing was the fastest way to get it.',
   },
   art: {
     heading: 'Things I draw',
@@ -167,7 +167,7 @@ export const room = {
     ],
   },
   sayHi: {
-    heading: 'Come say hi',
-    body: 'Games, art, books, tabletop, or systems. If any of this sounds fun, I want to hear from you.',
+    heading: 'Say hi',
+    body: 'Games, art, books, tabletop, or systems. If any of this sounds fun, I want to hear from you — the mailbox works from in here too.',
   },
 } as const

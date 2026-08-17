@@ -25,6 +25,16 @@ export interface Scene {
   setting?: ReactNode
   /** Which side of the front door this room is on. Defaults to inside. */
   backdrop?: BackdropVariant
+  /**
+   * How much of the scroll track this room claims, relative to the others.
+   * Defaults to 1.
+   *
+   * Rooms used to share the track equally, which meant a room that pages
+   * through seven pieces had exactly as much scrolling as one that says a
+   * single sentence — so paging raced and read as the page skipping to the
+   * next section instead of moving through the work.
+   */
+  weight?: number
 }
 
 /**
@@ -67,14 +77,25 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
   }, [reduce])
 
   const cells = layout(scenes)
-  const seg = n > 1 ? 1 / n : 1
+
+  // Each room's slice of the track, weighted. `starts[i]`/`spans[i]` are
+  // fractions of total scroll progress, so a heavier room simply owns more of
+  // it and every keyframe below is expressed against its own slice.
+  const weights = scenes.map((s) => s.weight ?? 1)
+  const totalWeight = weights.reduce((a, b) => a + b, 0)
+  const spans = weights.map((w) => w / totalWeight)
+  const starts: number[] = []
+  spans.reduce((acc, span) => {
+    starts.push(acc)
+    return acc + span
+  }, 0)
 
   // Camera keyframes: hold at each cell (dwell), then move to the next.
   const ins: number[] = []
   const xs: number[] = []
   const ys: number[] = []
   cells.forEach((c, i) => {
-    ins.push(i * seg, i * seg + holdFor(i) * seg)
+    ins.push(starts[i]!, starts[i]! + holdFor(i) * spans[i]!)
     xs.push(-c.x * 100, -c.x * 100)
     ys.push(-c.y * 100, -c.y * 100)
   })
@@ -90,7 +111,11 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
   // or the active flag won't line up with the scene on screen — which also
   // breaks re-triggering the scene's animations when you scroll back to it.
   useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    setActive(Math.min(n - 1, Math.max(0, Math.floor(v * n))))
+    // Which slice v falls in. Uniform 1/n arithmetic would put the active flag
+    // on the wrong room the moment any room is weighted.
+    let i = 0
+    while (i < n - 1 && v >= starts[i + 1]!) i += 1
+    setActive(i)
   })
 
   // Fallback: stacked full-height sections (also the SSR / no-JS output).
@@ -110,7 +135,7 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
     <section
       ref={ref}
       id="top"
-      style={{ height: `${n * VH_PER_SCENE}vh` }}
+      style={{ height: `${totalWeight * VH_PER_SCENE}vh` }}
       aria-label="Scroll journey"
       className="relative bg-surface"
     >
@@ -126,12 +151,14 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
               zoom={cells[i]!.zoom}
               setting={s.setting}
               backdrop={s.backdrop}
-              // Panel i starts arriving when panel i-1 stops dwelling — so this
-              // reads the *previous* scene's hold, which differs for scene 0.
-              arriveStart={(i - 1 + holdFor(i - 1)) * seg}
-              arriveEnd={i * seg}
-              segStart={i * seg}
-              segEnd={(i + 1) * seg}
+              // Panel i starts arriving when panel i-1 stops dwelling, so this
+              // reads the previous room's slice, not this one's.
+              arriveStart={
+                i === 0 ? -spans[0]! : starts[i - 1]! + holdFor(i - 1) * spans[i - 1]!
+              }
+              arriveEnd={starts[i]!}
+              segStart={starts[i]!}
+              segEnd={starts[i]! + spans[i]!}
               progress={scrollYProgress}
               reduce={!!reduce}
             >

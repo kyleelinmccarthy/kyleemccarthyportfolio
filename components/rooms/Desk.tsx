@@ -22,7 +22,10 @@ for (let i = 0; i < onDesk.length; i += PAGE_SIZE) pages.push(onDesk.slice(i, i 
 export function DeskSetting() {
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div className="absolute inset-x-0 bottom-0 h-[58%] bg-surface-raised opacity-60" />
+      {/* The desk surface the notes sit on. A flat slab with a hard top edge
+          used to be fine when the room behind it was one colour; against the
+          study photograph it cut the room in half, so it fades in instead. */}
+      <div className="absolute inset-x-0 bottom-0 h-[62%] bg-gradient-to-b from-transparent via-surface-raised/40 to-surface-raised/70" />
       <div className="absolute left-1/2 top-[6%] h-[58vh] w-[46vw] min-w-[280px] -translate-x-1/2 rounded-[45%] bg-accent opacity-[0.12] blur-3xl" />
     </div>
   )

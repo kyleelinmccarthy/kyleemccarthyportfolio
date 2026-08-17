@@ -12,17 +12,17 @@ export const rooms = {
      * wrong — the visitor's local hour isn't knowable until we're in their
      * browser, so guessing here would mean a hydration mismatch.
      */
-    welcome: 'Come on in — the door’s open.',
+    welcome: 'Welcome. The door’s open.',
     /**
      * Swapped in on the client once the local hour is known. `from` is the
      * first hour of each band; anything before the earliest band wraps round
      * to the last one, so the small hours get the late-night greeting.
      */
     greetings: [
-      { from: 5, text: 'Morning. Come on in — the door’s open.' },
-      { from: 12, text: 'Afternoon. Come on in — the door’s open.' },
-      { from: 17, text: 'Evening. The door’s open, come on in.' },
-      { from: 22, text: 'Up late? So am I. Come on in.' },
+      { from: 5, text: 'Morning. Welcome — the door’s open.' },
+      { from: 12, text: 'Afternoon. Welcome — the door’s open.' },
+      { from: 17, text: 'Evening. Welcome — the door’s open.' },
+      { from: 22, text: 'Up late? So am I. Welcome.' },
     ],
     // No tagline out here. The front step is a welcome and nothing else; the
     // line that says who she is now greets you inside, as `window.entry`.
@@ -69,7 +69,16 @@ export const rooms = {
   },
   wayOut: {
     heading: 'Thanks for stopping by.',
-    body: 'Come back and see what’s new — there usually is something. And there’s one more room at the back: my personal library, for the things I make when nobody’s paying me to.',
+    body: 'Come back and see what’s new — there usually is something. And there’s one more room at the back: my personal library.',
+    door: {
+      /**
+       * The visible words on the door at the end of the tour. The aria-label
+       * has to start with these — WCAG 2.5.3, so someone driving by voice can
+       * say what they can read.
+       */
+      label: 'Step into the library',
+      description: 'the personal side of the site',
+    },
     mailbox: {
       label: 'Send me a letter',
       hint: 'It goes straight to my inbox and I reply myself.',

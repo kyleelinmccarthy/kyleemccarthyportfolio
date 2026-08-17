@@ -17,8 +17,11 @@ describe('The Steps', () => {
 
   it('falls back to a greeting that reads fine with no JS', () => {
     // The neutral welcome is what the server sends and what a no-JS visitor
-    // keeps. It has to stand on its own, not read as a placeholder.
-    expect(rooms.steps.welcome).toMatch(/come on in/i)
+    // keeps. It has to stand on its own, not read as a placeholder or as a
+    // half-sentence waiting for a time of day to be prepended.
+    expect(rooms.steps.welcome).not.toMatch(/^(morning|afternoon|evening)/i)
+    expect(rooms.steps.welcome.length).toBeGreaterThan(8)
+    expect(rooms.steps.welcome).toMatch(/[.!?]$/)
   })
 
   it('puts no statistic on the front door', () => {

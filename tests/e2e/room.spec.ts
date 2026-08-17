@@ -1,8 +1,13 @@
 import { test, expect } from '@playwright/test'
+import { rooms } from '@/content/rooms'
+
+// Read the door's words from content. Pinning them here meant every reword
+// broke three tests that were never about the wording.
+const doorName = new RegExp(rooms.wayOut.door.label, 'i')
 
 test('the door is a real link and reaches the room', async ({ page }) => {
   await page.goto('/')
-  const door = page.getByRole('link', { name: /another room/i })
+  const door = page.getByRole('link', { name: doorName })
   await expect(door).toHaveAttribute('href', '/room')
 })
 
@@ -11,19 +16,19 @@ test('the door is the last beat of the home scroll only, not part of /connect', 
   // render journey.talk's copy, but only WayOutRoom includes the door (spec
   // §5) — on /connect it would land mid-page between the copy and the form.
   await page.goto('/')
-  await expect(page.getByRole('link', { name: /another room/i })).toHaveCount(1)
+  await expect(page.getByRole('link', { name: doorName })).toHaveCount(1)
 
   await page.goto('/connect')
   // Proxy for "the talk copy did render here" — so the assertion below proves
   // the door is absent, not merely that the whole page failed to render.
   await expect(page.getByRole('heading', { name: /go poke around/i })).toBeVisible()
-  await expect(page.getByRole('link', { name: /another room/i })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: doorName })).toHaveCount(0)
 })
 
 test('the door’s accessible name contains its visible text (WCAG 2.5.3)', async ({ page }) => {
   await page.goto('/')
-  const door = page.getByRole('link', { name: /another room/i })
-  const visible = 'there is another room'
+  const door = page.getByRole('link', { name: doorName })
+  const visible = rooms.wayOut.door.label.toLowerCase()
   const accessible = ((await door.getAttribute('aria-label')) ?? '').toLowerCase()
   // Voice control activates by the label the user can read. axe cannot catch
   // this — label-content-name-mismatch ships disabled/experimental. Compared

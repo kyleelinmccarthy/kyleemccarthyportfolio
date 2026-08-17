@@ -5,6 +5,8 @@ import { groupArt } from '@/lib/artGroups'
 import { ProjectVisual } from '@/components/media/ProjectVisual'
 import { Gallery } from '@/components/media/Gallery'
 import { StackChips } from '@/components/primitives/StackChips'
+import { Mailbox } from '@/components/rooms/Mailbox'
+import { ContactForm } from '@/components/sections/ContactForm'
 
 const personalProjects = projects.filter((p) => p.isPersonal)
 
@@ -122,12 +124,20 @@ export function RoomSections() {
 
       <section
         aria-labelledby="room-sayhi-heading"
-        className="rounded-xl bg-surface-raised p-8 ring-1 ring-rule"
       >
         <h2 id="room-sayhi-heading" className="font-serif text-fluid-h2 text-fg">
           {room.sayHi.heading}
         </h2>
         <p className="mt-3 max-w-2xl font-sans text-fg-muted">{room.sayHi.body}</p>
+        {/* This section used to end here, with nothing to actually say hi with.
+            The mailbox is the site's one way to send a message, so the library
+            gets the real thing rather than a link back to the front of the
+            house. Only one form renders per page, so the ids stay unique. */}
+        <div className="mt-8 max-w-xl">
+          <Mailbox>
+            <ContactForm />
+          </Mailbox>
+        </div>
       </section>
     </div>
   )

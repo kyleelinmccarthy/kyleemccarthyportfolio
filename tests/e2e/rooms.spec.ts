@@ -6,7 +6,10 @@ test('the welcome is readable with animations disabled', async ({ browser }) => 
   const context = await browser.newContext({ reducedMotion: 'reduce' })
   const page = await context.newPage()
   await page.goto('/')
-  await expect(page.getByText(/come on in/i).first()).toBeVisible()
+  // Whatever the welcome says, the no-JS version of it has to be on screen
+  // with the door animation off. Read from content — pinning the words here
+  // broke on a reword that had nothing to do with animation.
+  await expect(page.getByText(rooms.steps.welcome).first()).toBeVisible()
   await context.close()
 })
 

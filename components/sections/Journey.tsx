@@ -23,12 +23,14 @@ export function Journey() {
     // 'in', not 'up': you walk THROUGH the front door, you don't pan up past
     // it. The zoom crossfade puts the next room straight ahead of you, which
     // is what stepping over a threshold actually feels like.
-    { id: 'window', dir: 'in', node: <WindowRoom />, setting: <WindowSetting /> },
-    { id: 'floor', dir: 'right', node: <FloorRoom />, setting: <FloorSetting /> },
-    { id: 'desk', dir: 'right', node: <DeskRoom />, setting: <DeskSetting /> },
+    { id: 'window', dir: 'in', node: <WindowRoom />, setting: <WindowSetting />, backdrop: 'entrance' },
+    // Seven pieces to walk past, so this room claims four times the scroll of
+    // a room that says one sentence. Without it, paging raced.
+    { id: 'floor', dir: 'right', node: <FloorRoom />, setting: <FloorSetting />, weight: 4, backdrop: 'showcase' },
+    { id: 'desk', dir: 'right', node: <DeskRoom />, setting: <DeskSetting />, weight: 3, backdrop: 'desk' },
     // The door is the last beat of the home scroll only (spec §5) — /connect
     // renders its own copy without it.
-    { id: 'way-out', dir: 'in', node: <WayOutRoom /> },
+    { id: 'way-out', dir: 'in', node: <WayOutRoom />, backdrop: 'endoftour' },
   ]
   return <CinematicJourney scenes={scenes} />
 }

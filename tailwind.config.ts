@@ -36,6 +36,14 @@ const config: Config = {
         fill: 'rgb(var(--fill) / <alpha-value>)',
         'fill-fg': 'rgb(var(--fill-fg) / <alpha-value>)',
         decor: 'rgb(var(--decor) / <alpha-value>)',
+        // Sticky-note palette — see the note in globals.css.
+        'note-1': 'rgb(var(--note-1) / <alpha-value>)',
+        'note-2': 'rgb(var(--note-2) / <alpha-value>)',
+        'note-3': 'rgb(var(--note-3) / <alpha-value>)',
+        'note-4': 'rgb(var(--note-4) / <alpha-value>)',
+        'note-5': 'rgb(var(--note-5) / <alpha-value>)',
+        'note-6': 'rgb(var(--note-6) / <alpha-value>)',
+        'note-ink': 'rgb(var(--note-ink) / <alpha-value>)',
       },
       fontFamily: {
         // Wired by next/font in app/layout.tsx -> CSS variables

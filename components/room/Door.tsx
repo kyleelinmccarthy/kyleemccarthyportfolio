@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { rooms } from '@/content/rooms'
 
 /**
  * The last beat of the home scroll: a door with warm light under it. Plays on
@@ -10,15 +11,15 @@ import Link from 'next/link'
  * opacity with a blur — a semantic token, not a hardcoded warm hex, so it
  * reads correctly in both light and dark themes.
  *
- * The aria-label starts with the visible text ("There is another room") to
- * satisfy WCAG 2.5.3 Label in Name — a voice-control user saying what they can
- * see must be able to activate the link.
+ * The aria-label is built from the visible text so it always starts with it —
+ * WCAG 2.5.3 Label in Name. A voice-control user saying what they can see has
+ * to be able to activate the link, and that stays true through a reword.
  */
 export function Door() {
   return (
     <Link
       href="/room"
-      aria-label="There is another room — open the door to the personal side"
+      aria-label={`${rooms.wayOut.door.label} — ${rooms.wayOut.door.description}`}
       className="group mt-12 inline-flex flex-col items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
     >
       <span className="relative block h-40 w-24 rounded-t-[3rem] bg-surface-raised ring-1 ring-rule transition-colors group-hover:ring-accent">
@@ -31,7 +32,7 @@ export function Door() {
         />
       </span>
       <span className="font-sans text-label uppercase text-fg-muted transition-colors group-hover:text-accent">
-        There is another room
+        {rooms.wayOut.door.label}
       </span>
     </Link>
   )

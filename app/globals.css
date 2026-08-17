@@ -28,6 +28,17 @@
      more of it: the photo is dark-based, so it reads as depth rather than as
      a picture competing with the copy. */
   --photo-veil: 0.34;
+  /* Sticky notes are a real object being depicted, so they get real Post-it
+     colours rather than tints of the site palette — which cannot produce a
+     pack of them. Slightly deepened here so they sit in a dark room without
+     glaring. Note text is always --note-ink. */
+  --note-1: 214 186 78;  /* yellow */
+  --note-2: 214 122 148; /* pink */
+  --note-3: 116 168 200; /* blue */
+  --note-4: 132 182 124; /* green */
+  --note-5: 216 148 92;  /* orange */
+  --note-6: 168 142 206; /* violet */
+  --note-ink: 27 33 28;
 }
 
 [data-theme='light'] {
@@ -45,6 +56,14 @@
   /* Much fainter on light: a dark photo under dark text destroys contrast, so
      here it is barely more than a texture. */
   --photo-veil: 0.14;
+  /* Brighter in a lit room — closer to the packet. */
+  --note-1: 253 230 138;
+  --note-2: 250 172 194;
+  --note-3: 158 206 236;
+  --note-4: 176 220 168;
+  --note-5: 250 190 138;
+  --note-6: 206 186 240;
+  --note-ink: 27 33 28;
 }
 
 @layer base {

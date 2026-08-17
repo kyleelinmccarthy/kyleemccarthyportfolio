@@ -1,40 +1,68 @@
-/** Which side of the front door a room is standing on. */
-export type BackdropVariant = 'exterior' | 'interior'
+/** Which room's photograph to hang behind the content. */
+export type BackdropVariant =
+  | 'exterior'
+  | 'entrance'
+  | 'showcase'
+  | 'desk'
+  | 'endoftour'
+  | 'library'
 
 const SOURCES: Record<BackdropVariant, string> = {
-  // Gothic brick, gables and a turret. Cropped to the upper facade on purpose:
-  // the photo has its own porch and door, and two doorways stacked on top of
-  // one another reads as a mistake rather than as depth. The house looms; you
-  // stand at the threshold the room itself draws.
+  // Outside: gothic brick, gables, a turret. Cropped to the upper facade so the
+  // photo's own porch does not compete with the door the room draws.
   exterior: '/media/backdrop/exterior.jpg',
-  // A dark panelled room with a gallery wall — which is literally what the
-  // rooms past the entrance are.
-  interior: '/media/backdrop/interior.jpg',
+  // Just inside: a dark entry hall, gallery wall, stairs.
+  entrance: '/media/backdrop/entrance.jpg',
+  // The gallery: panelled walls hung with framed work.
+  showcase: '/media/backdrop/showcase.jpg',
+  // The study: a wooden desk, a green wingback, bookshelves.
+  desk: '/media/backdrop/desk.jpg',
+  // The way out: a glass conservatory with a woodstove.
+  endoftour: '/media/backdrop/endoftour.jpg',
+  // The personal library at the back.
+  library: '/media/backdrop/library.jpg',
 }
 
 /**
  * The place a room is standing in, faded back to texture. A flat surface
  * colour across five full-viewport rooms was one note.
  *
- * The entrance gets the outside of the house and every room past it gets the
- * inside, so walking through the door actually changes where you are. That is
- * the whole reason this takes a variant rather than being a single image.
+ * Every room has its own photograph, so moving through the building actually
+ * moves you: the step outside, the entry hall, the gallery, the study, the
+ * conservatory you leave through, and the library at the back.
  *
  * How much shows through is a theme token (`--photo-veil` in globals.css), not
  * a fixed opacity: these are dark photographs, so dark mode carries far more of
  * them than light mode, where a dark image under dark text eats the contrast.
  *
- * Absolutely positioned inside each room rather than fixed to the viewport:
- * the camera transforms the panel container, and a `fixed` child inside a
- * transformed ancestor anchors to that ancestor instead of the viewport, so it
- * would drift with the camera. Each panel is exactly one viewport, so
- * `absolute inset-0` puts the same crop behind every room.
+ * Two anchorings, because there are two kinds of page here.
+ *
+ * `absolute` (the default) is what the journey needs: the camera transforms the
+ * panel container, and a `fixed` child inside a transformed ancestor anchors to
+ * that ancestor rather than the viewport, so it would drift with the camera.
+ * Each panel is exactly one viewport, so `absolute inset-0` puts the same crop
+ * behind every room.
+ *
+ * `fixed` is what an ordinary long page needs. /room scrolls for several
+ * screens, and an absolute backdrop there stretches one photograph over the
+ * whole document — which rendered as a pale rectangle floating in the middle
+ * of the page rather than as the room you are standing in. Fixed makes it
+ * wallpaper: the page scrolls, the library stays put.
  *
  * Sources and processing in public/media/backdrop/CREDITS.md.
  */
-export function Backdrop({ variant = 'interior' }: { variant?: BackdropVariant }) {
+export function Backdrop({
+  variant = 'entrance',
+  anchor = 'absolute',
+}: {
+  variant?: BackdropVariant
+  anchor?: 'absolute' | 'fixed'
+}) {
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+    <div
+      aria-hidden="true"
+      className={`pointer-events-none inset-0 z-0 overflow-hidden ${anchor === 'fixed' ? 'fixed' : 'absolute'}`}
+    >
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
@@ -42,9 +70,16 @@ export function Backdrop({ variant = 'interior' }: { variant?: BackdropVariant }
           opacity: 'var(--photo-veil)',
         }}
       />
-      {/* Sink the lower half back into the surface colour so the rooms' copy
-          always has flat ground under it, whatever the photo is doing. */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface/70 to-surface" />
+      {/* Settle the photo toward the floor so the copy has ground under it —
+          but only part way. This used to run to a fully opaque surface, which
+          left each room as a strip of photograph above a flat panel, and the
+          whole point of a room per photograph is that you can see the room. */}
+      <div className="absolute inset-0 bg-gradient-to-b from-surface/20 via-surface/45 to-surface/75" />
+      {/* Fade the left and right edges out. The camera pans sideways between
+          rooms, so for a moment two different photographs share the screen;
+          without this they meet at a hard vertical seam that reads as a
+          rendering fault rather than as a doorway. */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgb(var(--surface))_0%,transparent_10%,transparent_90%,rgb(var(--surface))_100%)]" />
     </div>
   )
 }
