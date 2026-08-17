@@ -1,22 +1,15 @@
 'use client'
 
-import { useState } from 'react'
-import { AnimatePresence, motion, useMotionValueEvent } from 'framer-motion'
 import { rooms } from '@/content/rooms'
 import { projects } from '@/content/projects'
 import { FEATURED } from '@/content/caseStudies'
 import type { Project } from '@/content/types'
 import { Room } from './Room'
 import { StickyNote, tiltForIndex } from './StickyNote'
-import { RevealOnActive, useSceneActive, useSceneProgress } from '@/components/journey/sceneActive'
+import { RevealOnActive } from '@/components/journey/sceneActive'
 
 /** Everything not hung on the wall — the overflow, not the exhibition. */
 const onDesk = projects.filter((p) => !FEATURED.includes(p.slug as never))
-
-/** Notes per page inside the fixed-height camera panel — one tidy row. */
-const PAGE_SIZE = 5
-const pages: Project[][] = []
-for (let i = 0; i < onDesk.length; i += PAGE_SIZE) pages.push(onDesk.slice(i, i + PAGE_SIZE))
 
 /** A desk surface and a lamp pool of accent light. Decorative only. */
 export function DeskSetting() {
@@ -31,83 +24,32 @@ export function DeskSetting() {
   )
 }
 
-function NoteGrid({ notes }: { notes: Project[] }) {
+/**
+ * `offset` is the note's position in the whole deck, not on this page, so the
+ * colours keep walking across a page turn instead of restarting at yellow.
+ */
+/**
+ * Every note on the desk at once.
+ *
+ * This used to deal them out five at a time and page through them on scroll,
+ * which was a fix for the gallery's problem applied to a room that never had
+ * it: ten notes fit on one desk at a readable size. Paging them meant a second
+ * thing to scroll through and a second thing to fight the page scroll, for
+ * nothing. `offset` is gone with it — the colours just walk the list.
+ */
+function NoteGrid() {
   return (
-    <ul className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5">
-      {notes.map((p, i) => (
+    <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+      {onDesk.map((p, i) => (
         <li key={p.slug}>
-          <StickyNote project={p} tilt={tiltForIndex(i)} />
+          <StickyNote project={p} tilt={tiltForIndex(i)} index={i} />
         </li>
       ))}
     </ul>
   )
 }
 
-/**
- * Every note pinned at once — the plain-flow fallback used on mobile, under
- * reduced motion, and with JS off. The room simply grows to fit them.
- */
-function DeskStack() {
-  return (
-    <RevealOnActive index={1}>
-      <div className="mt-10">
-        <NoteGrid notes={onDesk} />
-      </div>
-    </RevealOnActive>
-  )
-}
-
-/**
- * Ten notes is too many to pin up inside one fixed-height camera panel at a
- * readable size, so the desk is dealt out a row at a time as you scroll
- * through the room's own slice of the track (see useSceneProgress) — the same
- * fix as the gallery wall next door, and for the same reason: the panel is
- * exactly one viewport tall and nothing here may be clipped or scrolled to see.
- */
-function DeskPager() {
-  const progress = useSceneProgress()
-  const n = pages.length
-  const [page, setPage] = useState(0)
-
-  useMotionValueEvent(progress!, 'change', (v) => {
-    setPage(Math.min(n - 1, Math.max(0, Math.floor(v * n))))
-  })
-
-  return (
-    <div className="mt-10">
-      <div className="relative min-h-[26vh]">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={page}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <NoteGrid notes={pages[page]!} />
-          </motion.div>
-        </AnimatePresence>
-      </div>
-      {n > 1 && (
-        <div aria-hidden="true" className="mt-6 flex items-center justify-center gap-2">
-          {pages.map((_, i) => (
-            <span
-              key={i}
-              className={`h-1.5 w-1.5 rounded-full transition-colors ${i === page ? 'bg-accent' : 'bg-rule'}`}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
 export function DeskRoom() {
-  // See Floor.tsx: only the fixed-height camera panel provides a non-null
-  // SceneActiveContext, and only there does content taller than one viewport
-  // get clipped rather than simply growing the page.
-  const inPanel = useSceneActive() !== null
-
   return (
     <Room className="mx-auto max-w-6xl">
       <RevealOnActive>
@@ -116,7 +58,11 @@ export function DeskRoom() {
         <p className="mt-4 max-w-2xl font-sans leading-relaxed text-fg-muted">{rooms.desk.lede}</p>
       </RevealOnActive>
 
-      {inPanel ? <DeskPager /> : <DeskStack />}
+      <RevealOnActive index={1}>
+        <div className="mt-8">
+          <NoteGrid />
+        </div>
+      </RevealOnActive>
     </Room>
   )
 }

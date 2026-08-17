@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { projects } from '@/content/projects'
 import { InfoTip } from '@/components/primitives/InfoTip'
 import { StackChips } from '@/components/primitives/StackChips'
@@ -22,7 +23,15 @@ const professionalProjects = projects.filter((p) => !p.isPersonal)
 export function ProjectDetails() {
   return (
     <div className="mt-16">
-      <h2 className="font-serif text-fluid-h2 text-fg">Every build</h2>
+      <h2 className="font-serif text-fluid-h2 text-fg">Everything I’ve built at work</h2>
+      <p className="mt-3 max-w-2xl font-sans text-fg-muted">
+        The professional side in full — platforms, portals and internal tools. The things I
+        build after hours live in{' '}
+        <Link href="/room" className="font-semibold text-accent underline-offset-4 hover:underline">
+          the library
+        </Link>
+        .
+      </p>
       <div className="mt-8 grid gap-6 sm:grid-cols-2">
         {professionalProjects.map((p) => (
           <article key={p.slug} className="rounded-xl bg-surface-raised p-6 ring-1 ring-rule">

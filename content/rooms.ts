@@ -37,10 +37,11 @@ export const rooms = {
      * It also explains the gallery two rooms along, since every piece there
      * exists because something already existed and wasn't good enough.
      */
-    entry: 'There’s always a better way, and I go find it.',
+    entry: 'There’s always a better way, and I like trying to find it.',
     eyebrow: 'My process',
     heading: 'Three things',
-    lede: 'Build it, look at it, throw it out, build it better. That’s most of it.',
+    // No lede. There was one, and it was a summary of the three principles
+    // sitting directly beneath it — saying the same thing twice, badly.
     principles: [
       {
         title: 'Keep moving',

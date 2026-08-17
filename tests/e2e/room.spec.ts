@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { rooms } from '@/content/rooms'
+import { room } from '@/content/room'
 
 // Read the door's words from content. Pinning them here meant every reword
 // broke three tests that were never about the wording.
@@ -50,10 +51,16 @@ test('/work shows the 8 professional builds and /room the 9 personal ones', asyn
 
 test('the room renders its sections', async ({ page }) => {
   await page.goto('/room')
-  await expect(page.getByRole('heading', { name: /built after hours/i })).toBeVisible()
-  await expect(page.getByRole('heading', { name: /things I draw/i })).toBeVisible()
-  await expect(page.getByRole('heading', { name: /tattoo flash/i })).toBeVisible()
-  await expect(page.getByRole('heading', { name: /off the clock/i })).toBeVisible()
+  // Read the headings from content. Pinned strings here broke on a reword
+  // that had nothing to do with whether the sections render.
+  for (const heading of [
+    room.projects.heading,
+    room.art.heading,
+    room.tattoo.heading,
+    room.offTheClock.heading,
+  ]) {
+    await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible()
+  }
 })
 
 test('the room refers to family generically', async ({ page }) => {

@@ -26,6 +26,25 @@ export function useSceneProgress() {
   return useContext(SceneProgressContext)
 }
 
+/**
+ * The same idea, but 0 to 1 across only the part of the room's slice where the
+ * camera is standing still.
+ *
+ * A room that pages through content — the gallery wall, the desk — has to
+ * finish paging before the camera starts travelling to the next room, or the
+ * two movements happen at once and the reader cannot tell whether scrolling is
+ * walking them along the wall or off to the next room. Scenery that plays
+ * *through* the transition (the front door you scroll into) wants
+ * useSceneProgress instead.
+ *
+ * Outside the journey, and in the stacked mobile layout, there is no camera to
+ * wait for, so this is the same value as useSceneProgress.
+ */
+export const ScenePagingContext = createContext<MotionValue<number> | null>(null)
+export function useScenePaging() {
+  return useContext(ScenePagingContext)
+}
+
 /** Rise + fade a block in when its scene becomes active (or scrolls into view). */
 export function RevealOnActive({
   children,

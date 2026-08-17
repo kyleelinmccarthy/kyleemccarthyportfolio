@@ -51,9 +51,14 @@ export function Gallery({ items, label }: { items: MediaItem[]; label: string })
             <button
               type="button"
               onClick={(e) => open(i, e.currentTarget)}
-              className="relative block h-20 w-32 overflow-hidden rounded-lg ring-1 ring-rule transition-shadow hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="relative block h-24 w-24 overflow-hidden rounded-lg bg-surface-raised p-1 ring-1 ring-rule transition-shadow hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
-              <Image src={m.src} alt={m.alt} fill sizes="8rem" className="object-cover" />
+              {/* Square and contained. These were 2:1 and object-cover, which
+                  centre-cropped every portrait piece into a letterbox of its
+                  own middle — beheading the tattoo flash and half the
+                  drawings. A gallery thumbnail may shrink a picture; it may
+                  not decide which part of it you get to see. */}
+              <Image src={m.src} alt={m.alt} fill sizes="6rem" className="object-contain" />
             </button>
           </li>
         ))}

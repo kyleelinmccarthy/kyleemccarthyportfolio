@@ -147,8 +147,9 @@ export const room = {
     lede: 'Nobody assigned these. Each one started as a question I wanted the answer to, and building the thing was the fastest way to get it.',
   },
   art: {
-    heading: 'Things I draw',
-    lede: 'Digital and traditional. I have been drawing far longer than I have been writing code.',
+    // Not "things I draw": there is paint in here, and ink, and stickers.
+    heading: 'Art',
+    lede: 'Digital, pencil, ink and paint. I have been making art far longer than I have been writing code.',
   },
   tattoo: {
     heading: 'Tattoo flash',
@@ -157,7 +158,7 @@ export const room = {
   offTheClock: {
     heading: 'Off the clock',
     items: [
-      { title: 'Reading and writing', body: 'Constantly reading, and always turning over story ideas. I am writing books, slowly.' },
+      { title: 'Reading and writing', body: 'Constantly reading, and always turning over story ideas. I am writing books.' },
       { title: 'Homeschooling', body: 'I homeschool my kids, which is where Kingdoms & Crowns came from.' },
       { title: 'Outside', body: 'Paddleboarding and hiking.' },
       { title: 'A lot of pets', body: 'Cats, dogs and fish.' },

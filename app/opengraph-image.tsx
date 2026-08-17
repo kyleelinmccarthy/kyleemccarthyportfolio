@@ -17,9 +17,9 @@ export default function OpengraphImage() {
           flexDirection: 'column',
           justifyContent: 'center',
           padding: '80px',
-          backgroundColor: '#12121C',
+          backgroundColor: '#1B211C',
           backgroundImage:
-            'radial-gradient(circle at 85% 15%, rgba(191,77,58,0.35), transparent 55%)',
+            'radial-gradient(circle at 85% 15%, rgba(47,59,49,0.85), transparent 55%)',
         }}
       >
         <div
@@ -27,7 +27,7 @@ export default function OpengraphImage() {
             fontSize: 26,
             letterSpacing: 6,
             textTransform: 'uppercase',
-            color: '#D87F63',
+            color: '#CCC2B8',
           }}
         >
           Kylee McCarthy, MS
@@ -45,7 +45,7 @@ export default function OpengraphImage() {
           {hero.headline}
         </div>
         <div style={{ marginTop: 40, display: 'flex', alignItems: 'center', gap: 20 }}>
-          <div style={{ width: 80, height: 5, backgroundColor: '#BF4D3A' }} />
+          <div style={{ width: 80, height: 5, backgroundColor: '#CCC2B8' }} />
           <div style={{ fontSize: 30, color: '#C2B29A' }}>
             Technology Leadership · AI · Product & UX
           </div>

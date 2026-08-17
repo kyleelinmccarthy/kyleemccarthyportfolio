@@ -67,7 +67,6 @@ export function WindowRoom() {
       <RevealOnActive index={1}>
         <p className="mt-12 font-sans text-label uppercase text-accent">{rooms.window.eyebrow}</p>
         <h2 className="mt-3 font-serif text-3xl text-fg">{rooms.window.heading}</h2>
-        <p className="mt-4 max-w-xl font-sans leading-relaxed text-fg-muted">{rooms.window.lede}</p>
       </RevealOnActive>
       <dl className="mt-10 space-y-8">
         {rooms.window.principles.map((p, i) => (

@@ -37,17 +37,21 @@ export function tiltForIndex(index: number): number {
   return TILT_STEPS[index % TILT_STEPS.length]!
 }
 
-/** A colour keyed by the project's own slug — stable and needs no extra prop. */
-function noteFor(slug: string): (typeof NOTES)[number] {
-  let hash = 0
-  for (let i = 0; i < slug.length; i++) hash = (hash * 31 + slug.charCodeAt(i)) % NOTES.length
-  return NOTES[hash]!
+/**
+ * A colour per note, dealt in order.
+ *
+ * This used to hash the slug, which collided: two greens turned up in the same
+ * row of five and the desk read as a pattern rather than as a handful of notes
+ * off a pack. Walking the list means no two neighbours ever match, and a row of
+ * five out of six colours is always five different colours.
+ */
+function noteFor(index: number): (typeof NOTES)[number] {
+  return NOTES[index % NOTES.length]!
 }
 
-function sizeFor(slug: string): string {
-  let hash = 0
-  for (let i = 0; i < slug.length; i++) hash = (hash * 31 + slug.charCodeAt(i) * 7) % SIZE_STEPS.length
-  return SIZE_STEPS[hash]!
+/** Sizes cycle on a different length to the colours, so the two don't lock step. */
+function sizeFor(index: number): string {
+  return SIZE_STEPS[index % SIZE_STEPS.length]!
 }
 
 /**
@@ -58,8 +62,16 @@ function sizeFor(slug: string): string {
  * the bit of "underneath" showing through is the desk surface, not the note's
  * own colour — and lifts further when the note itself lifts.
  */
-export function StickyNote({ project, tilt }: { project: Project; tilt: number }) {
-  const note = noteFor(project.slug)
+export function StickyNote({
+  project,
+  tilt,
+  index,
+}: {
+  project: Project
+  tilt: number
+  index: number
+}) {
+  const note = noteFor(index)
   const className = [
     'group relative block h-full overflow-hidden rounded-md shadow-md ring-1',
     note.bg,
@@ -67,7 +79,7 @@ export function StickyNote({ project, tilt }: { project: Project; tilt: number }
     'transition-transform duration-200 ease-out',
     'hover:-translate-y-1 hover:shadow-md',
     'focus-visible:-translate-y-1 focus-visible:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
-    sizeFor(project.slug),
+    sizeFor(index),
   ].join(' ')
   const style = { transform: `rotate(${tilt}deg)` }
 

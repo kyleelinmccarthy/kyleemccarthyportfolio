@@ -10,8 +10,8 @@ import {
   useReducedMotion,
   type MotionValue,
 } from 'framer-motion'
-import { SceneActiveContext, SceneProgressContext } from './sceneActive'
-import { VH_PER_SCENE, holdFor } from './timing'
+import { SceneActiveContext, SceneProgressContext, ScenePagingContext } from './sceneActive'
+import { VH_PER_SCENE, dwellEnd } from './timing'
 import { BackgroundShapes } from '@/components/media/BackgroundShapes'
 import { Backdrop, type BackdropVariant } from '@/components/media/Backdrop'
 
@@ -90,12 +90,18 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
     return acc + span
   }, 0)
 
+  // One unit of weight, in progress terms. A camera move costs the same number
+  // of these wherever it happens, so a heavy room spends its extra weight
+  // standing still rather than travelling more slowly (see timing.ts).
+  const unit = 1 / totalWeight
+  const dwellEnds = starts.map((s, i) => dwellEnd(i, s, spans[i]!, unit))
+
   // Camera keyframes: hold at each cell (dwell), then move to the next.
   const ins: number[] = []
   const xs: number[] = []
   const ys: number[] = []
   cells.forEach((c, i) => {
-    ins.push(starts[i]!, starts[i]! + holdFor(i) * spans[i]!)
+    ins.push(starts[i]!, dwellEnds[i]!)
     xs.push(-c.x * 100, -c.x * 100)
     ys.push(-c.y * 100, -c.y * 100)
   })
@@ -153,12 +159,11 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
               backdrop={s.backdrop}
               // Panel i starts arriving when panel i-1 stops dwelling, so this
               // reads the previous room's slice, not this one's.
-              arriveStart={
-                i === 0 ? -spans[0]! : starts[i - 1]! + holdFor(i - 1) * spans[i - 1]!
-              }
+              arriveStart={i === 0 ? -spans[0]! : dwellEnds[i - 1]!}
               arriveEnd={starts[i]!}
               segStart={starts[i]!}
               segEnd={starts[i]! + spans[i]!}
+              dwellEnd={dwellEnds[i]!}
               progress={scrollYProgress}
               reduce={!!reduce}
             >
@@ -232,9 +237,13 @@ function StackedScene({ scene }: { scene: Scene }) {
       <Backdrop variant={scene.backdrop} />
       {scene.setting ?? <BackgroundShapes />}
       <SceneProgressContext.Provider value={scrollYProgress}>
-        <div className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
-          {scene.node}
-        </div>
+        {/* No camera here, so there is no transition to keep clear of: paging
+            gets the section's whole pass. */}
+        <ScenePagingContext.Provider value={scrollYProgress}>
+          <div className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
+            {scene.node}
+          </div>
+        </ScenePagingContext.Provider>
       </SceneProgressContext.Provider>
     </section>
   )
@@ -252,6 +261,7 @@ function Panel({
   arriveEnd,
   segStart,
   segEnd,
+  dwellEnd,
   progress,
   reduce,
   children,
@@ -267,6 +277,7 @@ function Panel({
   arriveEnd: number
   segStart: number
   segEnd: number
+  dwellEnd: number
   progress: MotionValue<number>
   reduce: boolean
   children: ReactNode
@@ -284,6 +295,11 @@ function Panel({
   // 0 -> 1 across this scene's own slice of the track, so a room can drive its
   // scenery off the scroll (the front door growing as you walk up to it).
   const sceneProgress = useTransform(progress, [segStart, segEnd], [0, 1], { clamp: true })
+
+  // 0 -> 1 across the part of the slice where the camera is parked, for rooms
+  // that page through their content. Reaching 1 before the camera leaves is the
+  // whole point: the last piece is on the wall while you walk out of the room.
+  const scenePaging = useTransform(progress, [segStart, dwellEnd], [0, 1], { clamp: true })
 
   // Remount the scene's content each time it becomes active, so every reveal /
   // count-up replays when you scroll back to it (reveals-only scenes like
@@ -316,9 +332,11 @@ function Panel({
       {/* The scene's own content animates on arrival via SceneActiveContext. */}
       <SceneActiveContext.Provider value={isActive}>
         <SceneProgressContext.Provider value={sceneProgress}>
-        <div key={enterKey} className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
-          {children}
-        </div>
+          <ScenePagingContext.Provider value={scenePaging}>
+            <div key={enterKey} className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
+              {children}
+            </div>
+          </ScenePagingContext.Provider>
         </SceneProgressContext.Provider>
       </SceneActiveContext.Provider>
     </motion.div>

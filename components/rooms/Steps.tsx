@@ -80,7 +80,7 @@ function Doorway() {
   return (
     <motion.div
       aria-hidden="true"
-      className="flex flex-col items-center"
+      className="mt-10 flex flex-col items-center"
       style={
         reduce ? undefined : { scale, y: lift, opacity: fade, transformOrigin: '50% 62%' }
       }
@@ -152,13 +152,16 @@ function Greeting({ className }: { className?: string }) {
 export function StepsRoom() {
   return (
     <Room className="mx-auto flex max-w-3xl flex-col items-center text-center">
-      <Doorway />
       {/* No signature here — the nav carries the name on every page, and
           repeating it at 96px directly beneath it was saying it twice. */}
       {/* The building's only h1: this room is the first thing the home page
           says, so the greeting carries the page's single top-level heading
           (a11y.spec.ts, smoke.spec.ts both require exactly one). */}
-      <Greeting className="mt-10 font-serif text-fluid-h2 text-fg" />
+      {/* The greeting reads first and the door stands below it. With the order
+          reversed the door sat in the upper third of the frame, which on the
+          house photograph put it up in the roof. */}
+      <Greeting className="font-serif text-fluid-h2 text-fg" />
+      <Doorway />
     </Room>
   )
 }

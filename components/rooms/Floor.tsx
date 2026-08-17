@@ -11,7 +11,7 @@ import { Placard } from './Placard'
 import { ProjectVisual } from '@/components/media/ProjectVisual'
 import { Gallery } from '@/components/media/Gallery'
 import { StackChips } from '@/components/primitives/StackChips'
-import { RevealOnActive, useSceneActive, useSceneProgress } from '@/components/journey/sceneActive'
+import { RevealOnActive, useSceneActive, useScenePaging } from '@/components/journey/sceneActive'
 
 /**
  * The seven pieces, joined to their projects at module load. A featured slug
@@ -100,12 +100,12 @@ function FloorStack() {
 /**
  * The gallery wall as it plays inside the scroll-driven camera: one piece on
  * the wall at a time, walked past as you scroll through the room's own
- * slice of the track (see useSceneProgress). This is what keeps the room to
+ * slice of the track (see useScenePaging). This is what keeps the room to
  * one viewport tall without a scrollbar or clipped content — the fixed-height
  * camera panel never has to hold more than a single piece's worth of copy.
  */
 function FloorWall() {
-  const progress = useSceneProgress()
+  const progress = useScenePaging()
   const n = pieces.length
   const [active, setActive] = useState(0)
 

@@ -11,7 +11,10 @@ export const contact = {
   options: {
     email: site.email,
     linkedin: site.linkedin,
-    linkedinLabel: 'linkedin.com/in/kylee-mccarthy-ms',
+    // Derived, never typed out again. The hand-written label was a stale copy
+    // of a URL that had already been fixed in site.ts, so the page showed an
+    // address that went nowhere while the link itself worked.
+    linkedinLabel: site.linkedin.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''),
   },
 } as const
 

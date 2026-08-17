@@ -5,8 +5,8 @@ import { join } from 'path'
 // Browser-tab favicon. The "KM" monogram reuses the wordmark's letterforms:
 // in NameLogo the capital "K" and the "M" of McCarthy are both set in
 // Give You Glory, so the tab icon echoes the signature rather than a generic
-// sans glyph. Cream on blackberry = the site's dark-theme signature pairing,
-// which stays legible against both light and dark browser chrome.
+// sans glyph. Cream on the site's green is the dark-theme signature pairing,
+// and it stays legible against both light and dark browser chrome.
 export const size = { width: 32, height: 32 }
 export const contentType = 'image/png'
 
@@ -24,10 +24,10 @@ export default function Icon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#12121C',
-          // Soft terracotta glow, mirroring the OG image's brand accent.
+          backgroundColor: '#2F3B31',
+          // A soft cream glow, the same light the rooms are lit with.
           backgroundImage:
-            'radial-gradient(circle at 70% 25%, rgba(191,77,58,0.55), transparent 70%)',
+            'radial-gradient(circle at 70% 25%, rgba(233,213,189,0.30), transparent 70%)',
           borderRadius: 6,
         }}
       >

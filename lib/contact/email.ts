@@ -66,7 +66,7 @@ export function buildEmail(
       <tr><td style="padding:2px 12px 2px 0;color:#666">Email</td><td><a href="mailto:${escapeHtml(s.email)}">${escapeHtml(s.email)}</a></td></tr>
       <tr><td style="padding:2px 12px 2px 0;color:#666">Company</td><td>${escapeHtml(company)}</td></tr>
     </table>
-    <p style="font-size:14px;line-height:1.6;white-space:pre-wrap;margin:16px 0;padding:14px 16px;background:#f6efe4;border-left:3px solid #bf4d3a;border-radius:4px">${escapeHtml(
+    <p style="font-size:14px;line-height:1.6;white-space:pre-wrap;margin:16px 0;padding:14px 16px;background:#f6efe4;border-left:3px solid #2f3b31;border-radius:4px">${escapeHtml(
       s.message
     )}</p>
     <p style="font-size:12px;color:#999;margin-top:24px">

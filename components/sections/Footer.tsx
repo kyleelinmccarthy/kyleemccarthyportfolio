@@ -5,8 +5,11 @@ import { footer } from '@/content/contact'
 import { site } from '@/content/site'
 
 export function Footer() {
+  // `relative z-10`: /room hangs a fixed backdrop behind the page, and a fixed
+  // element with a z-index paints over every static box regardless of DOM
+  // order — which showed the library photograph straight through the footer.
   return (
-    <footer className="bg-surface text-fg border-t border-rule">
+    <footer className="relative z-10 bg-surface text-fg border-t border-rule">
       <Container className="py-16">
         {/* items-end: the columns have mismatched headings — a tall script
             wordmark on the left, a small uppercase label on the right — so only

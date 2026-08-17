@@ -27,7 +27,7 @@ export function Journey() {
     // Seven pieces to walk past, so this room claims four times the scroll of
     // a room that says one sentence. Without it, paging raced.
     { id: 'floor', dir: 'right', node: <FloorRoom />, setting: <FloorSetting />, weight: 4, backdrop: 'showcase' },
-    { id: 'desk', dir: 'right', node: <DeskRoom />, setting: <DeskSetting />, weight: 3, backdrop: 'desk' },
+    { id: 'desk', dir: 'right', node: <DeskRoom />, setting: <DeskSetting />, backdrop: 'desk' },
     // The door is the last beat of the home scroll only (spec §5) — /connect
     // renders its own copy without it.
     { id: 'way-out', dir: 'in', node: <WayOutRoom />, backdrop: 'endoftour' },
