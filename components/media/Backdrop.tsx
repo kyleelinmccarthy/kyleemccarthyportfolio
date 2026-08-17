@@ -1,11 +1,16 @@
 /**
- * A misty pine forest sitting behind the whole building, faded almost to
- * texture. The flat surface colour alone was too much of one note across five
- * full-viewport rooms; this gives the rooms somewhere to be.
+ * A gothic library — carved wood, a chandelier, a staircase — sitting behind
+ * the whole building, faded back to texture. The flat surface colour alone was
+ * too much of one note across five full-viewport rooms.
+ *
+ * An interior rather than a landscape, because the site IS a building you walk
+ * into. It replaced a misty forest for that reason: the forest was atmospheric
+ * but it put the reader outdoors in every room, including the ones that are
+ * explicitly indoors. The staircase in it also rhymes with the entrance.
  *
  * How much shows through is a theme token (`--photo-veil` in globals.css), not
- * a fixed opacity: the photo is dark-based, so dark mode can carry it at 0.2
- * while light mode needs 0.07 or it eats the text contrast.
+ * a fixed opacity: the photo is dark-based, so dark mode can carry far more of
+ * it than light mode, where a dark photo under dark text eats the contrast.
  *
  * Absolutely positioned inside each room rather than fixed to the viewport:
  * the camera applies a transform to the panel container, and a `fixed` child
@@ -13,7 +18,7 @@
  * viewport — so it would drift with the camera. Each panel is exactly one
  * viewport, so `absolute inset-0` puts the same crop behind every room.
  *
- * Photo: Paul Pastourmatzis on Unsplash. See public/media/backdrop/CREDITS.md.
+ * Photo: Daniil Smetanin on Unsplash. See public/media/backdrop/CREDITS.md.
  */
 export function Backdrop() {
   return (
@@ -21,7 +26,7 @@ export function Backdrop() {
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: 'url(/media/backdrop/forest.jpg)',
+          backgroundImage: 'url(/media/backdrop/library.jpg)',
           opacity: 'var(--photo-veil)',
         }}
       />

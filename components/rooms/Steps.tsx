@@ -86,7 +86,7 @@ function Doorway() {
       }
     >
       <div
-        className="pointer-events-auto relative h-[22vh] min-h-[130px] w-[15vw] min-w-[110px] rounded-t-[8rem] bg-fg/[0.12] ring-1 ring-fg/30"
+        className="pointer-events-auto relative h-[22vh] min-h-[130px] w-[15vw] min-w-[110px] rounded-t-[8rem] bg-surface ring-1 ring-fg/35 shadow-2xl shadow-black/40"
         style={{ perspective: '900px' }}
         onMouseEnter={() => {
           if (!reduce) animate(swingFromHover, -52, { duration: 0.6, ease: [0.16, 1, 0.3, 1] })
@@ -98,7 +98,7 @@ function Doorway() {
         {/* Warm light in the opening, behind the door. */}
         <span className="absolute inset-0 rounded-t-[8rem] bg-accent/25" />
         <motion.div
-          className="absolute inset-0 origin-left rounded-t-[8rem] bg-fg/[0.22] ring-1 ring-fg/40"
+          className="absolute inset-0 origin-left rounded-t-[8rem] bg-surface ring-1 ring-fg/45"
           // Reduced motion gets it standing open: no swing, but the way in is
           // still legible as a way in.
           style={reduce ? { rotateY: -58 } : { rotateY: swing }}
@@ -117,7 +117,7 @@ function Doorway() {
       {[0, 1, 2, 3, 4].map((i) => (
         <span
           key={i}
-          className="block border-t border-fg/40 bg-fg/[0.17]"
+          className="block border-t border-fg/45 bg-surface"
           style={{
             width: `${110 + i * 46}px`,
             height: '1.5vh',
