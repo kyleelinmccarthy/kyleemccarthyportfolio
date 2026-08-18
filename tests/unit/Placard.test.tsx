@@ -12,9 +12,9 @@ describe('Placard', () => {
     const user = userEvent.setup()
     render(<Placard study={study} />)
     const summary = screen.getByText(rooms.floor.placardHint)
-    expect(screen.queryByText(study.placard.threwAway)).not.toBeVisible()
+    expect(screen.queryByText(study.placard!.threwAway)).not.toBeVisible()
     await user.click(summary)
-    expect(screen.getByText(study.placard.threwAway)).toBeVisible()
+    expect(screen.getByText(study.placard!.threwAway)).toBeVisible()
   })
 
   it('is a native disclosure so it works without JS', () => {

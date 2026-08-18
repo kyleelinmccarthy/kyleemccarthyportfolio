@@ -68,12 +68,14 @@
   --accent: 47 59 49; /* deep green — 10.75:1 on surface; primary accent text/borders/rings/dots */
   --accent-strong: 47 59 49;
   --rule: 226 226 224;
-  --fill: 216 176 74; /* gold — all buttons + decorative accents */
-  --fill-fg: 47 59 49; /* green text on gold; 5.71:1 (AA) */
-  --decor: 216 176 74; /* gold — background geometric shapes (light) */
-  /* Much fainter on light: a dark photo under dark text destroys contrast, so
-     here it is barely more than a texture. */
-  --photo-veil: 0.14;
+  --fill: 47 59 49; /* deep green — all buttons. Was gold, which read as a
+                       different brand from the dark theme's; the green is the
+                       colour the whole site is built on. */
+  --fill-fg: 233 213 189; /* cream on green — 10.75:1 */
+  --decor: 47 59 49; /* green — background line-work (light) */
+  /* Lighter than dark mode, but not so light the room disappears — at 0.14 the
+     photographs were invisible and every light-mode room was a flat panel. */
+  --photo-veil: 0.30;
   /* Brighter in a lit room — closer to the packet. */
   --note-1: 253 230 138;
   --note-2: 250 172 194;

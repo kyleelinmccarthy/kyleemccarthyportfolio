@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { ProjectDetails } from '@/components/ProjectDetails'
 import { ShelfRoom } from '@/components/room/libraryRooms'
-import { Bookshelf } from '@/components/room/Bookshelf'
 import { projects } from '@/content/projects'
 
 const personal = projects.filter((p) => p.isPersonal)
@@ -64,9 +63,13 @@ describe('stack chips', () => {
   })
 
   it('renders the résumé tech chips inside a personal project’s book', () => {
-    const kc = projects.find((p) => p.slug === 'kingdoms-and-crowns')!
-    const { container } = render(<Bookshelf projects={[kc]} />)
+    // The shelf mounts one dialog holding whichever book is open, and the
+    // first volume is open by default — so the first personal project's pages
+    // are in the document without a click.
+    const first = personal[0]!
+    const { container } = render(<ShelfRoom />)
     const chipText = Array.from(container.querySelectorAll('li')).map((li) => li.textContent)
-    for (const tech of kc.stack!) expect(chipText).toContain(tech)
+    for (const tech of first.stack ?? []) expect(chipText).toContain(tech)
+    expect(first.stack?.length ?? 0).toBeGreaterThan(0)
   })
 })

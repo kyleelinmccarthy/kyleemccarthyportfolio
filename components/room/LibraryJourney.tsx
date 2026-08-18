@@ -29,9 +29,7 @@ export function LibraryJourney() {
     { id: 'shelf', dir: 'start', node: <ShelfRoom />, setting: <ShelfSetting />, backdrop: 'library' },
     // Right along the wall, the way you walk a gallery — the same move the
     // home page's showcase uses, for the same reason.
-    // Five media to walk past, so this room claims three times the scroll of a
-    // room that says one thing. Its dwell is what the paging runs on.
-    { id: 'art', dir: 'right', node: <ArtRoom />, setting: <ArtSetting />, weight: 3, backdrop: 'library' },
+    { id: 'art', dir: 'right', node: <ArtRoom />, setting: <ArtSetting />, backdrop: 'library' },
     { id: 'flash', dir: 'right', node: <FlashRoom />, setting: <ArtSetting />, backdrop: 'library' },
     // Down, off the wall and back to the table.
     {

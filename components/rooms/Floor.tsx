@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { AnimatePresence, motion, useMotionValueEvent } from 'framer-motion'
 import { FEATURED, caseStudies, type CaseStudy } from '@/content/caseStudies'
 import { rooms } from '@/content/rooms'
@@ -93,6 +94,7 @@ function FloorStack() {
           <FloorPiece key={project.slug} project={project} study={study} />
         ))}
       </div>
+      <LibraryNote className="mt-12" />
     </RevealOnActive>
   )
 }
@@ -134,14 +136,31 @@ function FloorWall() {
         {pieces.map((p, i) => (
           <span
             key={p.project.slug}
-            className={`h-1.5 w-1.5 rounded-full transition-colors ${i === active ? 'bg-accent' : 'bg-rule'}`}
+            className={`h-1.5 w-1.5 rounded-full transition-colors ${i === active ? 'bg-accent' : 'bg-fg/25'}`}
           />
         ))}
       </div>
       <p aria-hidden="true" className="mt-2 text-center font-sans text-xs text-fg-muted">
         {active + 1} / {n}
       </p>
+      <LibraryNote className="mt-4 text-center" />
     </div>
+  )
+}
+
+/**
+ * The pointer that replaced the three personal pieces on this wall. They were
+ * hanging here and standing on their own shelf in the library at the same
+ * time; this says where they went, so the gallery doesn't read as the whole of
+ * what she makes.
+ */
+function LibraryNote({ className = '' }: { className?: string }) {
+  return (
+    <p className={`font-sans text-sm text-fg-muted ${className}`}>
+      <Link href="/room" className="text-accent underline-offset-4 hover:underline">
+        {rooms.floor.libraryNote}
+      </Link>
+    </p>
   )
 }
 

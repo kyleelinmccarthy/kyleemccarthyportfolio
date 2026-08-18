@@ -66,6 +66,12 @@ export const projects: Project[] = [
       'One project model spanning all three systems. Beacon shapes work before it starts, reviews every pull request against our engineering standards with AI, and feeds the results into performance scorecards. It also carries the technology asset inventory with dependency mapping and compliance scoring, generates SOC audit evidence packs per project, and scans every site for ADA compliance.',
     outcome:
       'Retired the project tracker subscription and gave the department one source of truth. A model writing the first draft never means less scrutiny than a person writing it.',
+    media: {
+      hero: {
+        src: '/media/beacon/hero.jpg',
+        alt: 'Beacon’s Lighthouse dashboard: active backlogs, GitHub and ServiceDesk project counts, and quick navigation',
+      },
+    },
     stack: ['.NET', 'Next.js', 'Azure', 'GitHub Actions', 'Claude'],
     isPersonal: false,
   },
@@ -81,6 +87,16 @@ export const projects: Project[] = [
     built:
       'Ten browser-based multiplayer games with live polls and quizzes over SignalR, behind Microsoft SSO so access follows the identity infrastructure already in place. Built in weeks.',
     outcome: 'Retired the vendor, raised adoption, and removed shared-login access management entirely.',
+    media: {
+      hero: {
+        src: '/media/ruckus/hero.jpg',
+        alt: 'The Ruckus home screen: quick actions to start a game, poll, presentation or quiz, with the live lobby beneath',
+      },
+      gallery: [
+        { src: '/media/ruckus/games.jpg', alt: 'The Ruckus games library' },
+        { src: '/media/ruckus/presentation.jpg', alt: 'A live Ruckus presentation session' },
+      ],
+    },
     stack: ['.NET', 'SignalR', 'Entra ID'],
     isPersonal: false,
   },
@@ -145,6 +161,13 @@ export const projects: Project[] = [
       'FIS Relius is a licensed vendor platform sitting underneath 403(b), 457 and FICA Alternative administration.',
     built:
       'An in-house replacement spanning 616 endpoints and 194 entities, sharing the headless forms, upload and onboarding packages rather than duplicating them.',
+    media: {
+      hero: { src: '/media/paragon/hero.jpg', alt: 'The Paragon recordkeeping platform' },
+      gallery: [
+        { src: '/media/paragon/login.jpg', alt: 'The Paragon sign-in screen' },
+        { src: '/media/paragon/dashboard.jpg', alt: 'A Paragon dashboard after signing in' },
+      ],
+    },
     stack: ['.NET', 'EF Core', 'Azure SQL', 'Clean Architecture'],
     isPersonal: false,
   },
@@ -164,6 +187,10 @@ export const projects: Project[] = [
     media: {
       hero: { src: '/media/kingdoms-and-crowns/hero.jpg', alt: "A child's quest log listing today's lessons with start timers and XP rewards" },
       gallery: [
+        {
+          src: '/media/kingdoms-and-crowns/marketing.jpg',
+          alt: 'The Kingdoms & Crowns marketing site: “Be the Hero of Homeschool” over a mountain sunrise, with the three-step explainer beneath',
+        },
         { src: '/media/kingdoms-and-crowns/castle.jpg', alt: 'The castle screen, a student’s home base' },
         { src: '/media/kingdoms-and-crowns/tavern.jpg', alt: 'The tavern screen' },
         { src: '/media/kingdoms-and-crowns/trophies.jpg', alt: 'Earned trophies and achievements' },

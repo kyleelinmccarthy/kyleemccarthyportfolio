@@ -7,7 +7,7 @@ export const site = {
   // What a search result and a link preview show. Keep it in the same voice as
   // the landing headline — it used to be résumé statistics.
   description:
-    'There’s always a better way, and I like trying to find it. Kylee McCarthy — full-stack engineer with a design specialty. Benefits platforms, games, and art.',
+    'There’s always a better way, and I enjoy trying to find it. Kylee McCarthy — full-stack engineer with a design specialty. Benefits platforms, games, and art.',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kyleemccarthy.com',
   locale: 'en_US',
   location: 'Saratoga Springs, UT',

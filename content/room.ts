@@ -151,6 +151,7 @@ export const room = {
     // Not "things I draw": there is paint in here, and ink, and stickers.
     heading: 'Art',
     lede: 'Digital, pencil, ink and paint. I have been making art far longer than I have been writing code.',
+    hint: 'A volume per medium — take one down.',
   },
   tattoo: {
     heading: 'Tattoo flash',

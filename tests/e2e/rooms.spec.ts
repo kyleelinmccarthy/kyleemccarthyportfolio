@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test'
 import { rooms } from '@/content/rooms'
+import { FEATURED } from '@/content/caseStudies'
+import { projects } from '@/content/projects'
 
 test('the welcome is readable with animations disabled', async ({ browser }) => {
   // The door opening must never gate the content behind it.
@@ -30,14 +32,16 @@ test('the window states all three principles on the home page', async ({ page })
 // motion sidesteps that: it falls back to plain stacked sections with no
 // opacity gating, so the floor's content is genuinely visible without
 // simulating the scroll-driven camera move.
-test('the floor names all seven featured pieces', async ({ browser }) => {
+test('the floor names every featured piece, and nothing personal', async ({ browser }) => {
   const context = await browser.newContext({ reducedMotion: 'reduce' })
   const page = await context.newPage()
   await page.goto('/')
-  for (const name of [
-    'Beacon', '403HQ', 'AURA', 'NBS Website',
-    'Kingdoms & Crowns', 'ChemTreeHQ', 'The Wretched Few',
-  ]) {
+  // Read the roster from content. Hardcoding it here meant the wall's contents
+  // were pinned in two places, and moving the personal pieces to the library
+  // broke a test that was only ever about whether the wall renders.
+  const byslug = new Map(projects.map((p) => [p.slug, p]))
+  for (const slug of FEATURED) {
+    const name = byslug.get(slug)!.name
     await expect(page.getByRole('heading', { name, level: 3 })).toBeVisible()
   }
   await context.close()

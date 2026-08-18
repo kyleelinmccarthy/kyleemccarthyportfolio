@@ -42,7 +42,7 @@ export const rooms = {
      * It also explains the gallery two rooms along, since every piece there
      * exists because something already existed and wasn't good enough.
      */
-    entry: 'There’s always a better way, and I like trying to find it.',
+    entry: 'There’s always a better way, and I enjoy trying to find it.',
     eyebrow: 'My process',
     heading: 'Three things',
     // No lede. There was one, and it was a summary of the three principles
@@ -74,6 +74,12 @@ export const rooms = {
      */
     label: 'The work',
     placardHint: 'More about this one',
+    /**
+     * The personal builds came off this wall — they were being shown here and
+     * again on their own shelf. This is the pointer that replaces them, so
+     * someone walking the gallery still knows the other half exists.
+     */
+    libraryNote: 'The things I build after hours are in the library',
   },
   desk: {
     eyebrow: 'The desk',

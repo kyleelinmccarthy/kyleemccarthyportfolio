@@ -13,6 +13,6 @@
  * Do not put statistics here. The scenes below carry them.
  */
 export const hero = {
-  headline: 'There’s always a better way, and I like trying to find it.',
+  headline: 'There’s always a better way, and I enjoy trying to find it.',
   why: 'Full-stack, with design as the specialty — I’ll write the schema and then spend just as long getting the screen right. Some of it is my job: benefits portals, an accessibility platform. The rest is games, art, and apps for my kids.',
 } as const

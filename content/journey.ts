@@ -41,8 +41,10 @@ export const journey = {
   // The closing scene. It used to be a hiring-funnel close ("Let's get to work")
   // on a site that is a showcase — so it now points at the work instead of
   // asking for a meeting, and the door sits directly beneath it.
+  // Reached by "Send me a letter", so it is not the place to sell the work
+  // again — the person is already here and already interested.
   talk: {
-    heading: 'Go poke around.',
-    body: 'That was the summary. The actual work is all here to look at — client portals and an accessibility platform at the day job, games and art and half-finished experiments after hours.',
+    heading: 'Drop me a line.',
+    body: 'Whatever it is about — something here you want to know more about, something you are working on, or just hello.',
   },
 } as const

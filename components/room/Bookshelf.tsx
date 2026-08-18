@@ -1,11 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
-import type { Project } from '@/content/types'
-import { room } from '@/content/room'
-import { ProjectVisual } from '@/components/media/ProjectVisual'
-import { Gallery } from '@/components/media/Gallery'
-import { StackChips } from '@/components/primitives/StackChips'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 
 /**
  * Six cloth bindings. Real book colours rather than tints of the site palette,
@@ -25,29 +20,29 @@ const BINDINGS = ['bg-book-1', 'bg-book-2', 'bg-book-3', 'bg-book-4', 'bg-book-5
 const WIDTHS = ['w-[3.25rem]', 'w-[4rem]', 'w-[3.5rem]', 'w-[4.5rem]', 'w-[3.75rem]']
 const HEIGHTS = ['h-[15rem]', 'h-[16.5rem]', 'h-[15.75rem]', 'h-[17rem]', 'h-[16rem]']
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <dt className="font-sans text-label uppercase text-accent">{label}</dt>
-      <dd className="mt-1 font-sans text-sm leading-relaxed text-fg-muted">{children}</dd>
-    </div>
-  )
+/** One book: what is stamped on the spine, and what is inside it. */
+export interface Volume {
+  key: string
+  /** The spine text, and the dialog's accessible name. */
+  title: string
+  detail: ReactNode
 }
 
 /**
- * The after-hours projects, shelved.
+ * A shelf of books you pull out.
  *
  * The library was a column of cards on a page while the rest of the site was a
  * building you walk through — which had the fun part of the site being the
- * least fun thing in it. A shelf of books you pull out is the library's version
- * of the desk's sticky notes: the content is identical, the object is real.
+ * least fun thing in it. A shelf is the library's version of the desk's sticky
+ * notes: the content is identical, the object is real. It holds the after-hours
+ * projects on one shelf and the art, a volume per medium, on another.
  *
  * A spine is a real <button> that opens a native <dialog>, so focus trapping,
  * Esc-to-close and an inert background all come from the platform. Only one
  * dialog is mounted, holding whichever book is open, so the markup does not
- * carry nine copies of a modal.
+ * carry a modal per book.
  */
-export function Bookshelf({ projects }: { projects: Project[] }) {
+export function Bookshelf({ volumes, hint }: { volumes: Volume[]; hint?: string }) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const [open, setOpen] = useState(0)
 
@@ -67,28 +62,28 @@ export function Bookshelf({ projects }: { projects: Project[] }) {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') {
         e.preventDefault()
-        setOpen((i) => (i + 1) % projects.length)
+        setOpen((i) => (i + 1) % volumes.length)
       }
       if (e.key === 'ArrowLeft') {
         e.preventDefault()
-        setOpen((i) => (i - 1 + projects.length) % projects.length)
+        setOpen((i) => (i - 1 + volumes.length) % volumes.length)
       }
     }
     el.addEventListener('keydown', onKey)
     return () => el.removeEventListener('keydown', onKey)
-  }, [projects.length])
+  }, [volumes.length])
 
-  if (!projects.length) return null
-  const current = projects[open]!
+  if (!volumes.length) return null
+  const current = volumes[open]!
 
   return (
     <>
-      <p className="font-sans text-sm italic text-fg-muted">{room.projects.hint}</p>
+      {hint && <p className="font-sans text-sm italic text-fg-muted">{hint}</p>}
 
-      <div className="mt-4">
+      <div className={hint ? 'mt-4' : ''}>
         <ul className="flex flex-wrap items-end gap-1.5">
-          {projects.map((p, i) => (
-            <li key={p.slug}>
+          {volumes.map((v, i) => (
+            <li key={v.key}>
               <button
                 type="button"
                 onClick={(e) => pull(i, e.currentTarget)}
@@ -127,7 +122,7 @@ export function Bookshelf({ projects }: { projects: Project[] }) {
                   className="px-1 text-center font-serif text-sm leading-tight text-book-foil [writing-mode:vertical-rl] [text-orientation:mixed]"
                   style={{ transform: 'rotate(180deg)' }}
                 >
-                  {p.name}
+                  {v.title}
                 </span>
               </button>
             </li>
@@ -140,40 +135,15 @@ export function Bookshelf({ projects }: { projects: Project[] }) {
 
       <dialog
         ref={dialogRef}
-        aria-label={`${current.name} — details`}
-        className="max-w-[min(92vw,44rem)] rounded-xl bg-surface-raised p-6 text-fg ring-1 ring-rule backdrop:bg-black/70"
+        aria-label={current.title}
+        className="max-h-[86vh] max-w-[min(92vw,44rem)] overflow-y-auto rounded-xl bg-surface-raised p-6 text-fg ring-1 ring-rule backdrop:bg-black/70"
       >
-        <ProjectVisual media={current.media} name={current.name} className="mb-5" />
-        <h3 className="font-serif text-2xl leading-tight text-fg">{current.name}</h3>
-        <p className="mt-1 font-sans text-sm text-fg-muted">{current.descriptor}</p>
-        <dl className="mt-4 space-y-3">
-          <Field label="Problem">{current.problem}</Field>
-          <Field label="What I Built">{current.built}</Field>
-          {current.outcome && <Field label="Outcome">{current.outcome}</Field>}
-        </dl>
-        <StackChips stack={current.stack} />
-        {current.media?.gallery && (
-          <Gallery items={current.media.gallery} label={current.name} />
-        )}
-        <div className="mt-6 flex items-center justify-between gap-3">
-          {current.liveUrl ? (
-            <a
-              href={current.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 font-sans text-sm font-semibold text-accent underline-offset-4 hover:underline"
-            >
-              Visit
-              <span aria-hidden="true">↗</span>
-              <span className="sr-only">{current.name} (opens in a new tab)</span>
-            </a>
-          ) : (
-            <span />
-          )}
+        {current.detail}
+        <div className="mt-6 text-right">
           <button
             type="button"
             onClick={() => dialogRef.current?.close()}
-            className="rounded-full bg-accent px-4 py-1.5 font-sans text-sm font-semibold text-fill-fg"
+            className="rounded-full bg-fill px-4 py-1.5 font-sans text-sm font-semibold text-fill-fg"
           >
             Put it back
           </button>

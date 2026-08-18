@@ -14,7 +14,12 @@ const fieldClass =
 
 const labelClass = 'block font-sans text-sm font-medium text-fg'
 
-export function ContactForm() {
+/**
+ * `rows` sizes the message box. The default suits a page that can grow; the
+ * library's mailbox sits inside a room exactly one viewport tall, where a
+ * five-row box pushed Send off the bottom edge.
+ */
+export function ContactForm({ rows = 5 }: { rows?: number }) {
   const [status, setStatus] = useState<Status>('idle')
   const [errors, setErrors] = useState<Errors>({})
   const [serverMessage, setServerMessage] = useState('')
@@ -121,7 +126,7 @@ export function ContactForm() {
       </Field>
 
       <Field id="message" label="Message" error={errors.message}>
-        <textarea id="message" name="message" rows={5} className={fieldClass}
+        <textarea id="message" name="message" rows={rows} className={fieldClass}
           aria-invalid={!!errors.message} aria-describedby={errors.message ? 'message-error' : undefined} />
       </Field>
 

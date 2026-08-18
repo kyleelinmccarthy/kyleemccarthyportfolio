@@ -19,21 +19,42 @@ export interface CaseStudy {
   whatItIs: string
   problem: string
   whyBuiltThisWay: string
-  placard: Placard
+  /**
+   * Optional, because a placard is written from Kylee's own four answers about
+   * a piece and some pieces do not have them yet. A missing placard renders
+   * nothing — it never renders an invented one.
+   */
+  placard?: Placard
 }
 
-/** Wall order. Four professional, then three personal. */
+/**
+ * Wall order — the professional work only.
+ *
+ * The three personal pieces used to hang here too, which meant Kingdoms &
+ * Crowns, ChemTreeHQ and The Wretched Few were shown twice: once on the wall
+ * and again on their own shelf in the library. The gallery points at the
+ * library instead (see rooms.floor.libraryNote).
+ */
 export const FEATURED = [
   'beacon',
   '403hq',
   'aura',
+  'ruckus',
   'nbs-website',
-  'kingdoms-and-crowns',
-  'chemtree-hq',
-  'wretched-few',
 ] as const
 
 export const caseStudies: CaseStudy[] = [
+  {
+    // No placard: the four placard answers come from Kylee's interview and
+    // Ruckus was not one of the pieces covered. Everything here is her own
+    // copy from content/projects.ts rather than anything inferred.
+    slug: 'ruckus',
+    whatItIs: 'Ten browser-based multiplayer games, with live polls and quizzes, for a fully remote company.',
+    problem:
+      'The company was paying for AhaSlides — low adoption, shared logins, and nothing employees found compelling.',
+    whyBuiltThisWay:
+      'Live play runs over SignalR, and the whole thing sits behind Microsoft SSO so access follows the identity infrastructure already in place. That retired the vendor and removed shared-login access management entirely.',
+  },
   {
     slug: 'beacon',
     whatItIs: 'One app the whole IS department runs on — projects, tickets, assets, pull requests, scorecards.',

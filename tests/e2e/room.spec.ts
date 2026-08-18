@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { rooms } from '@/content/rooms'
+import { journey } from '@/content/journey'
 import { room } from '@/content/room'
 
 // Read the door's words from content. Pinning them here meant every reword
@@ -22,7 +23,7 @@ test('the door is the last beat of the home scroll only, not part of /connect', 
   await page.goto('/connect')
   // Proxy for "the talk copy did render here" — so the assertion below proves
   // the door is absent, not merely that the whole page failed to render.
-  await expect(page.getByRole('heading', { name: /go poke around/i })).toBeVisible()
+  await expect(page.getByRole('heading', { name: journey.talk.heading })).toBeVisible()
   await expect(page.getByRole('link', { name: doorName })).toHaveCount(0)
 })
 

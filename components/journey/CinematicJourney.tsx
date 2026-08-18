@@ -178,7 +178,7 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
             <span
               key={s.id}
               className={`h-2 w-2 rounded-full transition-colors duration-300 ${
-                i === active ? 'bg-accent' : 'bg-rule'
+                i === active ? 'bg-accent' : 'bg-fg/25'
               }`}
             />
           ))}
