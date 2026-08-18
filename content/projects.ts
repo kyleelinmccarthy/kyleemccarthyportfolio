@@ -341,6 +341,12 @@ export const projects: Project[] = [
       'Budgeting tools are built around the calendar month, which is not when money actually arrives.',
     built:
       'A budgeting app organised by pay period instead, covering accounts, expenses, debts and school funds.',
+    media: {
+      hero: {
+        src: '/media/family-budgeting/hero.jpg',
+        alt: 'The Budget dashboard: a four-week projection of income, expenses and surplus, with cash flow, accounts, expenses and debts beneath',
+      },
+    },
     stack: ['Next.js', 'TypeScript', 'SQLite'],
     isPersonal: true,
   },
@@ -356,6 +362,19 @@ export const projects: Project[] = [
     built:
       'A zero-friction list that asks whether you did the thing. Snooze an item enough times and it stops asking yes-or-no and starts asking what is getting in the way, surfacing the real blocker behind a stalled task.',
     outcome: 'Runs locally for my family, and they actually use it.',
+    media: {
+      hero: {
+        src: '/media/doing-the-thing/hero.jpg',
+        alt: 'Doing The Thing: each chore as a card asking whether you did it, with “Did the thing”, “Doing the thing” and “Can’t right now”, and a done list beside it',
+      },
+      gallery: [
+        { src: '/media/doing-the-thing/add.jpg', alt: 'Adding a thing to the list' },
+        {
+          src: '/media/doing-the-thing/add-advanced.jpg',
+          alt: 'The advanced options when adding a thing',
+        },
+      ],
+    },
     stack: ['Next.js', 'TypeScript'],
     isPersonal: true,
   },

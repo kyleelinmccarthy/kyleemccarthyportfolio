@@ -154,7 +154,9 @@ export const room = {
     hint: 'A volume per medium — take one down.',
   },
   tattoo: {
-    heading: 'Tattoo flash',
+    // Not "flash": flash is pre-drawn sheet work you pick from. These were
+    // drawn for the person who then went and got them.
+    heading: 'Tattoo designs',
     lede: 'Designs I have drawn for people who went and got them tattooed. There are several of these walking around out there, which I still find slightly unbelievable.',
   },
   offTheClock: {

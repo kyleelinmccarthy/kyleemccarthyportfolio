@@ -66,11 +66,38 @@ describe('Gallery', () => {
     expect(within(dialog).getByAltText('The castle screen')).toBeInTheDocument()
   })
 
-  it('the Close button calls dialog.close()', async () => {
+  it('offers two ways out, and both call dialog.close()', async () => {
+    // There are two Close buttons on purpose: the × in the corner, so you can
+    // get out without reading to the bottom, and the one in the footer beside
+    // the Previous/Next controls.
     const user = userEvent.setup()
     render(<Gallery items={items} label="Kingdoms & Crowns" />)
     await user.click(screen.getByRole('button', { name: /The castle screen/ }))
-    await user.click(screen.getByRole('button', { name: 'Close' }))
+
+    const ways = screen.getAllByRole('button', { name: 'Close' })
+    expect(ways).toHaveLength(2)
+    for (const way of ways) {
+      await user.click(way)
+      expect(HTMLDialogElement.prototype.close).toHaveBeenCalled()
+    }
+  })
+
+  it('closes when you click outside the picture', async () => {
+    // The click lands on the ::backdrop, which the platform reports against
+    // the dialog element itself. Anything inside must NOT close it, which is
+    // why the dialog carries no padding of its own.
+    //
+    // The spy is installed once for the file, so clear it: the assertion below
+    // is about this test's clicks, not every click the suite has made.
+    vi.mocked(HTMLDialogElement.prototype.close).mockClear()
+    render(<Gallery items={items} label="Kingdoms & Crowns" />)
+    fireEvent.click(screen.getByRole('button', { name: /The castle screen/ }))
+    const dialog = document.querySelector('dialog')!
+
+    fireEvent.click(dialog.querySelector('img')!)
+    expect(HTMLDialogElement.prototype.close).not.toHaveBeenCalled()
+
+    fireEvent.click(dialog)
     expect(HTMLDialogElement.prototype.close).toHaveBeenCalled()
   })
 
