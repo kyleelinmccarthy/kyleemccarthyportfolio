@@ -19,10 +19,10 @@ export const contact = {
 } as const
 
 export const footer = {
-  nav: [
-    { label: 'Start over', href: '/' },
-    { label: 'Send me a letter', href: '/#contact' },
-  ],
+  // "Send me a letter" is in the pages column on the right, pointing at
+  // /connect. It was here too, pointing at the home page's own mailbox, so the
+  // footer offered the same thing twice on one line.
+  nav: [{ label: 'Start over', href: '/' }],
   // Standalone, directly-linkable pages for each journey scene.
   pages: [
     { label: 'About', href: '/about' },

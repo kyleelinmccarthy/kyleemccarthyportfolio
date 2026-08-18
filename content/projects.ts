@@ -232,6 +232,30 @@ export const projects: Project[] = [
     problem: 'I wanted to find out whether I could build a game end to end on my own.',
     built:
       'A 3D multiplayer party game in Unity and C#, where a lobby is cut down through a gauntlet of playground minigames until one player remains.',
+    media: {
+      hero: {
+        src: '/media/eliminated/hero.jpg',
+        alt: 'The Eliminated main menu: the pink logo over a green sweep, the player’s donut character, a Marbles balance, and Play, Spectate, Settings and Quit',
+      },
+      gallery: [
+        {
+          src: '/media/eliminated/mingle.jpg',
+          alt: 'A round of Mingle in play, seen from above: five players racing for rooms around a ring as the group size is called',
+        },
+        {
+          src: '/media/eliminated/player.jpg',
+          alt: 'The Choose Your Player screen — a grid of unlockable characters with pun names, bought with Marbles',
+        },
+        {
+          src: '/media/eliminated/how-to-play.jpg',
+          alt: 'The How to Play screen',
+        },
+        {
+          src: '/media/eliminated/account.jpg',
+          alt: 'A player’s account: display name, Marbles, crowns, rounds survived and their current title',
+        },
+      ],
+    },
     stack: ['Unity', 'C#'],
     isPersonal: true,
   },
