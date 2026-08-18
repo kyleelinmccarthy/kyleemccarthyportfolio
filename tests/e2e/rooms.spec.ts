@@ -197,3 +197,70 @@ test('the window walks you on to the work', async ({ page }, testInfo) => {
     .toBeGreaterThan(before + 200)
   await expect(page.getByRole('heading', { name: 'Beacon', level: 3 })).toBeVisible()
 })
+
+/**
+ * Back buttons a visitor can actually reach.
+ *
+ * The journey renders every room at once, so all four back buttons are in the
+ * DOM from the start; the rooms you are not standing in are `inert`, which
+ * takes them out of the focus order and the accessibility tree. Playwright's
+ * role engine does not model inert, so the check is on the DOM.
+ */
+function reachableBackButtons(page: import('@playwright/test').Page) {
+  return page.evaluate(
+    () =>
+      [...document.querySelectorAll('button[aria-label^="Back to"]')].filter(
+        (b) => !b.closest('[inert]')
+      ).length
+  )
+}
+
+test('only the room you are standing in offers its way back', async ({ page }, testInfo) => {
+  // Camera path only. Stacked, every section is genuinely on the page at once,
+  // so every back button is reachable — which is correct there.
+  test.skip(
+    (testInfo.project.use.viewport?.width ?? 1280) < 768,
+    'the stacked layout has no inert rooms'
+  )
+  await page.goto('/')
+  await page.waitForTimeout(1200)
+
+  // Nothing behind you on the front step.
+  expect(await reachableBackButtons(page)).toBe(0)
+
+  await page.getByRole('button', { name: rooms.steps.doorAction }).click()
+  await settled(page)
+  expect(await reachableBackButtons(page)).toBe(1)
+})
+
+test('the way back walks you back', async ({ page }) => {
+  await page.goto('/')
+  await page.waitForTimeout(1200)
+  await page.getByRole('button', { name: rooms.steps.doorAction }).click()
+  await settled(page)
+
+  const back = page.locator('button[aria-label^="Back to"]:not([inert] *)').first()
+  const before = await page.evaluate(() => window.scrollY)
+  await back.click()
+  await settled(page)
+  expect(await page.evaluate(() => window.scrollY)).toBeLessThan(before)
+})
+
+test('a desk note with screenshots but no live URL opens them', async ({ browser }) => {
+  // Stacked, so the desk is a section you can scroll to rather than a room the
+  // camera has to arrive at first.
+  const context = await browser.newContext({ reducedMotion: 'reduce' })
+  const page = await context.newPage()
+  await page.goto('/')
+  await page.waitForTimeout(800)
+
+  const note = page.getByRole('button', { name: /Paragon/i }).first()
+  await note.click()
+  const dialog = page.getByRole('dialog', { name: 'Paragon' })
+  await expect(dialog).toBeVisible()
+
+  // Closable without hunting for a button at the bottom of a long entry.
+  await dialog.getByRole('button', { name: 'Close' }).click()
+  await expect(dialog).toBeHidden()
+  await context.close()
+})

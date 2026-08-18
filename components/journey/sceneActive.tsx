@@ -64,6 +64,16 @@ export function useSceneAdvance() {
   return useContext(SceneAdvanceContext)
 }
 
+/**
+ * Walks the reader back to the room before this one. Mirror of
+ * useSceneAdvance, and null in the first room, where there is nothing behind
+ * you.
+ */
+export const SceneRetreatContext = createContext<(() => void) | null>(null)
+export function useSceneRetreat() {
+  return useContext(SceneRetreatContext)
+}
+
 /** Rise + fade a block in when its scene becomes active (or scrolls into view). */
 export function RevealOnActive({
   children,

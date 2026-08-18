@@ -1,6 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
+import { Modal, useModal } from '@/components/primitives/Modal'
 
 /**
  * Six cloth bindings. Real book colours rather than tints of the site palette,
@@ -43,18 +44,8 @@ export interface Volume {
  * carry a modal per book.
  */
 export function Bookshelf({ volumes, hint }: { volumes: Volume[]; hint?: string }) {
-  const dialogRef = useRef<HTMLDialogElement>(null)
+  const { ref: dialogRef, open: showBook } = useModal()
   const [open, setOpen] = useState(0)
-
-  const pull = useCallback((i: number, trigger: HTMLButtonElement) => {
-    setOpen(i)
-    // Focus the spine before showModal(). A native dialog restores focus to
-    // whatever was document.activeElement when it opened, and Safari has
-    // historically not focused buttons on mouse click — without this, where
-    // focus lands on close would be browser-dependent. Same fix as Gallery.
-    trigger.focus()
-    dialogRef.current?.showModal()
-  }, [])
 
   useEffect(() => {
     const el = dialogRef.current
@@ -71,7 +62,7 @@ export function Bookshelf({ volumes, hint }: { volumes: Volume[]; hint?: string 
     }
     el.addEventListener('keydown', onKey)
     return () => el.removeEventListener('keydown', onKey)
-  }, [volumes.length])
+  }, [dialogRef, volumes.length])
 
   if (!volumes.length) return null
   const current = volumes[open]!
@@ -86,7 +77,10 @@ export function Bookshelf({ volumes, hint }: { volumes: Volume[]; hint?: string 
             <li key={v.key}>
               <button
                 type="button"
-                onClick={(e) => pull(i, e.currentTarget)}
+                onClick={(e) => {
+                  setOpen(i)
+                  showBook(e.currentTarget)
+                }}
                 className={[
                   'group relative flex items-center justify-center rounded-sm rounded-t-md',
                   'ring-1 ring-black/30 shadow-md shadow-black/30',
@@ -133,11 +127,7 @@ export function Bookshelf({ volumes, hint }: { volumes: Volume[]; hint?: string 
         <div aria-hidden="true" className="mx-2 h-1.5 rounded-b-sm bg-surface-raised opacity-60" />
       </div>
 
-      <dialog
-        ref={dialogRef}
-        aria-label={current.title}
-        className="max-h-[86vh] max-w-[min(92vw,44rem)] overflow-y-auto rounded-xl bg-surface-raised p-6 text-fg ring-1 ring-rule backdrop:bg-black/70"
-      >
+      <Modal dialogRef={dialogRef} label={current.title}>
         {current.detail}
         <div className="mt-6 text-right">
           <button
@@ -148,7 +138,7 @@ export function Bookshelf({ volumes, hint }: { volumes: Volume[]; hint?: string 
             Put it back
           </button>
         </div>
-      </dialog>
+      </Modal>
     </>
   )
 }

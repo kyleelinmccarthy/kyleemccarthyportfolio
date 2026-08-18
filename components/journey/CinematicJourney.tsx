@@ -15,6 +15,7 @@ import {
   SceneAdvanceContext,
   SceneProgressContext,
   ScenePagingContext,
+  SceneRetreatContext,
 } from './sceneActive'
 import { VH_PER_SCENE, dwellEnd } from './timing'
 import { BackgroundShapes } from '@/components/media/BackgroundShapes'
@@ -25,6 +26,12 @@ export type Dir = 'start' | 'right' | 'left' | 'up' | 'down' | 'in'
 export interface Scene {
   id: string
   dir: Dir
+  /**
+   * What this room is called, in a sentence. Used by the next room's back
+   * button — "Back to the entrance" tells you where you are going in a way
+   * that a bare "Back" does not.
+   */
+  title?: string
   node: ReactNode
   /** The room's environment, rendered behind its content. */
   setting?: ReactNode
@@ -145,8 +152,8 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
   if (!horizontal) {
     return (
       <div id="top">
-        {scenes.map((s) => (
-          <StackedScene key={s.id} scene={s} />
+        {scenes.map((s, i) => (
+          <StackedScene key={s.id} scene={s} previous={scenes[i - 1]?.title} />
         ))}
       </div>
     )
@@ -190,6 +197,10 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
                   ? () => scrollToProgress(starts[i + 1]! + 0.15 * spans[i + 1]!)
                   : null
               }
+              retreat={
+                i > 0 ? () => scrollToProgress(starts[i - 1]! + 0.15 * spans[i - 1]!) : null
+              }
+              previous={scenes[i - 1]?.title}
             >
               {s.node}
             </Panel>
@@ -229,6 +240,32 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
 }
 
 /**
+ * The way back, in every room but the first.
+ *
+ * Deliberately a visible pill with the word on it rather than a bare chevron:
+ * the journey is a building you walk through, and the one thing a building
+ * always tells you is where the way out is. Left-hand side, opposite the
+ * scroll cue at bottom right.
+ *
+ * It sits at the bottom-left on a phone, where the copy runs the full width
+ * and a vertically-centred control would land on top of it, and moves to the
+ * middle of the left edge from `sm` up.
+ */
+function BackToPreviousRoom({ onBack, previous }: { onBack: () => void; previous?: string }) {
+  return (
+    <button
+      type="button"
+      onClick={onBack}
+      aria-label={previous ? `Back to ${previous}` : 'Back to the previous room'}
+      className="absolute bottom-20 left-3 z-20 inline-flex items-center gap-2 rounded-full bg-surface-raised/95 px-4 py-2 font-sans text-sm text-fg shadow-lg shadow-black/20 ring-1 ring-rule transition-colors hover:text-accent hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:bottom-auto sm:left-4 sm:top-1/2 sm:-translate-y-1/2"
+    >
+      <span aria-hidden="true">←</span>
+      Back
+    </button>
+  )
+}
+
+/**
  * One room in the stacked layout — mobile, and the reduced-motion and no-JS
  * output.
  *
@@ -245,7 +282,7 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
  * Reduced motion still gets stillness: every consumer checks that itself, so
  * publishing progress here costs those users nothing.
  */
-function StackedScene({ scene }: { scene: Scene }) {
+function StackedScene({ scene, previous }: { scene: Scene; previous?: string }) {
   const ref = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -256,12 +293,18 @@ function StackedScene({ scene }: { scene: Scene }) {
   // off the DOM rather than threaded through as an index: the sections are
   // siblings, and the last one correctly has no next.
   const [canAdvance, setCanAdvance] = useState(false)
+  const [canRetreat, setCanRetreat] = useState(false)
   useEffect(() => {
     setCanAdvance(!!ref.current?.nextElementSibling)
+    setCanRetreat(!!ref.current?.previousElementSibling)
   }, [])
   const advance = useCallback(() => {
     const next = ref.current?.nextElementSibling as HTMLElement | null
     if (next) window.scrollTo(0, next.offsetTop)
+  }, [])
+  const retreat = useCallback(() => {
+    const prev = ref.current?.previousElementSibling as HTMLElement | null
+    if (prev) window.scrollTo(0, prev.offsetTop)
   }, [])
 
   return (
@@ -271,6 +314,7 @@ function StackedScene({ scene }: { scene: Scene }) {
       aria-label={scene.id}
     >
       <SceneAdvanceContext.Provider value={canAdvance ? advance : null}>
+      <SceneRetreatContext.Provider value={canRetreat ? retreat : null}>
         <SceneProgressContext.Provider value={scrollYProgress}>
           {/* No camera here, so there is no transition to keep clear of:
               paging gets the section's whole pass. */}
@@ -280,8 +324,10 @@ function StackedScene({ scene }: { scene: Scene }) {
             <div className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
               {scene.node}
             </div>
+            {canRetreat && <BackToPreviousRoom onBack={retreat} previous={previous} />}
           </ScenePagingContext.Provider>
         </SceneProgressContext.Provider>
+      </SceneRetreatContext.Provider>
       </SceneAdvanceContext.Provider>
     </section>
   )
@@ -303,6 +349,8 @@ function Panel({
   progress,
   reduce,
   advance,
+  retreat,
+  previous,
   children,
 }: {
   x: number
@@ -320,6 +368,8 @@ function Panel({
   progress: MotionValue<number>
   reduce: boolean
   advance: (() => void) | null
+  retreat: (() => void) | null
+  previous?: string
   children: ReactNode
 }) {
   const a = arriveStart
@@ -366,6 +416,12 @@ function Panel({
         // disable pointer events) — which made the Build scene's links dead.
         pointerEvents: isActive ? 'auto' : 'none',
       }}
+      // And only the centered scene is reachable. pointer-events stops the
+      // mouse but not the keyboard: every room's links and buttons sat in the
+      // tab order at once, so tabbing out of the front step walked you through
+      // four rooms you could not see. `inert` takes them out of the focus
+      // order and out of the accessibility tree together.
+      inert={!isActive}
     >
       {/* The setting is inside the providers, not beside them. It used to sit
           outside, which meant a room's scenery could not read the scene at
@@ -373,6 +429,7 @@ function Panel({
           where "on to the next room" is. */}
       <SceneActiveContext.Provider value={isActive}>
         <SceneAdvanceContext.Provider value={advance}>
+        <SceneRetreatContext.Provider value={retreat}>
           <SceneProgressContext.Provider value={sceneProgress}>
             <ScenePagingContext.Provider value={scenePaging}>
               <Backdrop variant={backdrop} />
@@ -381,8 +438,10 @@ function Panel({
               <div key={enterKey} className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
                 {children}
               </div>
+              {retreat && <BackToPreviousRoom onBack={retreat} previous={previous} />}
             </ScenePagingContext.Provider>
           </SceneProgressContext.Provider>
+        </SceneRetreatContext.Provider>
         </SceneAdvanceContext.Provider>
       </SceneActiveContext.Provider>
     </motion.div>

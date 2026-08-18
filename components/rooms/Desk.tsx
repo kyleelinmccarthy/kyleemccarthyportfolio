@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { rooms } from '@/content/rooms'
 import { projects } from '@/content/projects'
 import { FEATURED } from '@/content/caseStudies'
@@ -7,6 +8,8 @@ import type { Project } from '@/content/types'
 import { Room } from './Room'
 import { StickyNote, tiltForIndex } from './StickyNote'
 import { RevealOnActive } from '@/components/journey/sceneActive'
+import { ProjectPages } from '@/components/media/ProjectPages'
+import { Modal, useModal } from '@/components/primitives/Modal'
 
 /**
  * The professional work that isn't hung on the wall — the overflow, not the
@@ -45,14 +48,39 @@ export function DeskSetting() {
  * nothing. `offset` is gone with it — the colours just walk the list.
  */
 function NoteGrid() {
+  const { ref: dialogRef, open: show } = useModal()
+  const [openIndex, setOpenIndex] = useState(0)
+  const current = onDesk[openIndex]!
+
   return (
-    <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-      {onDesk.map((p, i) => (
-        <li key={p.slug}>
-          <StickyNote project={p} tilt={tiltForIndex(i)} index={i} />
-        </li>
-      ))}
-    </ul>
+    <>
+      <ul aria-label={rooms.desk.heading} className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {onDesk.map((p, i) => (
+          <li key={p.slug}>
+            <StickyNote
+              project={p}
+              tilt={tiltForIndex(i)}
+              index={i}
+              // Only offered where there is something to show. An internal
+              // platform has no public URL, but Paragon has screenshots — and
+              // a note with pictures behind it that you cannot open is a note
+              // pretending to be a card.
+              onOpen={
+                p.media
+                  ? (trigger) => {
+                      setOpenIndex(i)
+                      show(trigger)
+                    }
+                  : undefined
+              }
+            />
+          </li>
+        ))}
+      </ul>
+      <Modal dialogRef={dialogRef} label={current.name}>
+        <ProjectPages project={current} />
+      </Modal>
+    </>
   )
 }
 

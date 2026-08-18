@@ -56,14 +56,13 @@ test('the room renders its sections', async ({ page }) => {
   await page.goto('/room')
   // Read the headings from content. Pinned strings here broke on a reword
   // that had nothing to do with whether the sections render.
-  for (const heading of [
-    room.projects.heading,
-    room.art.heading,
-    room.tattoo.heading,
-    room.offTheClock.heading,
-  ]) {
+  for (const heading of [room.projects.heading, room.art.heading, room.offTheClock.heading]) {
     await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible()
   }
+  // The tattoo flash had a room of its own, which made it look like a separate
+  // career rather than one more thing she draws. It is a volume on the art
+  // shelf now, so it is a book you can take down, not a section heading.
+  await expect(page.getByRole('button', { name: room.tattoo.heading })).toBeVisible()
 })
 
 test('the room refers to family generically', async ({ page }) => {

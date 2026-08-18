@@ -1,16 +1,13 @@
 'use client'
 
-import type { ReactNode } from 'react'
 import { projects } from '@/content/projects'
 import { room, artAlt, tattooAlt } from '@/content/room'
-import type { Project } from '@/content/types'
 import { groupArt } from '@/lib/artGroups'
 import { Room } from '@/components/rooms/Room'
 import { Mailbox } from '@/components/rooms/Mailbox'
 import { ContactForm } from '@/components/sections/ContactForm'
-import { ProjectVisual } from '@/components/media/ProjectVisual'
 import { Gallery } from '@/components/media/Gallery'
-import { StackChips } from '@/components/primitives/StackChips'
+import { ProjectPages } from '@/components/media/ProjectPages'
 import { Bookshelf, type Volume } from './Bookshelf'
 import { RevealOnActive } from '@/components/journey/sceneActive'
 
@@ -32,51 +29,10 @@ const tattooItems = Object.entries(tattooAlt).map(([slug, alt]) => ({
   alt,
 }))
 
-function Field({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div>
-      <dt className="font-sans text-label uppercase text-accent">{label}</dt>
-      <dd className="mt-1 font-sans text-sm leading-relaxed text-fg-muted">{children}</dd>
-    </div>
-  )
-}
-
-/* ------------------------------------------------------------------ shelf */
-
-/** What is inside a project's book: everything its old card carried. */
-function ProjectPages({ p }: { p: Project }) {
-  return (
-    <>
-      <ProjectVisual media={p.media} name={p.name} className="mb-5" />
-      <h3 className="font-serif text-2xl leading-tight text-fg">{p.name}</h3>
-      <p className="mt-1 font-sans text-sm text-fg-muted">{p.descriptor}</p>
-      <dl className="mt-4 space-y-3">
-        <Field label="Problem">{p.problem}</Field>
-        <Field label="What I Built">{p.built}</Field>
-        {p.outcome && <Field label="Outcome">{p.outcome}</Field>}
-      </dl>
-      <StackChips stack={p.stack} />
-      {p.media?.gallery && <Gallery items={p.media.gallery} label={p.name} />}
-      {p.liveUrl && (
-        <a
-          href={p.liveUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-5 inline-flex items-center gap-1.5 font-sans text-sm font-semibold text-accent underline-offset-4 hover:underline"
-        >
-          Visit
-          <span aria-hidden="true">↗</span>
-          <span className="sr-only">{p.name} (opens in a new tab)</span>
-        </a>
-      )}
-    </>
-  )
-}
-
 const projectVolumes: Volume[] = personalProjects.map((p) => ({
   key: p.slug,
   title: p.name,
-  detail: <ProjectPages p={p} />,
+  detail: <ProjectPages project={p} />,
 }))
 
 /** Warm lamplight from the left, the way a reading room is lit. */
@@ -112,23 +68,41 @@ export function ShelfRoom() {
 /* -------------------------------------------------------------------- art */
 
 /**
- * A volume per medium.
+ * A volume per medium, and the tattoo flash is one of them.
  *
  * The art used to page through five walls of framed work off the scroll, which
  * put a second thing to scroll through inside a room you were already
- * scrolling. A shelf holds all five at once and opens the one you want — and
+ * scrolling. A shelf holds them all at once and opens the one you want — and
  * in a library, a body of work by medium is a set of volumes anyway.
+ *
+ * The flash had a room to itself, which made it look like a separate career
+ * rather than one more thing she draws. It is a volume on the same shelf now,
+ * and it keeps its own lede because the story behind it — people went and got
+ * these tattooed — is not obvious from the pictures.
  */
-const artVolumes: Volume[] = artGroups.map((g) => ({
-  key: g.label,
-  title: g.label,
-  detail: (
-    <>
-      <h3 className="font-serif text-2xl leading-tight text-fg">{g.label}</h3>
-      <Gallery items={g.items} label={g.label} variant="wall" />
-    </>
-  ),
-}))
+const artVolumes: Volume[] = [
+  ...artGroups.map((g) => ({
+    key: g.label,
+    title: g.label,
+    detail: (
+      <>
+        <h3 className="font-serif text-2xl leading-tight text-fg">{g.label}</h3>
+        <Gallery items={g.items} label={g.label} variant="wall" />
+      </>
+    ),
+  })),
+  {
+    key: 'tattoo-flash',
+    title: room.tattoo.heading,
+    detail: (
+      <>
+        <h3 className="font-serif text-2xl leading-tight text-fg">{room.tattoo.heading}</h3>
+        <p className="mt-2 max-w-2xl font-sans text-sm text-fg-muted">{room.tattoo.lede}</p>
+        <Gallery items={tattooItems} label={room.tattoo.heading} variant="wall" />
+      </>
+    ),
+  },
+]
 
 /** Picture lights over the shelf. */
 export function ArtSetting() {
@@ -150,22 +124,6 @@ export function ArtRoom() {
         <div className="mt-8">
           <Bookshelf volumes={artVolumes} hint={room.art.hint} />
         </div>
-      </RevealOnActive>
-    </Room>
-  )
-}
-
-/* ----------------------------------------------------------------- flash */
-
-export function FlashRoom() {
-  return (
-    <Room className="mx-auto max-w-5xl">
-      <RevealOnActive>
-        <h2 className="font-serif text-3xl text-fg">{room.tattoo.heading}</h2>
-        <p className="mt-2 max-w-2xl font-sans text-sm text-fg-muted">{room.tattoo.lede}</p>
-      </RevealOnActive>
-      <RevealOnActive index={1}>
-        <Gallery items={tattooItems} label={room.tattoo.heading} variant="wall" />
       </RevealOnActive>
     </Room>
   )

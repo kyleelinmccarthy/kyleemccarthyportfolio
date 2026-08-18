@@ -1,29 +1,37 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { DeskRoom } from '@/components/rooms/Desk'
 import { StickyNote } from '@/components/rooms/StickyNote'
 import { projects } from '@/content/projects'
+import { rooms } from '@/content/rooms'
 import { FEATURED } from '@/content/caseStudies'
 import type { Project } from '@/content/types'
 
 const onDesk = projects.filter((p) => !p.isPersonal && !FEATURED.includes(p.slug as never))
 
+/**
+ * The desk mounts one dialog holding whichever note is open, so the open
+ * project's detail is in the document alongside the notes. Everything about
+ * the notes themselves is asserted against the list, by its accessible name.
+ */
+const notes = () => within(screen.getByRole('list', { name: rooms.desk.heading }))
+
 describe('The Desk', () => {
   it('holds the professional work that is not on the wall, and nothing else', () => {
     render(<DeskRoom />)
-    for (const p of onDesk) expect(screen.getByText(p.name)).toBeInTheDocument()
+    for (const p of onDesk) expect(notes().getByText(p.name)).toBeInTheDocument()
 
     // Nothing that is already hung in the gallery.
     for (const slug of FEATURED) {
       const featured = projects.find((p) => p.slug === slug)!
-      expect(screen.queryByText(featured.name)).toBeNull()
+      expect(notes().queryByText(featured.name)).toBeNull()
     }
 
     // And nothing personal. The desk sits on the working side of the house;
     // the after-hours builds have their own room at the back and were being
     // shown in both.
     for (const p of projects.filter((p) => p.isPersonal)) {
-      expect(screen.queryByText(p.name)).toBeNull()
+      expect(notes().queryByText(p.name)).toBeNull()
     }
   })
 
@@ -31,9 +39,9 @@ describe('The Desk', () => {
     // They were coloured by hashing the slug, which collided: two greens
     // turned up in one row of five and the desk read as a repeating pattern
     // rather than as notes off a pack.
-    const { container } = render(<DeskRoom />)
-    const colours = [...container.querySelectorAll('li > *')].map(
-      (el) => [...el.classList].find((c) => c.startsWith('bg-note-')) ?? ''
+    render(<DeskRoom />)
+    const colours = [...notes().getAllByRole('listitem')].map(
+      (li) => [...(li.firstElementChild?.classList ?? [])].find((c) => c.startsWith('bg-note-')) ?? ''
     )
     expect(colours.length).toBeGreaterThan(1)
     expect(colours).not.toContain('')
@@ -46,8 +54,8 @@ describe('The Desk', () => {
     // Every note fits at a readable size. Dealing them out a row at a time
     // added a second thing to scroll and a second thing to fight the page
     // scroll, for nothing.
-    const { container } = render(<DeskRoom />)
-    expect(container.querySelectorAll('li')).toHaveLength(onDesk.length)
+    render(<DeskRoom />)
+    expect(notes().getAllByRole('listitem')).toHaveLength(onDesk.length)
   })
 })
 
@@ -94,5 +102,31 @@ describe('a sticky note', () => {
     expect([...card.classList]).toContain('hover:-translate-y-1')
     // Not mouse-only: keyboard focus gets the same affordance.
     expect([...card.classList]).toContain('focus-visible:-translate-y-1')
+  })
+})
+
+describe('a note with pictures but no public URL', () => {
+  // jsdom does not implement HTMLDialogElement.showModal (checked: undefined
+  // on jsdom 25), so whether the dialog actually opens is proven in a real
+  // browser — tests/e2e/rooms.spec.ts. What is worth pinning here is that the
+  // note is a control at all: Paragon is an internal platform with no live URL
+  // to send anyone to, and before this it rendered as a plain card with its
+  // screenshots unreachable.
+  it('is a button, not a plain card', () => {
+    const withMedia = onDesk.find((p) => !p.liveUrl && p.media)
+    expect(withMedia, 'no desk project has media without a live URL').toBeTruthy()
+
+    render(<DeskRoom />)
+    expect(
+      notes().getByRole('button', { name: new RegExp(withMedia!.name, 'i') })
+    ).toBeInTheDocument()
+  })
+
+  it('leaves a note with neither a URL nor pictures inert', () => {
+    const bare = onDesk.find((p) => !p.liveUrl && !p.media)
+    if (!bare) return
+    render(<DeskRoom />)
+    expect(notes().queryByRole('button', { name: new RegExp(bare.name, 'i') })).toBeNull()
+    expect(notes().queryByRole('link', { name: new RegExp(bare.name, 'i') })).toBeNull()
   })
 })

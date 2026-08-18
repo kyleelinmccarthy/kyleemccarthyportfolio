@@ -4,7 +4,6 @@ import { CinematicJourney, type Scene } from '@/components/journey/CinematicJour
 import {
   ArtRoom,
   ArtSetting,
-  FlashRoom,
   OffTheClockRoom,
   OffTheClockSetting,
   SayHiRoom,
@@ -26,20 +25,20 @@ import {
  */
 export function LibraryJourney() {
   const scenes: Scene[] = [
-    { id: 'shelf', dir: 'start', node: <ShelfRoom />, setting: <ShelfSetting />, backdrop: 'library' },
+    { id: 'shelf', title: 'the shelf', dir: 'start', node: <ShelfRoom />, setting: <ShelfSetting />, backdrop: 'library' },
     // Right along the wall, the way you walk a gallery — the same move the
     // home page's showcase uses, for the same reason.
-    { id: 'art', dir: 'right', node: <ArtRoom />, setting: <ArtSetting />, backdrop: 'library' },
-    { id: 'flash', dir: 'right', node: <FlashRoom />, setting: <ArtSetting />, backdrop: 'library' },
+    { id: 'art', title: 'the art', dir: 'right', node: <ArtRoom />, setting: <ArtSetting />, backdrop: 'library' },
     // Down, off the wall and back to the table.
     {
       id: 'off-the-clock',
+      title: 'off the clock',
       dir: 'down',
       node: <OffTheClockRoom />,
       setting: <OffTheClockSetting />,
       backdrop: 'library',
     },
-    { id: 'say-hi', dir: 'in', node: <SayHiRoom />, setting: <ShelfSetting />, backdrop: 'library' },
+    { id: 'say-hi', title: 'the mailbox', dir: 'in', node: <SayHiRoom />, setting: <ShelfSetting />, backdrop: 'library' },
   ]
   return <CinematicJourney scenes={scenes} />
 }

@@ -55,6 +55,10 @@ function Frame({
   label: string
   children: ReactNode
 }) {
+  // z-20 where it is a control: the room's content column is z-10 and, being a
+  // full-width block, it sits over the window everywhere they overlap — so the
+  // click landed on an empty div beside the copy instead of on the window. The
+  // window is out at right-8%, well clear of the text, so lifting it is safe.
   const className = 'absolute right-[8%] top-[14%] h-[40vh] w-[22vw] min-w-[180px] rounded-sm'
   if (!interactive) {
     return (
@@ -68,7 +72,7 @@ function Frame({
       type="button"
       onClick={onActivate}
       aria-label={label}
-      className={`${className} pointer-events-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-surface`}
+      className={`${className} z-20 pointer-events-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-surface`}
     >
       {children}
     </button>

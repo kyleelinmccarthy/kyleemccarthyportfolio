@@ -55,26 +55,34 @@ function sizeFor(index: number): string {
 }
 
 /**
- * One project, pinned to the desk. A note with somewhere to send you renders
- * as a real link; one without renders as a plain, non-interactive card —
- * never an anchor with no destination.
+ * One project, pinned to the desk.
  *
- * Only the link lifts. The lift and the peeling corner used to be on every
- * note, which promised a click that most of them could not honour — the
- * cursor said "this goes somewhere" and then nothing happened. A note that is
- * just a note now sits still. On the ones that do lift, the affordance is on
- * hover and on focus both, so it isn't mouse-only.
+ * Three shapes, in order of what the note can actually do:
+ *  - somewhere public to send you: a real link
+ *  - screenshots but no public URL (an internal platform): a button that
+ *    opens them
+ *  - neither: a plain card, and nothing that suggests otherwise
+ *
+ * Only the first two lift. The lift and the peeling corner used to be on every
+ * note, which promised a click that most of them could not honour — the cursor
+ * said "this goes somewhere" and then nothing happened. On the ones that do
+ * lift, the affordance is on hover and on focus both, so it isn't mouse-only.
  */
 export function StickyNote({
   project,
   tilt,
   index,
+  onOpen,
 }: {
   project: Project
   tilt: number
   index: number
+  /** Show what's inside, for a project with pictures but no public URL. */
+  onOpen?: (trigger: HTMLButtonElement) => void
 }) {
   const note = noteFor(index)
+  const opens = !!onOpen && !project.liveUrl
+  const interactive = !!project.liveUrl || opens
   const base = [
     'group relative block h-full overflow-hidden rounded-md shadow-md ring-1',
     note.bg,
@@ -83,7 +91,7 @@ export function StickyNote({
   ]
   const className = [
     ...base,
-    ...(project.liveUrl
+    ...(interactive
       ? [
           'transition-transform duration-200 ease-out',
           'hover:-translate-y-1 hover:shadow-md',
@@ -98,7 +106,7 @@ export function StickyNote({
   // that lift, and stays put on the ones that don't.
   const corner = [
     'pointer-events-none absolute right-0 top-0 h-4 w-4 bg-surface shadow-sm [clip-path:polygon(100%_0,0_0,100%_100%)]',
-    ...(project.liveUrl
+    ...(interactive
       ? [
           'transition-all duration-200',
           'group-hover:h-6 group-hover:w-6 group-focus-visible:h-6 group-focus-visible:w-6',
@@ -120,6 +128,19 @@ export function StickyNote({
       <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className={className} style={style}>
         {body}
       </a>
+    )
+  }
+
+  if (opens) {
+    return (
+      <button
+        type="button"
+        onClick={(e) => onOpen!(e.currentTarget)}
+        className={`${className} text-left`}
+        style={style}
+      >
+        {body}
+      </button>
     )
   }
 

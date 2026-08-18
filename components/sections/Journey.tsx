@@ -14,6 +14,7 @@ export function Journey() {
   const scenes: Scene[] = [
     {
       id: 'steps',
+      title: 'the front step',
       dir: 'start',
       node: <StepsRoom />,
       setting: <StepsSetting />,
@@ -23,14 +24,14 @@ export function Journey() {
     // 'in', not 'up': you walk THROUGH the front door, you don't pan up past
     // it. The zoom crossfade puts the next room straight ahead of you, which
     // is what stepping over a threshold actually feels like.
-    { id: 'window', dir: 'in', node: <WindowRoom />, setting: <WindowSetting />, backdrop: 'entrance' },
+    { id: 'window', title: 'the way in', dir: 'in', node: <WindowRoom />, setting: <WindowSetting />, backdrop: 'entrance' },
     // Seven pieces to walk past, so this room claims four times the scroll of
     // a room that says one sentence. Without it, paging raced.
-    { id: 'floor', dir: 'right', node: <FloorRoom />, setting: <FloorSetting />, weight: 4, backdrop: 'showcase' },
-    { id: 'desk', dir: 'right', node: <DeskRoom />, setting: <DeskSetting />, backdrop: 'desk' },
+    { id: 'floor', title: 'the work', dir: 'right', node: <FloorRoom />, setting: <FloorSetting />, weight: 4, backdrop: 'showcase' },
+    { id: 'desk', title: 'the desk', dir: 'right', node: <DeskRoom />, setting: <DeskSetting />, backdrop: 'desk' },
     // The door is the last beat of the home scroll only (spec §5) — /connect
     // renders its own copy without it.
-    { id: 'way-out', dir: 'in', node: <WayOutRoom />, backdrop: 'endoftour' },
+    { id: 'way-out', title: 'the way out', dir: 'in', node: <WayOutRoom />, backdrop: 'endoftour' },
   ]
   return <CinematicJourney scenes={scenes} />
 }

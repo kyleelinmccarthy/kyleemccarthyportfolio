@@ -122,6 +122,27 @@ export const projects: Project[] = [
     isPersonal: false,
   },
   {
+    slug: 'paragon',
+    name: 'Paragon',
+    descriptor: 'Recordkeeping Platform · Replacing FIS Relius',
+    category: 'Internal Tools',
+    status: 'building',
+    headline: 'Replacing the recordkeeping platform the business runs on.',
+    problem:
+      'FIS Relius is a licensed vendor platform sitting underneath 403(b), 457 and FICA Alternative administration.',
+    built:
+      'An in-house replacement spanning 616 endpoints and 194 entities, sharing the headless forms, upload and onboarding packages rather than duplicating them.',
+    media: {
+      hero: { src: '/media/paragon/hero.jpg', alt: 'The Paragon recordkeeping platform' },
+      gallery: [
+        { src: '/media/paragon/login.jpg', alt: 'The Paragon sign-in screen' },
+        { src: '/media/paragon/dashboard.jpg', alt: 'A Paragon dashboard after signing in' },
+      ],
+    },
+    stack: ['.NET', 'EF Core', 'Azure SQL', 'Clean Architecture'],
+    isPersonal: false,
+  },
+  {
     slug: 'forms-suite',
     name: 'Online Forms, Secure Upload & Onboarding',
     descriptor: 'Multi-Tenant Services · Headless Packages',
@@ -148,27 +169,6 @@ export const projects: Project[] = [
     built:
       'A pipeline that ingests employer payroll files with no per-employer configuration, validates them against plan rules, resolves exceptions and exports to recordkeepers.',
     stack: ['.NET', 'Azure', 'SQL Server'],
-    isPersonal: false,
-  },
-  {
-    slug: 'paragon',
-    name: 'Paragon',
-    descriptor: 'Recordkeeping Platform · Replacing FIS Relius',
-    category: 'Internal Tools',
-    status: 'building',
-    headline: 'Replacing the recordkeeping platform the business runs on.',
-    problem:
-      'FIS Relius is a licensed vendor platform sitting underneath 403(b), 457 and FICA Alternative administration.',
-    built:
-      'An in-house replacement spanning 616 endpoints and 194 entities, sharing the headless forms, upload and onboarding packages rather than duplicating them.',
-    media: {
-      hero: { src: '/media/paragon/hero.jpg', alt: 'The Paragon recordkeeping platform' },
-      gallery: [
-        { src: '/media/paragon/login.jpg', alt: 'The Paragon sign-in screen' },
-        { src: '/media/paragon/dashboard.jpg', alt: 'A Paragon dashboard after signing in' },
-      ],
-    },
-    stack: ['.NET', 'EF Core', 'Azure SQL', 'Clean Architecture'],
     isPersonal: false,
   },
   {
