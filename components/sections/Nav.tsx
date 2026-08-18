@@ -56,15 +56,19 @@ export function Nav() {
         >
           {/* Decorative here: the link is already named by its aria-label, and
               a second announcement of her name would just be noise. */}
+          {/* Its own square crop rather than the tall /about portrait: that
+              one is 900x1125 and was being squeezed into a 40px circle, which
+              meant shipping a portrait to draw a thumbnail. See
+              scripts/process-nav-avatar.ts. */}
           <Image
-            src="/kylee-portrait-6.png"
+            src="/kylee-nav.jpg"
             alt=""
             aria-hidden="true"
-            width={80}
-            height={80}
+            width={512}
+            height={512}
             priority
             sizes="40px"
-            className="h-10 w-10 shrink-0 rounded-full object-cover object-top ring-1 ring-rule"
+            className="h-10 w-10 shrink-0 rounded-full object-cover ring-1 ring-rule"
           />
           <NameLogo size="nav" />
         </Link>
