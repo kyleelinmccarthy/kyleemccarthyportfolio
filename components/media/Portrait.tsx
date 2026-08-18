@@ -2,15 +2,16 @@ import Image from 'next/image'
 import { site } from '@/content/site'
 
 /**
- * Art-directed portrait: natural color, most of the photo visible, with the
- * edges softly feathered into a gold tint (baked in process-headshot.ts)
- * so it ties to the site without a hard frame.
+ * The portrait on /about: natural colour, edges softly feathered so it sits on
+ * the page rather than being a rectangle stuck to it. Baked in
+ * scripts/process-portrait.ts — the feather is an alpha mask on the
+ * photograph, not a drawn frame.
  */
 export function Portrait({ className = '' }: { className?: string }) {
   return (
     <figure className={`relative ${className}`}>
       <Image
-        src="/kylee-portrait-6.png"
+        src="/kylee-portrait-2026.webp"
         alt={site.portraitAlt}
         width={900}
         height={1125}

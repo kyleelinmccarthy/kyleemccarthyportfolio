@@ -15,8 +15,8 @@
     "capture:screenshots": "tsx scripts/capture-screenshots.ts",
     "import:art": "tsx scripts/import-art.ts",
     "import:assets": "tsx scripts/import-assets.ts",
-    "process:headshot": "tsx scripts/process-headshot.ts",
-    "process:nav-avatar": "tsx scripts/process-nav-avatar.ts"
+    "process:nav-avatar": "tsx scripts/process-nav-avatar.ts",
+    "process:portrait": "tsx scripts/process-portrait.ts"
   },
   "dependencies": {
     "@vercel/analytics": "^1.4.1",

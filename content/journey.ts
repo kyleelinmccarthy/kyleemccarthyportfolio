@@ -7,7 +7,9 @@ export const journey = {
   // paragraphs around it — the facts and figures are all still here, but they
   // arrive as things she is telling you rather than as achievements listed.
   about: {
-    eyebrow: 'Hello',
+    // Runs straight into the wordmark beneath it, so it has to read as the
+    // first half of a sentence: "Hello, I'm" / "Kylee McCarthy".
+    eyebrow: 'Hello, I’m',
     lede: 'The work itself is on the portfolio page, and the personal side is in the library. This is the background behind both.',
     arc: {
       heading: 'How I ended up here',
