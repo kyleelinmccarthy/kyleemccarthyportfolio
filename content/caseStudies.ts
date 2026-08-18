@@ -45,15 +45,18 @@ export const FEATURED = [
 
 export const caseStudies: CaseStudy[] = [
   {
-    // No placard: the four placard answers come from Kylee's interview and
-    // Ruckus was not one of the pieces covered. Everything here is her own
-    // copy from content/projects.ts rather than anything inferred.
     slug: 'ruckus',
     whatItIs: 'Ten browser-based multiplayer games, with live polls and quizzes, for a fully remote company.',
     problem:
       'The company was paying for AhaSlides — low adoption, shared logins, and nothing employees found compelling.',
     whyBuiltThisWay:
       'Live play runs over SignalR, and the whole thing sits behind Microsoft SSO so access follows the identity infrastructure already in place. That retired the vendor and removed shared-login access management entirely.',
+    placard: {
+      hard: 'Figuring out how to do web-based multiplayer games with a host that are genuinely interactive and engaging — and building dynamic, interactive presentations good enough to replace AhaSlides.',
+      threwAway: 'The game list. I started with a much longer one and cut several of the ideas so it would ship sooner.',
+      differently: 'Get people from outside technology involved sooner.',
+      builtFor: 'The technology department, but really HR and leadership — social engagement across a remote company is something they had been working on for years.',
+    },
   },
   {
     slug: 'beacon',
