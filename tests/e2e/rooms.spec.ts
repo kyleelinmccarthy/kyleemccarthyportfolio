@@ -20,8 +20,8 @@ test('the window states all three principles on the home page', async ({ page })
   // Read from content rather than hardcoding: this test pinned the old heading
   // and broke the moment the copy was reworded, which tells you nothing useful.
   // What actually matters is that whatever the window says, it all renders.
-  await expect(page.getByRole('heading', { name: rooms.window.heading })).toBeAttached()
-  for (const principle of rooms.window.principles) {
+  await expect(page.getByRole('heading', { name: rooms.landing.heading })).toBeAttached()
+  for (const principle of rooms.landing.principles) {
     await expect(page.getByText(principle.title, { exact: true })).toBeAttached()
   }
 })
@@ -154,7 +154,7 @@ test('the door walks you inside when you click it', async ({ page }) => {
     .toBeGreaterThan(before + 200)
 
   // And you land on the room the door leads into, not somewhere past it.
-  await expect(page.getByText(rooms.window.entry)).toBeVisible()
+  await expect(page.getByText(rooms.landing.entry)).toBeVisible()
 })
 
 /** Smooth scrolling is in flight after an advance; wait for it to settle. */
@@ -173,25 +173,25 @@ async function settled(page: import('@playwright/test').Page) {
     .toBe(true)
 }
 
-test('the window walks you on to the work', async ({ page }, testInfo) => {
-  // Desktop only, deliberately. Under 768px the room's copy runs full width
-  // and the window sits behind it, so the window renders as a picture rather
-  // than as a control nobody could reach.
+test('the stairs walk you up to the work', async ({ page }, testInfo) => {
+  // Desktop only, deliberately. Under 1024px the copy and the flight overlap
+  // with the copy on top, so the stairs render as a picture rather than as a
+  // control nobody could click.
   test.skip(
-    (testInfo.project.use.viewport?.width ?? 1280) < 768,
-    'the window is decoration on narrow screens'
+    (testInfo.project.use.viewport?.width ?? 1280) < 1024,
+    'the stairs are decoration on narrow screens'
   )
   await page.goto('/')
   await page.waitForTimeout(1200)
 
   await page.getByRole('button', { name: rooms.steps.doorAction }).click()
-  await expect(page.getByText(rooms.window.entry)).toBeVisible()
+  await expect(page.getByText(rooms.landing.entry)).toBeVisible()
   // The door's own scroll is still gliding; clicking a moving target is what
   // "element is not stable" means.
   await settled(page)
 
   const before = await page.evaluate(() => window.scrollY)
-  await page.getByRole('button', { name: rooms.window.windowAction }).click()
+  await page.getByRole('button', { name: rooms.landing.stairs.label }).click()
   await expect
     .poll(() => page.evaluate(() => window.scrollY), { timeout: 5000 })
     .toBeGreaterThan(before + 200)

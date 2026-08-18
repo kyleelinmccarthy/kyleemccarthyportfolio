@@ -54,6 +54,8 @@ const config: Config = {
         card: 'rgb(var(--card) / <alpha-value>)',
         'card-ink': 'rgb(var(--card-ink) / <alpha-value>)',
         'card-rule': 'rgb(var(--card-rule) / <alpha-value>)',
+        'card-margin': 'rgb(var(--card-margin) / <alpha-value>)',
+        'card-error': 'rgb(var(--card-error) / <alpha-value>)',
       },
       fontFamily: {
         // Wired by next/font in app/layout.tsx -> CSS variables

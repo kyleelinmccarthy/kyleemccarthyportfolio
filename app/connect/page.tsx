@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { SectionPage } from '@/components/SectionPage'
-import { Mailbox } from '@/components/rooms/Mailbox'
-import { ContactForm } from '@/components/sections/ContactForm'
+import { Postbox } from '@/components/rooms/Postbox'
 import { RevealOnActive } from '@/components/journey/sceneActive'
 import { contact } from '@/content/contact'
 import { journey } from '@/content/journey'
@@ -25,9 +24,7 @@ export default function ConnectPage() {
             <p key={i}>{para}</p>
           ))}
         </div>
-        <Mailbox>
-          <ContactForm />
-        </Mailbox>
+        <Postbox />
       </div>
     </SectionPage>
   )

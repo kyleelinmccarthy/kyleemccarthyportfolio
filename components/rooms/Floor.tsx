@@ -27,15 +27,46 @@ const pieces: { project: Project; study: CaseStudy }[] = FEATURED.map((slug) => 
   return { project, study }
 })
 
-/** Gallery lighting: a soft pool of accent behind each piece. Decorative only. */
+/**
+ * A hallway, seen down its length.
+ *
+ * It was a row of soft glows, which lit the room but did not put you anywhere.
+ * Walking a gallery is walking a corridor: the walls converge ahead of you,
+ * the floor and ceiling close in, and picture lights hang overhead. The
+ * vanishing point sits behind the piece on the wall, so each one arrives from
+ * down the hall rather than sliding across a flat panel.
+ */
 export function FloorSetting() {
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-      {pieces.map((_, i) => (
+      {/* The far end of the hall, lit. */}
+      <div className="absolute left-1/2 top-1/2 h-[34vh] w-[26vw] min-w-[200px] -translate-x-1/2 -translate-y-1/2 rounded-[45%] bg-accent opacity-[0.11] blur-3xl" />
+
+      {/* Walls, floor and ceiling converging on it. Each is a wedge clipped to
+          a trapezoid, which is all a one-point perspective corridor is. */}
+      <div
+        className="absolute inset-y-0 left-0 w-[34vw] bg-gradient-to-r from-surface-raised to-transparent opacity-70"
+        style={{ clipPath: 'polygon(0 0, 100% 34%, 100% 66%, 0 100%)' }}
+      />
+      <div
+        className="absolute inset-y-0 right-0 w-[34vw] bg-gradient-to-l from-surface-raised to-transparent opacity-70"
+        style={{ clipPath: 'polygon(100% 0, 0 34%, 0 66%, 100% 100%)' }}
+      />
+      <div
+        className="absolute inset-x-0 bottom-0 h-[26vh] bg-gradient-to-t from-surface-raised to-transparent opacity-60"
+        style={{ clipPath: 'polygon(0 100%, 34% 0, 66% 0, 100% 100%)' }}
+      />
+      <div
+        className="absolute inset-x-0 top-0 h-[22vh] bg-gradient-to-b from-surface-raised to-transparent opacity-50"
+        style={{ clipPath: 'polygon(0 0, 34% 100%, 66% 100%, 100% 0)' }}
+      />
+
+      {/* Picture lights down the ceiling line. */}
+      {[0, 1, 2, 3].map((i) => (
         <span
           key={i}
-          className="absolute top-[8%] h-[46vh] w-[26vw] min-w-[220px] rounded-[45%] bg-accent opacity-[0.07] blur-3xl"
-          style={{ left: `${(i / pieces.length) * 100}%` }}
+          className="absolute top-[13%] h-[10vh] w-[9vw] min-w-[70px] rounded-[50%] bg-accent opacity-[0.12] blur-2xl"
+          style={{ left: `${14 + i * 24}%` }}
         />
       ))}
     </div>
@@ -121,12 +152,15 @@ function FloorWall() {
     <div>
       <div className="relative min-h-[48vh]">
         <AnimatePresence mode="wait">
+          {/* Arriving from down the hall: further to travel than a card
+              swap, and scaled up on the way in, so a piece reads as coming
+              toward you rather than sliding across a flat panel. */}
           <motion.div
             key={current.project.slug}
-            initial={{ opacity: 0, x: 28 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -28 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, x: 90, scale: 0.94 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -90, scale: 1.04 }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
           >
             <FloorPiece project={current.project} study={current.study} layout="feature" />
           </motion.div>

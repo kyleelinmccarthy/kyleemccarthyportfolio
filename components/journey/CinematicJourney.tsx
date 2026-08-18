@@ -21,7 +21,15 @@ import { VH_PER_SCENE, dwellEnd } from './timing'
 import { BackgroundShapes } from '@/components/media/BackgroundShapes'
 import { Backdrop, type BackdropVariant } from '@/components/media/Backdrop'
 
-export type Dir = 'start' | 'right' | 'left' | 'up' | 'down' | 'in'
+/**
+ * How you get into a room.
+ *
+ * 'in' and 'out' share the previous room's cell and play as a zoom rather than
+ * a pan: 'in' arrives large and settles, which is what stepping through a door
+ * feels like; 'out' arrives small and grows, which is what backing out of one
+ * feels like.
+ */
+export type Dir = 'start' | 'right' | 'left' | 'up' | 'down' | 'in' | 'out'
 
 export interface Scene {
   id: string
@@ -67,9 +75,10 @@ export function layout(scenes: Scene[]) {
       else if (s.dir === 'left') x -= 1
       else if (s.dir === 'down') y += 1
       else if (s.dir === 'up') y -= 1
-      // 'in' keeps the same cell (zoom/crossfade over the previous scene)
+      // 'in' and 'out' keep the same cell (zoom/crossfade over the previous)
     }
-    return { x, y, zoom: s.dir === 'in' }
+    const zoom: 'in' | 'out' | null = s.dir === 'in' ? 'in' : s.dir === 'out' ? 'out' : null
+    return { x, y, zoom }
   })
 }
 
@@ -357,7 +366,7 @@ function Panel({
   y: number
   z: number
   isActive: boolean
-  zoom: boolean
+  zoom: 'in' | 'out' | null
   setting?: ReactNode
   backdrop?: BackdropVariant
   arriveStart: number
@@ -375,12 +384,16 @@ function Panel({
   const a = arriveStart
   const b = Math.max(arriveEnd, arriveStart + 0.0001)
 
-  // 'in' scenes dive in: opaque crossfade + a clear zoom over the prior scene.
+  // A zoom scene crossfades over the one it shares a cell with.
   const panelOpacity = useTransform(progress, [a, b], zoom ? [0, 1] : [1, 1])
-  // 1.5 rather than 1.3: the two 'in' moves are both thresholds you step
-  // through — the front door and the way out — and a shallower zoom read as a
-  // crossfade rather than as movement.
-  const panelScale = useTransform(progress, [a, b], zoom ? [1.5, 1] : [1, 1])
+  // 1.5 rather than 1.3: an 'in' move is a threshold you step through, and a
+  // shallower zoom read as a crossfade rather than as movement. 'out' comes
+  // the other way — small, then settling — which is backing out of a room.
+  const panelScale = useTransform(
+    progress,
+    [a, b],
+    zoom === 'in' ? [1.5, 1] : zoom === 'out' ? [0.68, 1] : [1, 1]
+  )
 
   // 0 -> 1 across this scene's own slice of the track, so a room can drive its
   // scenery off the scroll (the front door growing as you walk up to it).

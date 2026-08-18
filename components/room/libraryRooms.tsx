@@ -4,8 +4,7 @@ import { projects } from '@/content/projects'
 import { room, artAlt, tattooAlt } from '@/content/room'
 import { groupArt } from '@/lib/artGroups'
 import { Room } from '@/components/rooms/Room'
-import { Mailbox } from '@/components/rooms/Mailbox'
-import { ContactForm } from '@/components/sections/ContactForm'
+import { Postbox } from '@/components/rooms/Postbox'
 import { Gallery } from '@/components/media/Gallery'
 import { ProjectPages } from '@/components/media/ProjectPages'
 import { Bookshelf, type Volume } from './Bookshelf'
@@ -198,9 +197,7 @@ export function SayHiRoom() {
           {/* The mailbox is the site's one way to send a message, so the
               library gets the real thing rather than a link back to the front
               of the house. Only one form renders per page, so ids stay unique. */}
-          <Mailbox>
-            <ContactForm rows={3} />
-          </Mailbox>
+          <Postbox rows={3} />
         </RevealOnActive>
       </div>
     </Room>

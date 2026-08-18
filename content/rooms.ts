@@ -39,7 +39,7 @@ export const rooms = {
     // No tagline out here. The front step is a welcome and nothing else; the
     // line that says who she is now greets you inside, as `window.entry`.
   },
-  window: {
+  landing: {
     /**
      * The first thing you read once you're through the door — Kylee's own
      * words, from the interview: "theres always a better way."
@@ -50,8 +50,20 @@ export const rooms = {
      * exists because something already existed and wasn't good enough.
      */
     entry: 'There’s always a better way, and I enjoy trying to find it.',
-    /** The window is a button too — same idea as the front door. */
-    windowAction: 'Go through to the work',
+    /**
+     * The staircase is a button, the same as the front door a room back.
+     * There was a window here and you were invited to click through it, which
+     * nobody does to a window.
+     *
+     * The label is on screen as well as in the accessible name — the room's
+     * own photograph has a staircase in it, so drawn treads alone did not read
+     * as a thing you could press. WCAG 2.5.3: the accessible name starts with
+     * the visible words.
+     */
+    stairs: {
+      label: 'Upstairs',
+      description: 'go up to the work',
+    },
     eyebrow: 'My process',
     heading: 'Three things',
     // No lede. There was one, and it was a summary of the three principles

@@ -54,7 +54,7 @@ describe('room copy', () => {
     // number has slipped back into being a résumé.
     const prose = [
       rooms.steps.welcome,
-      rooms.window.entry, ...rooms.window.principles.flatMap((p) => [p.title, p.body]),
+      rooms.landing.entry, ...rooms.landing.principles.flatMap((p) => [p.title, p.body]),
       rooms.floor.label, rooms.desk.lede, ...rooms.wayOut.body,
     ].join(' ')
     expect(prose).not.toMatch(/\d+\s*(%|\+|x|×)/i)
@@ -62,6 +62,6 @@ describe('room copy', () => {
   })
 
   it('has three principles in the window', () => {
-    expect(rooms.window.principles).toHaveLength(3)
+    expect(rooms.landing.principles).toHaveLength(3)
   })
 })

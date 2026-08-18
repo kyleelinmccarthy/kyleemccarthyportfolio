@@ -57,6 +57,8 @@
   --card: 238 231 216;      /* warm off-white stock */
   --card-ink: 43 43 40;     /* pencil */
   --card-rule: 150 168 196; /* the printed blue rule */
+  --card-margin: 186 118 118; /* the red margin line */
+  --card-error: 152 40 40;    /* corrections, in red pen — 6.9:1 on --card */
 }
 
 [data-theme='light'] {

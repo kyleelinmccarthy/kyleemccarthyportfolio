@@ -3,35 +3,36 @@ import { layout, type Dir } from '@/components/journey/CinematicJourney'
 
 /**
  * The real floor plan, kept in step with components/sections/Journey.tsx.
- * This test previously built its own array and drifted: it still described a
- * `up` move into the window room long after that became a walk-through-the-door
+ * This test previously built its own array and drifted: it still described an
+ * `up` move into the landing long after that became a walk-through-the-door
  * zoom, so it passed while describing a site that no longer existed.
  */
 const FLOOR_PLAN: Array<{ id: string; dir: Dir }> = [
   { id: 'steps', dir: 'start' },
-  { id: 'window', dir: 'in' },
-  { id: 'floor', dir: 'right' },
-  { id: 'desk', dir: 'right' },
-  { id: 'way-out', dir: 'in' },
+  { id: 'landing', dir: 'in' },
+  { id: 'floor', dir: 'up' },
+  { id: 'desk', dir: 'in' },
+  { id: 'way-out', dir: 'out' },
 ]
 
 describe('the floor plan', () => {
-  it('steps through the front door, then walks along the gallery wall', () => {
+  it('goes in the front door, up the stairs, into the office and back out', () => {
     const cells = layout(FLOOR_PLAN.map((s) => ({ ...s, node: null })))
     expect(cells.map((c) => [c.x, c.y])).toEqual([
       [0, 0], // the steps, outside
-      [0, 0], // through the door — a zoom, so the same cell
-      [1, 0], // right, onto the gallery floor
-      [2, 0], // right, along to the desk
-      [2, 0], // in again, to the way out
+      [0, 0], // through the front door — a zoom, so the same cell
+      [0, -1], // up the stairs the landing draws, to the gallery
+      [0, -1], // through the office door — a zoom again
+      [0, -1], // and back out of it
     ])
   })
 
-  it('marks both thresholds as zooms and nothing else', () => {
+  it('marks every threshold as a zoom, and which way through it', () => {
     const cells = layout(FLOOR_PLAN.map((s) => ({ ...s, node: null })))
-    // The front door and the way out are the two moments you step through
-    // something rather than move past it.
-    expect(cells.map((c) => c.zoom)).toEqual([false, true, false, false, true])
+    // Three moments you step through something rather than move past it: the
+    // front door, the office door, and backing out of the office. The climb to
+    // the gallery is a move, not a threshold.
+    expect(cells.map((c) => c.zoom)).toEqual([null, 'in', null, 'in', 'out'])
   })
 
   it('never revisits a cell except deliberately, via a zoom', () => {
@@ -43,7 +44,10 @@ describe('the floor plan', () => {
       if (first !== undefined) {
         // Two rooms sharing a cell only works if the later one zooms over the
         // earlier one; otherwise they stack invisibly on top of each other.
-        expect(cells[i]!.zoom, `${FLOOR_PLAN[i]!.id} shares a cell but does not zoom`).toBe(true)
+        expect(
+          cells[i]!.zoom,
+          `${FLOOR_PLAN[i]!.id} shares a cell but does not zoom`
+        ).not.toBeNull()
       }
       seen.set(key, i)
     })

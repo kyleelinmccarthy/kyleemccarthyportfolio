@@ -1,13 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+import { motion, useReducedMotion, useTransform, type MotionValue } from 'framer-motion'
+import type { ReactNode } from 'react'
 import { rooms } from '@/content/rooms'
 import { projects } from '@/content/projects'
 import { FEATURED } from '@/content/caseStudies'
 import type { Project } from '@/content/types'
 import { Room } from './Room'
 import { StickyNote, tiltForIndex } from './StickyNote'
-import { RevealOnActive } from '@/components/journey/sceneActive'
+import { RevealOnActive, useScenePaging } from '@/components/journey/sceneActive'
 import { ProjectPages } from '@/components/media/ProjectPages'
 import { Modal, useModal } from '@/components/primitives/Modal'
 
@@ -84,6 +86,29 @@ function NoteGrid() {
   )
 }
 
+/**
+ * Leaning in over the desk.
+ *
+ * You come into this room through a door (the scene's 'in' direction), and
+ * then you are standing at a desk — so the notes come up to meet you as you
+ * read them, and settle back as you leave. Small: 1.0 to 1.06 is the
+ * difference between "I am looking at this" and a zoom that makes the room
+ * lurch.
+ */
+function LeaningIn({ paging, children }: { paging: MotionValue<number>; children: ReactNode }) {
+  const scale = useTransform(paging, [0, 1], [1, 1.06])
+  return <motion.div style={{ scale, transformOrigin: '50% 40%' }}>{children}</motion.div>
+}
+
+function DeskSurface({ children }: { children: ReactNode }) {
+  // Split in two so the hooks are unconditional: off the journey there is no
+  // scene progress to read, and reduced motion asks for none of this.
+  const paging = useScenePaging()
+  const reduce = useReducedMotion()
+  if (!paging || reduce) return <>{children}</>
+  return <LeaningIn paging={paging}>{children}</LeaningIn>
+}
+
 export function DeskRoom() {
   return (
     <Room className="mx-auto max-w-6xl">
@@ -94,9 +119,11 @@ export function DeskRoom() {
       </RevealOnActive>
 
       <RevealOnActive index={1}>
-        <div className="mt-8">
-          <NoteGrid />
-        </div>
+        <DeskSurface>
+          <div className="mt-8">
+            <NoteGrid />
+          </div>
+        </DeskSurface>
       </RevealOnActive>
     </Room>
   )
