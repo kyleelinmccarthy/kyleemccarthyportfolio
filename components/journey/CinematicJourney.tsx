@@ -46,6 +46,15 @@ export interface Scene {
   /** Which side of the front door this room is on. Defaults to inside. */
   backdrop?: BackdropVariant
   /**
+   * Push the room's own photograph toward you as you move through it.
+   *
+   * A drawn corridor of flat panels reads as a 2D game pretending to be 3D.
+   * The photograph is a real room, so moving *it* is what actually feels like
+   * walking: it grows and drifts a little across the room's dwell, and stops
+   * when the paging does.
+   */
+  travel?: boolean
+  /**
    * How much of the scroll track this room claims, relative to the others.
    * Defaults to 1.
    *
@@ -190,6 +199,7 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
               zoom={cells[i]!.zoom}
               setting={s.setting}
               backdrop={s.backdrop}
+              travel={s.travel}
               // Panel i starts arriving when panel i-1 stops dwelling, so this
               // reads the previous room's slice, not this one's.
               arriveStart={i === 0 ? -spans[0]! : dwellEnds[i - 1]!}
@@ -209,6 +219,12 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
               retreat={
                 i > 0 ? () => scrollToProgress(starts[i - 1]! + 0.15 * spans[i - 1]!) : null
               }
+              // Backing out of a room is the room receding, not the next one
+              // growing: without this the arriving panel sat at 68% over a
+              // fully-lit desk and you saw both rooms at once, Back button
+              // and all.
+              leaveStart={scenes[i + 1]?.dir === 'out' ? dwellEnds[i]! : null}
+              leaveEnd={scenes[i + 1]?.dir === 'out' ? starts[i + 1]! : null}
               previous={scenes[i - 1]?.title}
             >
               {s.node}
@@ -350,6 +366,9 @@ function Panel({
   zoom,
   setting,
   backdrop,
+  travel,
+  leaveStart,
+  leaveEnd,
   arriveStart,
   arriveEnd,
   segStart,
@@ -369,6 +388,10 @@ function Panel({
   zoom: 'in' | 'out' | null
   setting?: ReactNode
   backdrop?: BackdropVariant
+  travel?: boolean
+  /** When the room after this one backs out of it, this room recedes. */
+  leaveStart: number | null
+  leaveEnd: number | null
   arriveStart: number
   arriveEnd: number
   segStart: number
@@ -384,15 +407,29 @@ function Panel({
   const a = arriveStart
   const b = Math.max(arriveEnd, arriveStart + 0.0001)
 
-  // A zoom scene crossfades over the one it shares a cell with.
-  const panelOpacity = useTransform(progress, [a, b], zoom ? [0, 1] : [1, 1])
-  // 1.5 rather than 1.3: an 'in' move is a threshold you step through, and a
-  // shallower zoom read as a crossfade rather than as movement. 'out' comes
-  // the other way — small, then settling — which is backing out of a room.
+  // A zoom scene crossfades over the one it shares a cell with. 1.5 rather
+  // than 1.3 for an 'in': it is a threshold you step through, and a shallower
+  // zoom read as a crossfade rather than as movement. An 'out' arrives at its
+  // own size and simply fades up — the sense of backing away comes from the
+  // room behind it shrinking (leaveStart/leaveEnd below), which is what
+  // actually happens when you walk backwards through a door.
+  //
+  // A panel can both arrive and be left, so the two are one set of keyframes:
+  // in at [a, b], out at [leaveStart, leaveEnd].
+  const leaving = leaveStart !== null && leaveEnd !== null && leaveStart > b
+  const stops = leaving ? [a, b, leaveStart, leaveEnd] : [a, b]
+  const enterOpacity = zoom ? 0 : 1
+  const enterScale = zoom === 'in' ? 1.5 : 1
+
+  const panelOpacity = useTransform(
+    progress,
+    stops,
+    leaving ? [enterOpacity, 1, 1, 0] : [enterOpacity, 1]
+  )
   const panelScale = useTransform(
     progress,
-    [a, b],
-    zoom === 'in' ? [1.5, 1] : zoom === 'out' ? [0.68, 1] : [1, 1]
+    stops,
+    leaving ? [enterScale, 1, 1, 0.72] : [enterScale, 1]
   )
 
   // 0 -> 1 across this scene's own slice of the track, so a room can drive its
@@ -403,6 +440,11 @@ function Panel({
   // that page through their content. Reaching 1 before the camera leaves is the
   // whole point: the last piece is on the wall while you walk out of the room.
   const scenePaging = useTransform(progress, [segStart, dwellEnd], [0, 1], { clamp: true })
+
+  // The room coming toward you. Tied to the same value the room's own content
+  // pages on, so the photograph and the work move together.
+  const travelScale = useTransform(scenePaging, [0, 1], [1, 1.22])
+  const travelX = useTransform(scenePaging, [0, 1], ['0%', '-4%'])
 
   // Remount the scene's content each time it becomes active, so every reveal /
   // count-up replays when you scroll back to it (reveals-only scenes like
@@ -445,7 +487,16 @@ function Panel({
         <SceneRetreatContext.Provider value={retreat}>
           <SceneProgressContext.Provider value={sceneProgress}>
             <ScenePagingContext.Provider value={scenePaging}>
-              <Backdrop variant={backdrop} />
+              {travel && !reduce ? (
+                <motion.div
+                  className="absolute inset-0"
+                  style={{ scale: travelScale, x: travelX, transformOrigin: '50% 55%' }}
+                >
+                  <Backdrop variant={backdrop} />
+                </motion.div>
+              ) : (
+                <Backdrop variant={backdrop} />
+              )}
               {setting ?? <BackgroundShapes />}
               {/* The scene's own content animates on arrival via SceneActiveContext. */}
               <div key={enterKey} className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">

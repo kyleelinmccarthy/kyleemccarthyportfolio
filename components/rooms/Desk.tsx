@@ -87,17 +87,22 @@ function NoteGrid() {
 }
 
 /**
- * Leaning in over the desk.
+ * Crossing the office and leaning over the desk.
  *
- * You come into this room through a door (the scene's 'in' direction), and
- * then you are standing at a desk — so the notes come up to meet you as you
- * read them, and settle back as you leave. Small: 1.0 to 1.06 is the
- * difference between "I am looking at this" and a zoom that makes the room
- * lurch.
+ * 1.0 to 1.06 was the first attempt and it was invisible: the notes were
+ * simply there when you arrived, which is not an approach. They start back
+ * across the room now — smaller, lower, dimmer — and come up to meet you as
+ * you scroll, finishing slightly larger than life, the way a thing does when
+ * you are leaning over it. The room's photograph travels with them
+ * (Scene.travel), so the desk and the office move as one.
  */
 function LeaningIn({ paging, children }: { paging: MotionValue<number>; children: ReactNode }) {
-  const scale = useTransform(paging, [0, 1], [1, 1.06])
-  return <motion.div style={{ scale, transformOrigin: '50% 40%' }}>{children}</motion.div>
+  const scale = useTransform(paging, [0, 0.75, 1], [0.78, 1.02, 1.06])
+  const y = useTransform(paging, [0, 0.75, 1], ['9%', '0%', '-1%'])
+  const opacity = useTransform(paging, [0, 0.25], [0.35, 1])
+  return (
+    <motion.div style={{ scale, y, opacity, transformOrigin: '50% 30%' }}>{children}</motion.div>
+  )
 }
 
 function DeskSurface({ children }: { children: ReactNode }) {

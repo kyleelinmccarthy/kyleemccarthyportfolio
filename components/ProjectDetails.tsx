@@ -23,10 +23,10 @@ const professionalProjects = projects.filter((p) => !p.isPersonal)
 export function ProjectDetails() {
   return (
     <div className="mt-16">
-      <h2 className="font-serif text-fluid-h2 text-fg">Everything I’ve built at work</h2>
+      <h2 className="font-serif text-fluid-h2 text-fg">Recent work</h2>
       <p className="mt-3 max-w-2xl font-sans text-fg-muted">
-        The professional side in full — platforms, portals and internal tools. The things I
-        build after hours live in{' '}
+        The professional side — platforms, portals and internal tools, built recently or
+        still being built. Not a career’s worth: the things I make after hours are in{' '}
         <Link href="/room" className="font-semibold text-accent underline-offset-4 hover:underline">
           the library
         </Link>

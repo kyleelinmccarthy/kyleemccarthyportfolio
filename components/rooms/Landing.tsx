@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { Room } from './Room'
 import { RevealOnActive, useSceneAdvance } from '@/components/journey/sceneActive'
@@ -49,9 +49,10 @@ function Flight({
   // Narrow and hard right, so it clears the copy's column rather than
   // overlapping it — an overlapping flight is one whose centre you cannot
   // click, because the text is above it.
-  // bottom-[12%] leaves room for the label that hangs beneath the flight.
+  // Over the part of the picture the staircase occupies, with room beneath
+  // for the label that hangs off it.
   const className =
-    'absolute bottom-[12%] right-[3%] h-[58vh] w-[26vw] min-w-[220px] max-w-[320px]'
+    'absolute bottom-[14%] right-[4%] h-[56vh] w-[24vw] min-w-[210px] max-w-[300px]'
   if (!interactive) {
     return (
       <div aria-hidden="true" className={className}>
@@ -75,21 +76,19 @@ function Flight({
   )
 }
 
-/** How many treads. Enough to read as a flight rather than a stoop. */
-const TREADS = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-
 /**
  * The landing at the foot of the stairs.
  *
  * There was a window here, and you were invited to click through it. Nobody
  * goes through a window — and the shaft of light it cast across the floor read
- * as a rendering fault rather than as daylight. A staircase does the same job
- * honestly: the next room is upstairs, the camera climbs to reach it, and the
- * thing you click is the way up.
+ * as a rendering fault rather than as daylight.
  *
- * Treads recede as they rise: each is narrower, further right and a shade
- * darker than the one below, which is what makes a flat stack of bars read as
- * going away from you. Light spills down from the top of the flight.
+ * The stairs are not drawn. Two attempts at drawing them both fought the
+ * room's own photograph, which has a staircase in it already: flat pale bars
+ * standing in front of real steps, going a different way. What is drawn is the
+ * light — a warm band climbing the flight, on a loop — over the part of the
+ * picture the stairs actually occupy, plus a word at the bottom. The
+ * photograph supplies the stairs; this supplies the invitation.
  */
 export function StairsSetting() {
   const advance = useSceneAdvance()
@@ -100,13 +99,12 @@ export function StairsSetting() {
     // Not aria-hidden. The flight is a control, and a focusable control inside
     // an aria-hidden subtree is reachable by tab and invisible to a screen
     // reader — the exact fault the front door had. The scenery around it is
-    // hidden individually instead. (It also made the stairs unfindable by
-    // role, which is how this was caught.)
+    // hidden individually instead.
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       {/* Light from the floor above, pooling at the top of the flight. */}
       <div
         aria-hidden="true"
-        className="absolute right-[6%] top-[8%] h-[42vh] w-[34vw] min-w-[220px] rounded-[50%] bg-accent opacity-[0.13] blur-3xl"
+        className="absolute right-[6%] top-[6%] h-[40vh] w-[30vw] min-w-[200px] rounded-[50%] bg-accent opacity-[0.14] blur-3xl"
       />
 
       <Flight
@@ -114,65 +112,32 @@ export function StairsSetting() {
         onActivate={() => advance?.()}
         label={`${rooms.landing.stairs.label} — ${rooms.landing.stairs.description}`}
       >
-        <div aria-hidden="true" className="relative h-full w-full">
-          {/* No wrapper element per tread. There used to be one, an
-              `absolute` span with no size of its own — so every child's
-              percentage width resolved against 0 and the whole flight
-              measured 0x0. It drew nothing for days. */}
-          {TREADS.map((i) => {
-            const t = i / (TREADS.length - 1)
-            const box = {
-              right: `${t * 26}%`,
-              width: `${92 - t * 34}%`,
-            }
-            return (
-              <Fragment key={i}>
-                {/* The riser, in shadow, first so the tread sits on it. */}
-                <span
-                  className="absolute rounded-[1px] bg-surface opacity-80"
-                  style={{ ...box, bottom: `${2.5 + t * 74}%`, height: '3.5%' }}
-                />
-                {/* The tread. --fill, not a surface colour: taupe in the dark
-                    theme and green in the light one, so it stands off the
-                    photograph either way. */}
-                <span
-                  className="absolute rounded-[2px] bg-fill opacity-90 shadow-md shadow-black/40 transition-colors duration-200 group-hover:bg-accent"
-                  style={{ ...box, bottom: `${6 + t * 74}%`, height: '5.5%' }}
-                />
-                {/* The nosing: a lit edge along the front of each tread, the
-                    way a stair light strip runs. */}
-                <span
-                  className="absolute rounded-full bg-accent opacity-80 blur-[1px]"
-                  style={{ ...box, bottom: `${5.2 + t * 74}%`, height: '1.4%' }}
-                />
-                {/* A light climbing the flight, one tread at a time. This is
-                    the invitation: a still staircase in a photograph of a
-                    staircase does not read as something you can use. */}
-                {!reduce && (
-                  <motion.span
-                    className="absolute rounded-[2px] bg-accent blur-[3px]"
-                    style={{ ...box, bottom: `${6 + t * 74}%`, height: '5.5%' }}
-                    animate={{ opacity: [0, 0.8, 0] }}
-                    transition={{
-                      duration: 2.2,
-                      repeat: Infinity,
-                      repeatDelay: 0.9,
-                      delay: i * 0.13,
-                      ease: 'easeInOut',
-                    }}
-                  />
-                )}
-              </Fragment>
-            )
-          })}
-          {/* The banister, climbing with the treads. */}
-          <span
-            className="absolute bottom-[10%] left-[2%] h-[3px] w-[86%] origin-bottom-left rounded-full bg-fill opacity-60"
-            style={{ transform: 'rotate(-38deg)' }}
-          />
-        </div>
-        {/* Said out loud at the foot of the flight. Drawn treads over a
-            photograph of a staircase are ambiguous; a word is not. */}
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 block overflow-hidden rounded-sm bg-accent opacity-0 transition-opacity duration-300 group-hover:opacity-[0.09] group-focus-visible:opacity-[0.09]"
+        />
+        {/* The light going up. Blurred and wide, because it is light falling
+            across steps rather than an object sliding over them. */}
+        {!reduce && (
+          <span aria-hidden="true" className="absolute inset-0 block overflow-hidden rounded-sm">
+            <motion.span
+              // Wider than the box and heavily blurred, so its own edges never
+              // show: what should read is light on the steps, not a rectangle
+              // sliding over them.
+              className="absolute inset-x-[-40%] block h-[26%] bg-gradient-to-t from-transparent via-accent to-transparent blur-2xl"
+              animate={{ top: ['88%', '-20%'], opacity: [0, 0.34, 0.34, 0] }}
+              transition={{
+                duration: 2.6,
+                times: [0, 0.18, 0.7, 1],
+                repeat: Infinity,
+                repeatDelay: 1.1,
+                ease: 'easeInOut',
+              }}
+            />
+          </span>
+        )}
+        {/* Said out loud at the foot of the flight. A photograph of a
+            staircase, however clear, does not say "press me". */}
         <span className="pointer-events-none absolute inset-x-0 -bottom-9 mx-auto w-fit rounded-full bg-surface-raised/95 px-3 py-1 font-sans text-label uppercase text-fg ring-1 ring-fill/40 transition-colors duration-200 group-hover:text-accent group-hover:ring-accent">
           {rooms.landing.stairs.label}{' '}
           {reduce ? (

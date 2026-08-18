@@ -1,16 +1,8 @@
 'use client'
 
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
-import {
-  AnimatePresence,
-  motion,
-  motionValue,
-  useMotionValueEvent,
-  useReducedMotion,
-  useTransform,
-  type MotionValue,
-} from 'framer-motion'
+import { AnimatePresence, motion, useMotionValueEvent } from 'framer-motion'
 import { FEATURED, caseStudies, type CaseStudy } from '@/content/caseStudies'
 import { rooms } from '@/content/rooms'
 import { projects } from '@/content/projects'
@@ -21,9 +13,6 @@ import { ProjectVisual } from '@/components/media/ProjectVisual'
 import { Gallery } from '@/components/media/Gallery'
 import { StackChips } from '@/components/primitives/StackChips'
 import { RevealOnActive, useSceneActive, useScenePaging } from '@/components/journey/sceneActive'
-
-/** A standing zero, so useTransform can be called unconditionally. */
-const MOTION_ZERO = motionValue(0)
 
 /**
  * The seven pieces, joined to their projects at module load. A featured slug
@@ -39,94 +28,34 @@ const pieces: { project: Project; study: CaseStudy }[] = FEATURED.map((slug) => 
 })
 
 /**
- * How far apart the wall segments stand, and how many there are. Depth is in
- * px because that is what a CSS 3D translateZ is in.
- */
-const HALL_DEPTH = 460
-const HALL_SEGMENTS = [0, 1, 2, 3, 4, 5, 6, 7]
-
-/** One segment of wall, on one side, at one depth down the hall. */
-function WallSegment({ side, depth }: { side: -1 | 1; depth: number }) {
-  return (
-    <span
-      // 30vw out and 62 degrees round, not 46 and 74: at the old numbers the
-      // walls stood outside the viewport and edge-on to it, so the corridor
-      // was mathematically correct and completely invisible.
-      className="absolute left-1/2 top-1/2 block h-[62vh] w-[46vw]"
-      style={{
-        transform: `translate(-50%, -50%) translateX(${side * 38}vw) translateZ(${-depth}px) rotateY(${side * 62}deg)`,
-        transformStyle: 'preserve-3d',
-      }}
-    >
-      {/* The wall itself. */}
-      <span className="absolute inset-0 block bg-gradient-to-b from-surface-raised via-surface-raised to-surface opacity-60" />
-      {/* A framed piece hung on it, and the picture light above. Both are
-          suggestions rather than pictures: this is the hall you are walking
-          down, not the work — the work is the piece in the middle of the
-          screen. */}
-      <span className="absolute left-[18%] top-[26%] block h-[42%] w-[46%] rounded-sm bg-surface ring-2 ring-fill/40" />
-      <span className="absolute left-[26%] top-[16%] block h-[7%] w-[30%] rounded-full bg-accent opacity-40 blur-md" />
-      {/* Skirting, so the wall meets a floor. */}
-      <span className="absolute inset-x-0 bottom-[6%] block h-[2px] bg-fill opacity-35" />
-    </span>
-  )
-}
-
-function Corridor({ z }: { z: MotionValue<number> | number }) {
-  return (
-    <motion.div
-      className="absolute inset-0"
-      style={{ transformStyle: 'preserve-3d', z }}
-    >
-      {/* Fragments, not wrapper spans. A plain element between the
-          preserve-3d container and the segments flattens their 3D — every
-          segment then renders at the same size whatever depth it claims to
-          stand at, which is a corridor with no depth in it at all. */}
-      {HALL_SEGMENTS.map((i) => (
-        <Fragment key={i}>
-          <WallSegment side={-1} depth={i * HALL_DEPTH} />
-          <WallSegment side={1} depth={i * HALL_DEPTH} />
-        </Fragment>
-      ))}
-    </motion.div>
-  )
-}
-
-/**
- * A hallway you move down, not a picture of one.
+ * Gallery light, and nothing pretending to be architecture.
  *
- * The first attempt was four flat wedges clipped into trapezoids. It drew a
- * corridor and it moved not at all, so walking the gallery still felt like
- * swapping cards. This is the real thing: wall segments standing at intervals
- * down the z axis inside a perspective, and the whole corridor pulled toward
- * you as you scroll through the room. Segments pass the camera and the next
- * ones arrive — which is what walking down a hall looks like.
+ * There was a corridor here, built out of flat panels standing at intervals
+ * down a CSS z axis. It worked, in the sense that it had real perspective and
+ * really moved — and it looked like a 2D game trying to be 3D, because that is
+ * what a row of untextured rectangles looks like however correctly you place
+ * them.
  *
- * The travel is tied to the room's dwell, the same value the pieces page on,
- * so the hall and the work move together rather than at odds.
+ * The room's own photograph is a real gallery. Walking is the photograph
+ * coming toward you (Scene.travel), and what belongs here is only the light:
+ * a pool at the far end and picture lights overhead.
  */
 export function FloorSetting() {
-  const paging = useScenePaging()
-  const reduce = useReducedMotion()
-  // Stop one segment short of the end, so you never walk out of the corridor.
-  const z = useTransform(paging ?? MOTION_ZERO, [0, 1], [0, HALL_DEPTH * (HALL_SEGMENTS.length - 2)])
-
   return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 overflow-hidden"
-      style={{ perspective: '1100px', perspectiveOrigin: '50% 45%' }}
-    >
-      {/* The far end of the hall, lit. Sits behind everything, so the corridor
-          reads as running toward a light rather than into a wall. */}
-      <div className="absolute left-1/2 top-[45%] h-[30vh] w-[22vw] min-w-[180px] -translate-x-1/2 -translate-y-1/2 rounded-[45%] bg-accent opacity-[0.13] blur-3xl" />
-
-      <Corridor z={reduce || !paging ? HALL_DEPTH : z} />
-
-      {/* Fog: the far end fades into the room's own colour, and the near edges
-          darken, which is what stops the segments from looking like flats
-          standing in a row. */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_45%,transparent_0%,transparent_34%,rgb(var(--surface)/0.35)_72%,rgb(var(--surface)/0.6)_100%)]" />
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+      {/* The far end of the hall, lit. */}
+      <div className="absolute left-1/2 top-[45%] h-[32vh] w-[24vw] min-w-[190px] -translate-x-1/2 -translate-y-1/2 rounded-[45%] bg-accent opacity-[0.12] blur-3xl" />
+      {/* Picture lights along the ceiling line. */}
+      {[0, 1, 2, 3].map((i) => (
+        <span
+          key={i}
+          className="absolute top-[12%] h-[11vh] w-[10vw] min-w-[80px] rounded-[50%] bg-accent opacity-[0.10] blur-2xl"
+          style={{ left: `${12 + i * 25}%` }}
+        />
+      ))}
+      {/* The edges of the room fall away, so the lit middle reads as further
+          off than the corners. */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_45%,transparent_0%,transparent_42%,rgb(var(--surface)/0.35)_78%,rgb(var(--surface)/0.6)_100%)]" />
     </div>
   )
 }

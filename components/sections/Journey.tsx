@@ -31,8 +31,27 @@ export function Journey() {
     { id: 'landing', title: 'the way in', dir: 'in', node: <LandingRoom />, setting: <StairsSetting />, backdrop: 'entrance' },
     // Seven pieces to walk past, so this room claims four times the scroll of
     // a room that says one sentence. Without it, paging raced.
-    { id: 'floor', title: 'the work', dir: 'up', node: <FloorRoom />, setting: <FloorSetting />, weight: 4, backdrop: 'showcase' },
-    { id: 'desk', title: 'the desk', dir: 'in', node: <DeskRoom />, setting: <DeskSetting />, backdrop: 'desk' },
+    {
+      id: 'floor',
+      title: 'the work',
+      dir: 'up',
+      node: <FloorRoom />,
+      setting: <FloorSetting />,
+      weight: 4,
+      backdrop: 'showcase',
+      // Walking the hall is the room coming toward you.
+      travel: true,
+    },
+    {
+      id: 'desk',
+      title: 'the desk',
+      dir: 'in',
+      node: <DeskRoom />,
+      setting: <DeskSetting />,
+      backdrop: 'desk',
+      // Crossing the office to the desk, then leaning over it.
+      travel: true,
+    },
     // The door is the last beat of the home scroll only (spec §5) — /connect
     // renders its own copy without it.
     { id: 'way-out', title: 'the way out', dir: 'out', node: <WayOutRoom />, backdrop: 'endoftour' },
