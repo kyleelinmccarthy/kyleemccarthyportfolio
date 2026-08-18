@@ -45,6 +45,25 @@ export function useScenePaging() {
   return useContext(ScenePagingContext)
 }
 
+/**
+ * Walks the reader on to the next room.
+ *
+ * The journey is driven by scroll, so a room cannot navigate — there is no
+ * next page to go to, only a place further down the same track. This scrolls
+ * there, which means the camera plays the move exactly as it would if you had
+ * turned the wheel yourself. It uses the two-argument scrollTo on purpose:
+ * that form honours the page's CSS `scroll-behavior`, so someone who asked for
+ * reduced motion gets an instant jump instead of a forced smooth glide.
+ *
+ * null when there is nowhere further to go — the last room, or a standalone
+ * page with no journey around it — so a room can render a plain, unclickable
+ * object rather than a control that does nothing.
+ */
+export const SceneAdvanceContext = createContext<(() => void) | null>(null)
+export function useSceneAdvance() {
+  return useContext(SceneAdvanceContext)
+}
+
 /** Rise + fade a block in when its scene becomes active (or scrolls into view). */
 export function RevealOnActive({
   children,

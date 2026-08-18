@@ -1,28 +1,95 @@
 'use client'
 
-import { useRef } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 import { Room } from './Room'
-import { RevealOnActive } from '@/components/journey/sceneActive'
+import { RevealOnActive, useSceneAdvance } from '@/components/journey/sceneActive'
 import { rooms } from '@/content/rooms'
 
 /**
  * The first room inside. A window on one wall — a real frame around real
  * glass, so the room's own wall shows through it — with daylight that falls
- * onto the floor and travels as you scroll. Decorative only.
+ * onto the floor and travels as you scroll.
+ *
+ * The window is a button, the same as the front door a room back: click it to
+ * walk on rather than scrolling. The light and the sill stay decorative. The
+ * container keeps pointer-events-none so the room's copy is still selectable
+ * through it; only the window itself takes clicks.
  */
+/**
+ * Is there room for the window to be its own thing?
+ *
+ * Below 768px the room's copy runs the full width and the window sits behind
+ * it, so the window is unclickable — the text is on top of it. A control
+ * nobody can operate is worse than a picture, so narrow screens get the
+ * picture. Matches the breakpoint the journey uses for its camera.
+ *
+ * Starts false and settles after mount: the server cannot know the viewport,
+ * and guessing would mean a hydration mismatch.
+ */
+function useRoomForAWindow() {
+  const [wide, setWide] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)')
+    const update = () => setWide(mq.matches)
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
+  }, [])
+  return wide
+}
+
+/**
+ * The window's outer box: a button where it leads somewhere and there is room
+ * to reach it, an inert picture otherwise — same reasoning as the front door's
+ * slab.
+ */
+function Frame({
+  interactive,
+  onActivate,
+  label,
+  children,
+}: {
+  interactive: boolean
+  onActivate: () => void
+  label: string
+  children: ReactNode
+}) {
+  const className = 'absolute right-[8%] top-[14%] h-[40vh] w-[22vw] min-w-[180px] rounded-sm'
+  if (!interactive) {
+    return (
+      <div aria-hidden="true" className={className}>
+        {children}
+      </div>
+    )
+  }
+  return (
+    <button
+      type="button"
+      onClick={onActivate}
+      aria-label={label}
+      className={`${className} pointer-events-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-surface`}
+    >
+      {children}
+    </button>
+  )
+}
+
 export function WindowSetting() {
   const reduce = useReducedMotion()
+  const advance = useSceneAdvance()
+  const roomForAWindow = useRoomForAWindow()
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll()
   const x = useTransform(scrollYProgress, [0, 1], ['-8%', '26%'])
   return (
-    <div ref={ref} aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+    <div ref={ref} className="pointer-events-none absolute inset-0 overflow-hidden">
       {/* daylight falling through onto the floor, sweeping as you scroll.
           Opacity is a standalone utility, not a `/` colour modifier — this
           project's semantic tokens are plain CSS custom properties, and a
           slash-opacity class on one (`from-fill/30`) compiles to nothing. */}
       <motion.div
+        aria-hidden="true"
         className="absolute right-[2%] top-[46%] h-[42vh] w-[32vw] min-w-[220px] bg-gradient-to-b from-fill to-transparent opacity-30 blur-2xl"
         style={{
           clipPath: 'polygon(28% 0%, 72% 0%, 100% 100%, 0% 100%)',
@@ -31,9 +98,16 @@ export function WindowSetting() {
       />
 
       {/* the window: a frame around real glass, not a filled panel */}
-      <div className="absolute right-[8%] top-[14%] h-[40vh] w-[22vw] min-w-[180px]">
+      <Frame
+        interactive={!!advance && roomForAWindow}
+        onActivate={() => advance?.()}
+        label={rooms.window.windowAction}
+      >
         {/* frame: solid, like real wood or vinyl trim */}
-        <div className="relative h-full w-full rounded-sm bg-surface-raised shadow-md ring-4 ring-rule">
+        <div
+          aria-hidden="true"
+          className="relative h-full w-full rounded-sm bg-surface-raised shadow-md ring-4 ring-rule transition-shadow duration-200 hover:shadow-lg motion-reduce:transition-none"
+        >
           {/* the glass: no fill of its own, so the room's own wall reads
               straight through it, plus a faint diagonal glare so it still
               looks like glass and not an empty hole. */}
@@ -47,8 +121,11 @@ export function WindowSetting() {
           </div>
         </div>
         {/* sill */}
-        <div className="absolute -bottom-2 left-1/2 h-2 w-[114%] -translate-x-1/2 rounded-sm bg-surface-raised shadow-sm" />
-      </div>
+        <div
+          aria-hidden="true"
+          className="absolute -bottom-2 left-1/2 h-2 w-[114%] -translate-x-1/2 rounded-sm bg-surface-raised shadow-sm"
+        />
+      </Frame>
     </div>
   )
 }

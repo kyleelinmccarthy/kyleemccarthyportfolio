@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import {
   animate,
   motion,
@@ -10,7 +10,7 @@ import {
   type MotionValue,
 } from 'framer-motion'
 import { Room } from './Room'
-import { useSceneProgress } from '@/components/journey/sceneActive'
+import { useSceneAdvance, useSceneProgress } from '@/components/journey/sceneActive'
 import { greetingForHour } from './greeting'
 import { rooms } from '@/content/rooms'
 
@@ -48,11 +48,65 @@ export function StepsSetting() {
 
 /**
  * The doorway, the door hinged inside it, and the steps coming down toward
- * the viewer. Decorative — hidden from assistive tech — but laid out in normal
- * flow above the copy so the two can never overlap.
+ * the viewer. Laid out in normal flow beneath the greeting so the two can
+ * never overlap.
+ *
+ * The door is a real button: you can walk in by clicking it instead of
+ * scrolling, and it works from the keyboard. Everything around it — the
+ * opening, the steps, the light — is decoration and stays hidden from
+ * assistive tech. The wrapper deliberately is NOT aria-hidden: a focusable
+ * control inside an aria-hidden subtree is reachable by tab and invisible to
+ * a screen reader, which is worse than either alone.
  */
+/**
+ * The door slab: a real button when it leads somewhere, an inert picture when
+ * it does not. Same box either way, so the proportions and the perspective the
+ * hinge needs are identical.
+ */
+function Slab({
+  interactive,
+  onActivate,
+  label,
+  children,
+  ...handlers
+}: {
+  interactive: boolean
+  onActivate: () => void
+  label: string
+  children: ReactNode
+  onMouseEnter: () => void
+  onMouseLeave: () => void
+  onFocus: () => void
+  onBlur: () => void
+}) {
+  const className =
+    'pointer-events-auto relative aspect-[1/2.3] h-[32vh] min-h-[210px] max-h-[380px] rounded-t-[8rem] bg-surface ring-1 ring-fg/35 shadow-2xl shadow-black/40'
+  const style = { perspective: '900px' }
+
+  if (!interactive) {
+    return (
+      <div aria-hidden="true" className={className} style={style} {...handlers}>
+        {children}
+      </div>
+    )
+  }
+  return (
+    <button
+      type="button"
+      onClick={onActivate}
+      aria-label={label}
+      className={`${className} cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent`}
+      style={style}
+      {...handlers}
+    >
+      {children}
+    </button>
+  )
+}
+
 function Doorway() {
   const reduce = useReducedMotion()
+  const advance = useSceneAdvance()
 
   // Walk toward it. As you scroll through this room's slice of the track the
   // doorway grows and lifts, so by the time the next room zooms in over the
@@ -79,25 +133,35 @@ function Doorway() {
 
   return (
     <motion.div
-      aria-hidden="true"
       className="mt-10 flex flex-col items-center"
       style={
         reduce ? undefined : { scale, y: lift, opacity: fade, transformOrigin: '50% 62%' }
       }
     >
-      <div
-        className="pointer-events-auto relative aspect-[1/2.3] h-[32vh] min-h-[210px] max-h-[380px] rounded-t-[8rem] bg-surface ring-1 ring-fg/35 shadow-2xl shadow-black/40"
-        style={{ perspective: '900px' }}
+      {/* A button only where there is somewhere to go. Off the journey — a
+          standalone render, or the last room — the door is a picture, because
+          a control that does nothing is worse than no control. */}
+      <Slab
+        interactive={!!advance}
+        onActivate={() => advance?.()}
+        label={rooms.steps.doorAction}
         onMouseEnter={() => {
           if (!reduce) animate(swingFromHover, -52, { duration: 0.6, ease: [0.16, 1, 0.3, 1] })
         }}
         onMouseLeave={() => {
           if (!reduce) animate(swingFromHover, 0, { duration: 0.6, ease: [0.16, 1, 0.3, 1] })
         }}
+        onFocus={() => {
+          if (!reduce) animate(swingFromHover, -52, { duration: 0.6, ease: [0.16, 1, 0.3, 1] })
+        }}
+        onBlur={() => {
+          if (!reduce) animate(swingFromHover, 0, { duration: 0.6, ease: [0.16, 1, 0.3, 1] })
+        }}
       >
         {/* Warm light in the opening, behind the door. */}
-        <span className="absolute inset-0 rounded-t-[8rem] bg-accent/25" />
+        <span aria-hidden="true" className="absolute inset-0 rounded-t-[8rem] bg-accent/25" />
         <motion.div
+          aria-hidden="true"
           className="absolute inset-0 origin-left rounded-t-[8rem] bg-surface ring-1 ring-fg/45"
           // Reduced motion gets it standing open: no swing, but the way in is
           // still legible as a way in.
@@ -110,13 +174,14 @@ function Doorway() {
           </span>
           <span className="absolute right-[14%] top-[66%] block h-2 w-2 rounded-full bg-accent" />
         </motion.div>
-      </div>
+      </Slab>
 
       {/* Steps down from the threshold, each wider and a shade brighter as it
           comes nearer. Widths are of this centred column, not the viewport. */}
       {[0, 1, 2, 3, 4].map((i) => (
         <span
           key={i}
+          aria-hidden="true"
           className="block border-t border-fg/45 bg-surface"
           style={{
             width: `${96 + i * 44}px`,

@@ -29,6 +29,13 @@ export const rooms = {
       { from: 17, text: 'Evening.' },
       { from: 22, text: 'Up late? So am I.' },
     ],
+    /**
+     * The accessible name of the door itself, which is a real button: clicking
+     * it walks you into the next room rather than making you scroll there.
+     * Says what happens, not what the thing is — a voice-control user asking
+     * for "come inside" gets the door.
+     */
+    doorAction: 'Come inside',
     // No tagline out here. The front step is a welcome and nothing else; the
     // line that says who she is now greets you inside, as `window.entry`.
   },
@@ -43,6 +50,8 @@ export const rooms = {
      * exists because something already existed and wasn't good enough.
      */
     entry: 'There’s always a better way, and I enjoy trying to find it.',
+    /** The window is a button too — same idea as the front door. */
+    windowAction: 'Go through to the work',
     eyebrow: 'My process',
     heading: 'Three things',
     // No lede. There was one, and it was a summary of the three principles

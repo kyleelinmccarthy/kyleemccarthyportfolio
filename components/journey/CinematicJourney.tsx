@@ -1,6 +1,6 @@
 'use client'
 
-import { type ReactNode, useEffect, useRef, useState } from 'react'
+import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import {
   motion,
   useScroll,
@@ -10,7 +10,12 @@ import {
   useReducedMotion,
   type MotionValue,
 } from 'framer-motion'
-import { SceneActiveContext, SceneProgressContext, ScenePagingContext } from './sceneActive'
+import {
+  SceneActiveContext,
+  SceneAdvanceContext,
+  SceneProgressContext,
+  ScenePagingContext,
+} from './sceneActive'
 import { VH_PER_SCENE, dwellEnd } from './timing'
 import { BackgroundShapes } from '@/components/media/BackgroundShapes'
 import { Backdrop, type BackdropVariant } from '@/components/media/Backdrop'
@@ -109,6 +114,18 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
   xs.push(-cells[n - 1]!.x * 100)
   ys.push(-cells[n - 1]!.y * 100)
 
+  /**
+   * Scroll to a point on this track, as a fraction of the whole. Rooms use it
+   * to walk the reader on: clicking the front door puts you where the wheel
+   * would have, so the camera plays the same move.
+   */
+  const scrollToProgress = useCallback((p: number) => {
+    const el = ref.current
+    if (!el) return
+    const range = el.offsetHeight - window.innerHeight
+    window.scrollTo(0, el.offsetTop + p * range)
+  }, [])
+
   const { scrollYProgress } = useScroll({ target: ref })
   const camX = useTransform(scrollYProgress, ins, xs)
   const camY = useTransform(scrollYProgress, ins, ys)
@@ -166,6 +183,13 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
               dwellEnd={dwellEnds[i]!}
               progress={scrollYProgress}
               reduce={!!reduce}
+              // A nudge past the next room's start, so it has arrived and
+              // settled rather than landing on the exact frame it appears.
+              advance={
+                i + 1 < n
+                  ? () => scrollToProgress(starts[i + 1]! + 0.15 * spans[i + 1]!)
+                  : null
+              }
             >
               {s.node}
             </Panel>
@@ -228,23 +252,37 @@ function StackedScene({ scene }: { scene: Scene }) {
     offset: ['start start', 'end start'],
   })
 
+  // No camera here, so "on to the next room" is simply the next section. Read
+  // off the DOM rather than threaded through as an index: the sections are
+  // siblings, and the last one correctly has no next.
+  const [canAdvance, setCanAdvance] = useState(false)
+  useEffect(() => {
+    setCanAdvance(!!ref.current?.nextElementSibling)
+  }, [])
+  const advance = useCallback(() => {
+    const next = ref.current?.nextElementSibling as HTMLElement | null
+    if (next) window.scrollTo(0, next.offsetTop)
+  }, [])
+
   return (
     <section
       ref={ref}
       className="relative flex min-h-[100svh] items-center overflow-hidden bg-surface py-24"
       aria-label={scene.id}
     >
-      <Backdrop variant={scene.backdrop} />
-      {scene.setting ?? <BackgroundShapes />}
-      <SceneProgressContext.Provider value={scrollYProgress}>
-        {/* No camera here, so there is no transition to keep clear of: paging
-            gets the section's whole pass. */}
-        <ScenePagingContext.Provider value={scrollYProgress}>
-          <div className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
-            {scene.node}
-          </div>
-        </ScenePagingContext.Provider>
-      </SceneProgressContext.Provider>
+      <SceneAdvanceContext.Provider value={canAdvance ? advance : null}>
+        <SceneProgressContext.Provider value={scrollYProgress}>
+          {/* No camera here, so there is no transition to keep clear of:
+              paging gets the section's whole pass. */}
+          <ScenePagingContext.Provider value={scrollYProgress}>
+            <Backdrop variant={scene.backdrop} />
+            {scene.setting ?? <BackgroundShapes />}
+            <div className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
+              {scene.node}
+            </div>
+          </ScenePagingContext.Provider>
+        </SceneProgressContext.Provider>
+      </SceneAdvanceContext.Provider>
     </section>
   )
 }
@@ -264,6 +302,7 @@ function Panel({
   dwellEnd,
   progress,
   reduce,
+  advance,
   children,
 }: {
   x: number
@@ -280,6 +319,7 @@ function Panel({
   dwellEnd: number
   progress: MotionValue<number>
   reduce: boolean
+  advance: (() => void) | null
   children: ReactNode
 }) {
   const a = arriveStart
@@ -327,17 +367,23 @@ function Panel({
         pointerEvents: isActive ? 'auto' : 'none',
       }}
     >
-      <Backdrop variant={backdrop} />
-      {setting ?? <BackgroundShapes />}
-      {/* The scene's own content animates on arrival via SceneActiveContext. */}
+      {/* The setting is inside the providers, not beside them. It used to sit
+          outside, which meant a room's scenery could not read the scene at
+          all — and the window in the first room is scenery that has to know
+          where "on to the next room" is. */}
       <SceneActiveContext.Provider value={isActive}>
-        <SceneProgressContext.Provider value={sceneProgress}>
-          <ScenePagingContext.Provider value={scenePaging}>
-            <div key={enterKey} className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
-              {children}
-            </div>
-          </ScenePagingContext.Provider>
-        </SceneProgressContext.Provider>
+        <SceneAdvanceContext.Provider value={advance}>
+          <SceneProgressContext.Provider value={sceneProgress}>
+            <ScenePagingContext.Provider value={scenePaging}>
+              <Backdrop variant={backdrop} />
+              {setting ?? <BackgroundShapes />}
+              {/* The scene's own content animates on arrival via SceneActiveContext. */}
+              <div key={enterKey} className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
+                {children}
+              </div>
+            </ScenePagingContext.Provider>
+          </SceneProgressContext.Provider>
+        </SceneAdvanceContext.Provider>
       </SceneActiveContext.Provider>
     </motion.div>
   )

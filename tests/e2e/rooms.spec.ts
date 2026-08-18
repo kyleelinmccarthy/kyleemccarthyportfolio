@@ -140,3 +140,60 @@ test('the door has a door’s proportions, not the viewport’s', async ({ page 
     expect(ratio, `at ${w}x${h} the door is ${ratio.toFixed(2)}:1 tall`).toBeLessThan(2.6)
   }
 })
+
+test('the door walks you inside when you click it', async ({ page }) => {
+  await page.goto('/')
+  await page.waitForTimeout(1200)
+
+  const before = await page.evaluate(() => window.scrollY)
+  await page.getByRole('button', { name: rooms.steps.doorAction }).click()
+  // The journey has no next page to navigate to — clicking the door scrolls
+  // you to where the wheel would have, so the camera plays the same move.
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY), { timeout: 5000 })
+    .toBeGreaterThan(before + 200)
+
+  // And you land on the room the door leads into, not somewhere past it.
+  await expect(page.getByText(rooms.window.entry)).toBeVisible()
+})
+
+/** Smooth scrolling is in flight after an advance; wait for it to settle. */
+async function settled(page: import('@playwright/test').Page) {
+  let last = -1
+  await expect
+    .poll(
+      async () => {
+        const y = await page.evaluate(() => Math.round(window.scrollY))
+        const stable = y === last
+        last = y
+        return stable
+      },
+      { timeout: 10_000, message: 'scroll should come to rest' }
+    )
+    .toBe(true)
+}
+
+test('the window walks you on to the work', async ({ page }, testInfo) => {
+  // Desktop only, deliberately. Under 768px the room's copy runs full width
+  // and the window sits behind it, so the window renders as a picture rather
+  // than as a control nobody could reach.
+  test.skip(
+    (testInfo.project.use.viewport?.width ?? 1280) < 768,
+    'the window is decoration on narrow screens'
+  )
+  await page.goto('/')
+  await page.waitForTimeout(1200)
+
+  await page.getByRole('button', { name: rooms.steps.doorAction }).click()
+  await expect(page.getByText(rooms.window.entry)).toBeVisible()
+  // The door's own scroll is still gliding; clicking a moving target is what
+  // "element is not stable" means.
+  await settled(page)
+
+  const before = await page.evaluate(() => window.scrollY)
+  await page.getByRole('button', { name: rooms.window.windowAction }).click()
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY), { timeout: 5000 })
+    .toBeGreaterThan(before + 200)
+  await expect(page.getByRole('heading', { name: 'Beacon', level: 3 })).toBeVisible()
+})
