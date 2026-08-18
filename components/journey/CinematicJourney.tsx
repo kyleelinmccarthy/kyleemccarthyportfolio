@@ -219,12 +219,14 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
               retreat={
                 i > 0 ? () => scrollToProgress(starts[i - 1]! + 0.15 * spans[i - 1]!) : null
               }
-              // Backing out of a room is the room receding, not the next one
-              // growing: without this the arriving panel sat at 68% over a
-              // fully-lit desk and you saw both rooms at once, Back button
-              // and all.
-              leaveStart={scenes[i + 1]?.dir === 'out' ? dwellEnds[i]! : null}
-              leaveEnd={scenes[i + 1]?.dir === 'out' ? starts[i + 1]! : null}
+              // A zoom shares a cell with the room before it, so during the
+              // crossfade both were on screen at once — the gallery ghosting
+              // through the desk, two Back buttons, the lot. The room being
+              // left goes with you: through the door ('in', so it grows past
+              // you) or away from you ('out', so it recedes).
+              leaveStart={cells[i + 1]?.zoom ? dwellEnds[i]! : null}
+              leaveEnd={cells[i + 1]?.zoom ? starts[i + 1]! : null}
+              leaveScale={cells[i + 1]?.zoom === 'out' ? 0.72 : 1.4}
               previous={scenes[i - 1]?.title}
             >
               {s.node}
@@ -276,17 +278,34 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
  * and a vertically-centred control would land on top of it, and moves to the
  * middle of the left edge from `sm` up.
  */
-function BackToPreviousRoom({ onBack, previous }: { onBack: () => void; previous?: string }) {
+function BackToPreviousRoom({
+  onBack,
+  previous,
+  settled = true,
+}: {
+  onBack: () => void
+  previous?: string
+  /**
+   * Only once you have arrived. On the camera path every room is on the page
+   * from the start, so the next room's back button used to be visible in the
+   * middle of a pan, floating over the room you were still leaving.
+   */
+  settled?: boolean
+}) {
   return (
-    <button
+    <motion.button
       type="button"
       onClick={onBack}
       aria-label={previous ? `Back to ${previous}` : 'Back to the previous room'}
-      className="absolute bottom-20 left-3 z-20 inline-flex items-center gap-2 rounded-full bg-surface-raised/95 px-4 py-2 font-sans text-sm text-fg shadow-lg shadow-black/20 ring-1 ring-rule transition-colors hover:text-accent hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:bottom-auto sm:left-4 sm:top-1/2 sm:-translate-y-1/2"
+      className="absolute bottom-20 left-3 z-20 inline-flex items-center gap-2 rounded-full bg-surface-raised/95 px-4 py-2 font-sans text-sm text-fg shadow-lg shadow-black/20 ring-1 ring-rule hover:text-accent hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:bottom-auto sm:left-4 sm:top-1/2 sm:-translate-y-1/2"
+      initial={false}
+      animate={{ opacity: settled ? 1 : 0 }}
+      transition={{ duration: 0.3, delay: settled ? 0.35 : 0 }}
+      style={{ pointerEvents: settled ? 'auto' : 'none' }}
     >
       <span aria-hidden="true">←</span>
       Back
-    </button>
+    </motion.button>
   )
 }
 
@@ -369,6 +388,7 @@ function Panel({
   travel,
   leaveStart,
   leaveEnd,
+  leaveScale,
   arriveStart,
   arriveEnd,
   segStart,
@@ -389,9 +409,11 @@ function Panel({
   setting?: ReactNode
   backdrop?: BackdropVariant
   travel?: boolean
-  /** When the room after this one backs out of it, this room recedes. */
+  /** When the room after this one zooms, this one leaves rather than lingering. */
   leaveStart: number | null
   leaveEnd: number | null
+  /** Past 1 to pass through this room, under 1 to back away from it. */
+  leaveScale: number
   arriveStart: number
   arriveEnd: number
   segStart: number
@@ -411,8 +433,8 @@ function Panel({
   // than 1.3 for an 'in': it is a threshold you step through, and a shallower
   // zoom read as a crossfade rather than as movement. An 'out' arrives at its
   // own size and simply fades up — the sense of backing away comes from the
-  // room behind it shrinking (leaveStart/leaveEnd below), which is what
-  // actually happens when you walk backwards through a door.
+  // room behind it shrinking, which is what actually happens when you walk
+  // backwards through a door.
   //
   // A panel can both arrive and be left, so the two are one set of keyframes:
   // in at [a, b], out at [leaveStart, leaveEnd].
@@ -429,7 +451,7 @@ function Panel({
   const panelScale = useTransform(
     progress,
     stops,
-    leaving ? [enterScale, 1, 1, 0.72] : [enterScale, 1]
+    leaving ? [enterScale, 1, 1, leaveScale] : [enterScale, 1]
   )
 
   // 0 -> 1 across this scene's own slice of the track, so a room can drive its
@@ -502,7 +524,9 @@ function Panel({
               <div key={enterKey} className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
                 {children}
               </div>
-              {retreat && <BackToPreviousRoom onBack={retreat} previous={previous} />}
+              {retreat && (
+                <BackToPreviousRoom onBack={retreat} previous={previous} settled={isActive} />
+              )}
             </ScenePagingContext.Provider>
           </SceneProgressContext.Provider>
         </SceneRetreatContext.Provider>
