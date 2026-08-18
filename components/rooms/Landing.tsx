@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState, type ReactNode } from 'react'
+import { Fragment, useEffect, useState, type ReactNode } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { Room } from './Room'
 import { RevealOnActive, useSceneAdvance } from '@/components/journey/sceneActive'
 import { rooms } from '@/content/rooms'
@@ -93,6 +94,7 @@ const TREADS = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 export function StairsSetting() {
   const advance = useSceneAdvance()
   const roomForStairs = useRoomForStairs()
+  const reduce = useReducedMotion()
 
   return (
     // Not aria-hidden. The flight is a control, and a focusable control inside
@@ -113,49 +115,78 @@ export function StairsSetting() {
         label={`${rooms.landing.stairs.label} — ${rooms.landing.stairs.description}`}
       >
         <div aria-hidden="true" className="relative h-full w-full">
+          {/* No wrapper element per tread. There used to be one, an
+              `absolute` span with no size of its own — so every child's
+              percentage width resolved against 0 and the whole flight
+              measured 0x0. It drew nothing for days. */}
           {TREADS.map((i) => {
             const t = i / (TREADS.length - 1)
+            const box = {
+              right: `${t * 26}%`,
+              width: `${92 - t * 34}%`,
+            }
             return (
-              <span key={i} className="absolute block">
-                {/* The tread you walk on. */}
+              <Fragment key={i}>
+                {/* The riser, in shadow, first so the tread sits on it. */}
                 <span
-                  className="absolute rounded-[2px] bg-surface-raised ring-1 ring-fill/25 transition-colors duration-200 group-hover:ring-accent"
-                  style={{
-                    bottom: `${6 + t * 74}%`,
-                    right: `${t * 26}%`,
-                    width: `${92 - t * 34}%`,
-                    height: '5.5%',
-                    // Brighter than they were: the entrance photograph has its
-                    // own staircase, and faint treads drawn on top of it read
-                    // as part of the picture rather than as something to press.
-                    opacity: 0.82 + (1 - t) * 0.18,
-                  }}
+                  className="absolute rounded-[1px] bg-surface opacity-80"
+                  style={{ ...box, bottom: `${2.5 + t * 74}%`, height: '3.5%' }}
                 />
-                {/* The riser under it, a shade darker, so the flight has depth
-                    rather than reading as a ladder of floating bars. */}
+                {/* The tread. --fill, not a surface colour: taupe in the dark
+                    theme and green in the light one, so it stands off the
+                    photograph either way. */}
                 <span
-                  className="absolute rounded-[1px] bg-surface"
-                  style={{
-                    bottom: `${2.5 + t * 74}%`,
-                    right: `${t * 26}%`,
-                    width: `${92 - t * 34}%`,
-                    height: '3.5%',
-                    opacity: 0.5,
-                  }}
+                  className="absolute rounded-[2px] bg-fill opacity-90 shadow-md shadow-black/40 transition-colors duration-200 group-hover:bg-accent"
+                  style={{ ...box, bottom: `${6 + t * 74}%`, height: '5.5%' }}
                 />
-              </span>
+                {/* The nosing: a lit edge along the front of each tread, the
+                    way a stair light strip runs. */}
+                <span
+                  className="absolute rounded-full bg-accent opacity-80 blur-[1px]"
+                  style={{ ...box, bottom: `${5.2 + t * 74}%`, height: '1.4%' }}
+                />
+                {/* A light climbing the flight, one tread at a time. This is
+                    the invitation: a still staircase in a photograph of a
+                    staircase does not read as something you can use. */}
+                {!reduce && (
+                  <motion.span
+                    className="absolute rounded-[2px] bg-accent blur-[3px]"
+                    style={{ ...box, bottom: `${6 + t * 74}%`, height: '5.5%' }}
+                    animate={{ opacity: [0, 0.8, 0] }}
+                    transition={{
+                      duration: 2.2,
+                      repeat: Infinity,
+                      repeatDelay: 0.9,
+                      delay: i * 0.13,
+                      ease: 'easeInOut',
+                    }}
+                  />
+                )}
+              </Fragment>
             )
           })}
           {/* The banister, climbing with the treads. */}
           <span
-            className="absolute bottom-[10%] left-[2%] h-[2px] w-[86%] origin-bottom-left rounded-full bg-fill opacity-50"
+            className="absolute bottom-[10%] left-[2%] h-[3px] w-[86%] origin-bottom-left rounded-full bg-fill opacity-60"
             style={{ transform: 'rotate(-38deg)' }}
           />
         </div>
         {/* Said out loud at the foot of the flight. Drawn treads over a
             photograph of a staircase are ambiguous; a word is not. */}
-        <span className="pointer-events-none absolute inset-x-0 -bottom-9 mx-auto w-fit rounded-full bg-surface-raised/90 px-3 py-1 font-sans text-label uppercase text-fg-muted ring-1 ring-rule transition-colors duration-200 group-hover:text-accent group-hover:ring-accent">
-          {rooms.landing.stairs.label} <span aria-hidden="true">↑</span>
+        <span className="pointer-events-none absolute inset-x-0 -bottom-9 mx-auto w-fit rounded-full bg-surface-raised/95 px-3 py-1 font-sans text-label uppercase text-fg ring-1 ring-fill/40 transition-colors duration-200 group-hover:text-accent group-hover:ring-accent">
+          {rooms.landing.stairs.label}{' '}
+          {reduce ? (
+            <span aria-hidden="true">↑</span>
+          ) : (
+            <motion.span
+              aria-hidden="true"
+              className="inline-block"
+              animate={{ y: [0, -3, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              ↑
+            </motion.span>
+          )}
         </span>
       </Flight>
     </div>

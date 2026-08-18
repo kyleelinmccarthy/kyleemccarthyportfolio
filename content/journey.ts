@@ -42,9 +42,10 @@ export const journey = {
   // on a site that is a showcase — so it now points at the work instead of
   // asking for a meeting, and the door sits directly beneath it.
   // Reached by "Send me a letter", so it is not the place to sell the work
-  // again — the person is already here and already interested.
+  // again — the person is already here and already interested. No body
+  // either: contact.body says the same thing better, and said it twice on
+  // the same screen.
   talk: {
     heading: 'Drop me a line.',
-    body: 'Whatever it is about — something here you want to know more about, something you are working on, or just hello.',
   },
 } as const
