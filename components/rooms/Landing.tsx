@@ -94,6 +94,11 @@ export function StairsSetting() {
   const advance = useSceneAdvance()
   const roomForStairs = useRoomForStairs()
   const reduce = useReducedMotion()
+  // Whether the flight is a control rather than a picture. Read here as well
+  // as passed down, because the label below has to be gated on exactly the
+  // same thing: a word saying "press me" attached to nothing pressable is
+  // worse than no word at all.
+  const interactive = !!advance && roomForStairs
 
   return (
     // Not aria-hidden. The flight is a control, and a focusable control inside
@@ -108,7 +113,7 @@ export function StairsSetting() {
       />
 
       <Flight
-        interactive={!!advance && roomForStairs}
+        interactive={interactive}
         onActivate={() => advance?.()}
         label={`${rooms.landing.stairs.label} — ${rooms.landing.stairs.description}`}
       >
@@ -137,22 +142,29 @@ export function StairsSetting() {
           </span>
         )}
         {/* Said out loud at the foot of the flight. A photograph of a
-            staircase, however clear, does not say "press me". */}
-        <span className="pointer-events-none absolute inset-x-0 -bottom-9 mx-auto w-fit rounded-full bg-surface-raised/95 px-3 py-1 font-sans text-label uppercase text-fg ring-1 ring-fill/40 transition-colors duration-200 group-hover:text-accent group-hover:ring-accent">
-          {rooms.landing.stairs.label}{' '}
-          {reduce ? (
-            <span aria-hidden="true">↑</span>
-          ) : (
-            <motion.span
-              aria-hidden="true"
-              className="inline-block"
-              animate={{ y: [0, -3, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              ↑
-            </motion.span>
-          )}
-        </span>
+            staircase, however clear, does not say "press me".
+            Only where there is something to press: below 1024px the flight is
+            decoration, and the label was still being drawn — an opaque pill
+            reading "Upstairs ↑" sitting across the middle of a paragraph,
+            offering to do something no tap could do. The light stays, since it
+            is ambience and renders behind the copy; the invitation goes. */}
+        {interactive && (
+          <span className="pointer-events-none absolute inset-x-0 -bottom-9 mx-auto w-fit rounded-full bg-surface-raised/95 px-3 py-1 font-sans text-label uppercase text-fg ring-1 ring-fill/40 transition-colors duration-200 group-hover:text-accent group-hover:ring-accent">
+            {rooms.landing.stairs.label}{' '}
+            {reduce ? (
+              <span aria-hidden="true">↑</span>
+            ) : (
+              <motion.span
+                aria-hidden="true"
+                className="inline-block"
+                animate={{ y: [0, -3, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                ↑
+              </motion.span>
+            )}
+          </span>
+        )}
       </Flight>
     </div>
   )

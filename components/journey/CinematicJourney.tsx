@@ -274,9 +274,13 @@ export function CinematicJourney({ scenes }: { scenes: Scene[] }) {
  * always tells you is where the way out is. Left-hand side, opposite the
  * scroll cue at bottom right.
  *
- * It sits at the bottom-left on a phone, where the copy runs the full width
- * and a vertically-centred control would land on top of it, and moves to the
- * middle of the left edge from `sm` up.
+ * Where it sits is decided by whether the copy has room to reach it. The room
+ * is as wide as the screen, so until the centred `max-w-6xl` column has pulled
+ * clear of the left edge — which happens at `xl` — a vertically-centred pill
+ * lands in the middle of the paragraph beside it. Below `xl` it goes in the
+ * band along the bottom that every room keeps clear of copy (the stacked
+ * section's `py-24`, the camera panel's `pb-20`), rather than a little way up
+ * the side where the last line of a long room ran into it.
  */
 function BackToPreviousRoom({
   onBack,
@@ -297,7 +301,7 @@ function BackToPreviousRoom({
       type="button"
       onClick={onBack}
       aria-label={previous ? `Back to ${previous}` : 'Back to the previous room'}
-      className="absolute bottom-20 left-3 z-20 inline-flex items-center gap-2 rounded-full bg-surface-raised/95 px-4 py-2 font-sans text-sm text-fg shadow-lg shadow-black/20 ring-1 ring-rule hover:text-accent hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:bottom-auto sm:left-4 sm:top-1/2 sm:-translate-y-1/2"
+      className="absolute bottom-6 left-3 z-20 inline-flex items-center gap-2 rounded-full bg-surface-raised/95 px-4 py-2 font-sans text-sm text-fg shadow-lg shadow-black/20 ring-1 ring-rule hover:text-accent hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:left-4 xl:bottom-auto xl:top-1/2 xl:-translate-y-1/2"
       initial={false}
       animate={{ opacity: settled ? 1 : 0 }}
       transition={{ duration: 0.3, delay: settled ? 0.35 : 0 }}
@@ -520,8 +524,15 @@ function Panel({
                 <Backdrop variant={backdrop} />
               )}
               {setting ?? <BackgroundShapes />}
-              {/* The scene's own content animates on arrival via SceneActiveContext. */}
-              <div key={enterKey} className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
+              {/* The scene's own content animates on arrival via SceneActiveContext.
+                  The panel is a fixed height and this column is centred in it,
+                  so without the reserved band below `xl` the copy runs to the
+                  panel's bottom edge and the way back sits on its last line.
+                  The stacked layout gets the same band from its `py-24`. */}
+              <div
+                key={enterKey}
+                className="relative z-10 mx-auto w-full max-w-6xl px-6 pb-20 sm:px-8 lg:px-12 xl:pb-0"
+              >
                 {children}
               </div>
               {retreat && (
