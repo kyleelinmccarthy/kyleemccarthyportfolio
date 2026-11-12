@@ -12,14 +12,14 @@ describe('TourBar', () => {
     render(<TourBar placeId="home" />)
     expect(screen.getByText('01 / 19 · Home')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Next place' })).toHaveAttribute('href', '/places/three-things')
-    expect(screen.getByRole('link', { name: 'Previous place' })).toHaveAttribute('href', '/places/post')
+    expect(screen.getByRole('link', { name: 'Previous place' })).toHaveAttribute('href', '/places/tattoo-designs')
   })
 
   it('numbers a later stop and names it', () => {
     render(<TourBar placeId="beacon" />)
-    expect(screen.getByText('03 / 19 · Beacon')).toBeInTheDocument()
+    expect(screen.getByText('05 / 19 · Beacon')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Next place' })).toHaveAttribute('href', '/places/403hq')
-    expect(screen.getByRole('link', { name: 'Previous place' })).toHaveAttribute('href', '/places/three-things')
+    expect(screen.getByRole('link', { name: 'Previous place' })).toHaveAttribute('href', '/places/post')
   })
 
   it('steps with the arrow keys and leaves with Escape', () => {
@@ -30,7 +30,7 @@ describe('TourBar', () => {
     fireEvent.keyDown(document.body, { key: 'ArrowLeft' })
     expect(push).toHaveBeenLastCalledWith('/places/beacon')
     fireEvent.keyDown(document.body, { key: 'ArrowLeft' })
-    expect(push).toHaveBeenLastCalledWith('/places/three-things')
+    expect(push).toHaveBeenLastCalledWith('/places/post')
     fireEvent.keyDown(document.body, { key: 'Escape' })
     expect(push).toHaveBeenLastCalledWith('/')
     expect(push).toHaveBeenCalledTimes(4)
@@ -39,15 +39,15 @@ describe('TourBar', () => {
   it('steps on from the last stop asked for when the keys come faster than the pages', () => {
     const { rerender } = render(<TourBar placeId="home" />)
     for (let i = 0; i < 3; i++) fireEvent.keyDown(document.body, { key: 'ArrowRight' })
-    expect(push.mock.calls.map(([href]) => href)).toEqual(['/places/three-things', '/places/beacon', '/places/403hq'])
+    expect(push.mock.calls.map(([href]) => href)).toEqual(['/places/three-things', '/places/off-the-clock', '/places/post'])
     // A stop on the way arrives: the run carries on from the last one asked for.
     rerender(<TourBar placeId="three-things" />)
     fireEvent.keyDown(document.body, { key: 'ArrowRight' })
-    expect(push).toHaveBeenLastCalledWith('/places/aura')
+    expect(push).toHaveBeenLastCalledWith('/places/beacon')
     // The last one arrives: the next press steps from where the page now is.
-    rerender(<TourBar placeId="aura" />)
+    rerender(<TourBar placeId="beacon" />)
     fireEvent.keyDown(document.body, { key: 'ArrowRight' })
-    expect(push).toHaveBeenLastCalledWith('/places/ruckus')
+    expect(push).toHaveBeenLastCalledWith('/places/403hq')
     // Somewhere else arrives (a link, the back button): that is where the next press steps from.
     rerender(<TourBar placeId="art" />)
     fireEvent.keyDown(document.body, { key: 'ArrowRight' })

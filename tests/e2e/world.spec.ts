@@ -630,7 +630,8 @@ test.describe('with reduced motion, from afar', () => {
 })
 
 test.describe('on a phone, from afar', () => {
-  // The narrowest phone, the planet turned a little west: After Hours' tag has nowhere to go but over a landmark or a pin.
+  // The narrowest phone, the planet turned a little west and south: one district's tag has nowhere to go but over a
+  // landmark or a pin. (The drag was re-found by probing when the legend became a compact strip on phones.)
   test.use({ viewport: { width: 320, height: 900 }, hasTouch: true })
 
   test('a district’s tag that would stand over a landmark collapses to a named pin; a tap shows it, the next goes there (R33)', async ({
@@ -641,11 +642,11 @@ test.describe('on a phone, from afar', () => {
     await page.goto('/')
     await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-autorotate', 'false')
-    // Held still (reduced motion: no coasting), a 60px drag turns the planet the same way every time.
-    const from = await canvasPointNear(page, 160, 558)
+    // Held still (reduced motion: no coasting), a 60px diagonal drag turns the planet the same way every time.
+    const from = await canvasPointNear(page, 160, 450)
     await page.mouse.move(from.x, from.y)
     await page.mouse.down()
-    for (let i = 1; i <= 10; i++) await page.mouse.move(from.x - 6 * i, from.y)
+    for (let i = 1; i <= 10; i++) await page.mouse.move(from.x - 6 * i, from.y + 6 * i)
     await page.mouse.up()
     const collapsed = page.locator('#labels a.lm-district[data-on][data-tagless]')
     // This view is known to crowd at least one district: zero would mean the rule was never reached.

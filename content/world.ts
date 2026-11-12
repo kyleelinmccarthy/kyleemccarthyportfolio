@@ -9,7 +9,7 @@ export const districts: District[] = [
   { id: 'home', name: 'Home', blurb: 'Everything else', color: '#2EC4B6', center: { lat: -36, lon: 166 }, radius: 27 },
 ]
 
-/** In tour order. */
+/** Every place. The tour's order is `tourOrder`, below. */
 export const places: Place[] = [
   { id: 'home', district: 'home', name: 'Home', descriptor: 'About me', at: { lat: -31, lon: 160 }, model: 'house', height: 1.2, content: { kind: 'about' } },
   { id: 'three-things', district: 'home', name: 'Three things', descriptor: 'How I work', at: { lat: -27, lon: 173 }, model: 'flags', height: 1.3, content: { kind: 'principles' } },
@@ -32,7 +32,18 @@ export const places: Place[] = [
   { id: 'post', district: 'home', name: 'Send me a letter', descriptor: 'Contact', at: { lat: -41, lon: 153 }, model: 'postbox', height: 1.0, content: { kind: 'contact' } },
 ]
 
-export const tourOrder: string[] = places.map((p) => p.id)
+/**
+ * The order the districts are numbered and toured in. (`districts` and `places`
+ * keep their own order above: the seeded layout of trees and buildings reads
+ * them, so reordering those would move the scenery.)
+ */
+export const districtOrder: District['id'][] = ['home', 'works', 'hours', 'frenzy', 'studio']
+
+/** The districts as the visitor meets them: legend, index and tour. */
+export const tourDistricts: District[] = districtOrder.map((id) => districts.find((d) => d.id === id)!)
+
+/** The tour: district by district in `districtOrder`, each district's places as listed above. */
+export const tourOrder: string[] = tourDistricts.flatMap((d) => places.filter((p) => p.district === d.id).map((p) => p.id))
 
 export function placeById(id: string): Place | undefined {
   return places.find((p) => p.id === id)

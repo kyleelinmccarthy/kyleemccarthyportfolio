@@ -2,7 +2,7 @@ import { Header } from '@/components/hud/Header'
 import { IndexDrawerProvider } from '@/components/hud/IndexDrawer'
 import { IndexList } from '@/components/hud/IndexList'
 import { Legend } from '@/components/hud/Legend'
-import { districts, places, tourOrder } from '@/content/world'
+import { places, tourDistricts, tourOrder } from '@/content/world'
 
 export default function HomePage() {
   return (
@@ -20,9 +20,9 @@ export default function HomePage() {
           data-gives-way
           className="fixed bottom-9 left-10 z-[5] max-[820px]:bottom-[84px] max-[820px]:left-[26px] max-[820px]:right-[26px] max-[380px]:bottom-[124px] [html:not([data-js])_&]:hidden"
         >
-          <Legend districts={districts} places={places} />
+          <Legend districts={tourDistricts} />
         </div>
-        <IndexList districts={districts} places={places} tourOrder={tourOrder} />
+        <IndexList districts={tourDistricts} places={places} tourOrder={tourOrder} />
       </main>
     </IndexDrawerProvider>
   )

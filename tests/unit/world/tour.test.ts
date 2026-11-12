@@ -6,15 +6,15 @@ describe('tour', () => {
   it('knows where each stop sits', () => {
     expect(tourIndex('home')).toBe(0)
     expect(tourIndex('three-things')).toBe(1)
-    expect(tourIndex('post')).toBe(tourOrder.length - 1)
+    expect(tourIndex('tattoo-designs')).toBe(tourOrder.length - 1)
     expect(tourIndex('nope')).toBe(-1)
   })
 
   it('steps and wraps', () => {
     expect(tourStep(null, 1)).toBe('home')
     expect(tourStep('home', 1)).toBe('three-things')
-    expect(tourStep('home', -1)).toBe('post')
-    expect(tourStep('post', 1)).toBe('home')
+    expect(tourStep('home', -1)).toBe('tattoo-designs')
+    expect(tourStep('tattoo-designs', 1)).toBe('home')
     expect(tourStep('nope', 1)).toBe('home')
   })
 

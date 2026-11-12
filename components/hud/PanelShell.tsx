@@ -2,10 +2,12 @@ import Link from 'next/link'
 import type { CSSProperties, ReactNode } from 'react'
 import type { District, Place } from '@/content/types'
 import { formatCoord } from '@/lib/world/geo'
+import { districtHref } from '@/lib/world/route'
 
 /**
  * The detail panel for one place: district chip, coordinates, a close link back
- * to the planet, and the place's name as the page's heading. On a phone it is a
+ * to the place's district (so closing keeps the visitor over the island they
+ * were looking at), and the place's name as the page's heading. On a phone it is a
  * bottom sheet no taller than 58vh.
  */
 export function PanelShell({
@@ -32,7 +34,7 @@ export function PanelShell({
         <span className="ml-auto font-mono text-[10.5px] uppercase tracking-[0.13em] text-muted">
           {formatCoord(place.at)}
         </span>
-        <Link href="/" aria-label="Close" className="p-1 text-[15px] leading-none text-ink no-underline">
+        <Link href={districtHref(district.id)} aria-label="Close" className="p-1 text-[15px] leading-none text-ink no-underline">
           <span aria-hidden>✕</span>
         </Link>
       </div>

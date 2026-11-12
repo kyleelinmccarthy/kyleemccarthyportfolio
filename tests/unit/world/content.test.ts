@@ -31,9 +31,11 @@ describe('world content', () => {
       : p.content.kind === 'collection' ? p.content.items.flatMap((i) => 'project' in i ? [i.project] : []) : [])
     expect([...shown].sort()).toEqual(projects.map((p) => p.slug).sort())
   })
-  it('tours every place exactly once, starting at home and ending at the postbox', () => {
+  it('tours every place exactly once, district by district in the numbered order, starting at home', () => {
     expect([...tourOrder].sort()).toEqual(places.map((p) => p.id).sort())
-    expect(tourOrder[0]).toBe('home'); expect(tourOrder[1]).toBe('three-things'); expect(tourOrder.at(-1)).toBe('post')
+    expect(tourOrder[0]).toBe('home'); expect(tourOrder[1]).toBe('three-things'); expect(tourOrder.at(-1)).toBe('tattoo-designs')
+    const run = tourOrder.map((id) => placeById(id)!.district).filter((d, i, all) => d !== all[i - 1])
+    expect(run).toEqual(['home', 'works', 'hours', 'frenzy', 'studio'])
   })
   it('gives every poster a file on disk and its size in pixels, as the file stores them', () => {
     const withPosters = places.filter((p) => p.poster)

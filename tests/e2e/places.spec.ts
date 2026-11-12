@@ -149,15 +149,15 @@ test('hammering next on the tour ends on the place the URL names', async ({ page
   await page.goto('/places/home')
   await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
   for (let i = 0; i < 5; i++) await page.keyboard.press('ArrowRight')
-  await expect(page).toHaveURL('/places/ruckus')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Ruckus')
+  await expect(page).toHaveURL('/places/403hq')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('403HQ')
   // The camera lands on the place the URL names, not on one it was sent to on the way. Both are
   // read together, so a camera stuck in focus somewhere else cannot pass.
   await expect
     .poll(async () => [await rig(page).getAttribute('data-rig-target'), await rig(page).getAttribute('data-rig-mode')], {
       timeout: 10000,
     })
-    .toEqual(['ruckus', 'focus'])
+    .toEqual(['403hq', 'focus'])
 })
 
 test.describe('on a wide screen, at a place', () => {
