@@ -421,9 +421,10 @@ test('in close, the headline, greeting and legend give way, and come back for fo
   await expect.poll(() => page.locator('.hud-name').evaluate((el) => getComputedStyle(el).backgroundColor)).not.toBe('rgba(0, 0, 0, 0)')
   await expect(page.getByRole('navigation', { name: 'Main' })).toBeVisible()
   // A faded legend lets the pointer through to the planet.
-  const legendLink = page.locator('main [data-gives-way] a').first()
+  // Its heading is always there; its links are folded away on a phone.
+  const legendLink = page.locator('main [data-gives-way] button').first()
   const box = (await legendLink.boundingBox())!
-  const under = await page.evaluate(([x, y]) => document.elementFromPoint(x, y)?.closest('a')?.closest('[data-gives-way]') ?? null, [
+  const under = await page.evaluate(([x, y]) => document.elementFromPoint(x, y)?.closest('a, button')?.closest('[data-gives-way]') ?? null, [
     box.x + box.width / 2,
     box.y + box.height / 2,
   ])
@@ -731,7 +732,7 @@ test.describe('in the narrowest window', () => {
   test('the legend’s plate stays inside the frame', async ({ page }) => {
     await page.goto('/')
     await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
-    const plate = (await page.locator('ul.hud-plate').boundingBox())!
+    const plate = (await page.locator('.hud-plate.legend').boundingBox())!
     // The frame is the thin line inset round the view.
     const frame = (await page.locator('div[aria-hidden].pointer-events-none.fixed.border-ink').first().boundingBox())!
     expect(plate.x).toBeGreaterThanOrEqual(frame.x)

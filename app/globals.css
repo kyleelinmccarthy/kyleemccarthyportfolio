@@ -191,6 +191,30 @@
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
   }
+  /*
+   * The legend's list folds under its heading. Until the visitor presses the heading (`data-open` absent) it is open
+   * on a wide screen and folded at 820px and under (LEGEND_FOLDS_BELOW in Legend.tsx); after that it is as they left it.
+   */
+  .legend-list {
+    display: grid;
+  }
+  .legend[data-open='false'] .legend-list {
+    display: none;
+  }
+  .legend:not([data-open='false']) .legend-chevron {
+    transform: rotate(180deg);
+  }
+  @media (max-width: 820px) {
+    .legend-list {
+      display: flex;
+    }
+    .legend:not([data-open]) .legend-list {
+      display: none;
+    }
+    .legend:not([data-open]) .legend-chevron {
+      transform: none;
+    }
+  }
   [data-hud-away] .hud-name {
     background: var(--plate);
     -webkit-backdrop-filter: blur(10px);
