@@ -1,9 +1,11 @@
 import { ImageResponse } from 'next/og'
-import { hero } from '@/content/hero'
+import { hero } from '@/content/about'
+import { site } from '@/content/site'
+import { shareColors, shareImage, shareSky } from '@/lib/shareImage'
 
 export const runtime = 'edge'
-export const alt = 'Kylee McCarthy — Technology Leader, Builder & Designer'
-export const size = { width: 1200, height: 630 }
+export const alt = shareImage.alt
+export const size = { width: shareImage.width, height: shareImage.height }
 export const contentType = 'image/png'
 
 export default function OpengraphImage() {
@@ -17,38 +19,26 @@ export default function OpengraphImage() {
           flexDirection: 'column',
           justifyContent: 'center',
           padding: '80px',
-          backgroundColor: '#1B211C',
-          backgroundImage:
-            'radial-gradient(circle at 85% 15%, rgba(47,59,49,0.85), transparent 55%)',
+          backgroundImage: shareSky,
+          color: shareColors.ink,
         }}
       >
-        <div
-          style={{
-            fontSize: 26,
-            letterSpacing: 6,
-            textTransform: 'uppercase',
-            color: '#CCC2B8',
-          }}
-        >
-          Kylee McCarthy, MS
+        <div style={{ fontSize: 76, fontWeight: 800, letterSpacing: -2, lineHeight: 1 }}>
+          {site.name}
+        </div>
+        <div style={{ marginTop: 28, fontSize: 26, letterSpacing: 4, textTransform: 'uppercase' }}>
+          {site.roleLine}
         </div>
         <div
           style={{
-            marginTop: 24,
-            fontSize: 60,
-            lineHeight: 1.08,
-            fontWeight: 700,
-            color: '#E9D5BD',
-            maxWidth: 1040,
+            marginTop: 48,
+            maxWidth: 940,
+            fontSize: 48,
+            fontWeight: 500,
+            lineHeight: 1.18,
           }}
         >
           {hero.headline}
-        </div>
-        <div style={{ marginTop: 40, display: 'flex', alignItems: 'center', gap: 20 }}>
-          <div style={{ width: 80, height: 5, backgroundColor: '#CCC2B8' }} />
-          <div style={{ fontSize: 30, color: '#C2B29A' }}>
-            Technology Leadership · AI · Product & UX
-          </div>
         </div>
       </div>
     ),

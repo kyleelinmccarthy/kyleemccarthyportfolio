@@ -12,7 +12,6 @@ export const projects: Project[] = [
     slug: '403hq',
     name: '403HQ',
     descriptor: 'Client Portal · Two Deployments · ~10,000 Employees Each',
-    category: 'Client Portals',
     status: 'production',
     headline: 'A client put their contract out to bid. I shipped the portal in six weeks and kept them.',
     problem:
@@ -33,7 +32,6 @@ export const projects: Project[] = [
     slug: 'aura',
     name: 'AURA',
     descriptor: 'Accessibility Compliance · One Script Tag',
-    category: 'Internal Tools',
     status: 'production',
     headline: 'Built the accessibility layer once, then deployed it everywhere for nothing.',
     problem:
@@ -57,7 +55,6 @@ export const projects: Project[] = [
     slug: 'beacon',
     name: 'Beacon',
     descriptor: 'Engineering Operations Platform · Replaced Azure DevOps',
-    category: 'Internal Tools',
     status: 'production',
     headline: 'One platform replaced the stack the department ran on — and it reviews our pull requests.',
     problem:
@@ -79,7 +76,6 @@ export const projects: Project[] = [
     slug: 'ruckus',
     name: 'Ruckus',
     descriptor: 'Remote Engagement Platform · Ten Multiplayer Games',
-    category: 'Internal Tools',
     status: 'production',
     headline: 'Replaced the engagement tool nobody liked with ten games people actually play.',
     problem:
@@ -104,7 +100,6 @@ export const projects: Project[] = [
     slug: 'nbs-website',
     name: 'NBS Website',
     descriptor: 'Company Site · 66 Pages Rebuilt',
-    category: 'Marketing & Web',
     status: 'releasing',
     headline: 'A dated WordPress site rebuilt around the people who actually use it.',
     problem:
@@ -125,7 +120,6 @@ export const projects: Project[] = [
     slug: 'paragon',
     name: 'Paragon',
     descriptor: 'Recordkeeping Platform · Replacing FIS Relius',
-    category: 'Internal Tools',
     status: 'building',
     headline: 'Replacing the recordkeeping platform the business runs on.',
     problem:
@@ -143,46 +137,29 @@ export const projects: Project[] = [
     isPersonal: false,
   },
   {
-    slug: 'forms-suite',
-    name: 'Online Forms, Secure Upload & Onboarding',
-    descriptor: 'Multi-Tenant Services · Headless Packages',
-    category: 'Internal Tools',
+    slug: 'onboarding',
+    name: 'Onboarding',
+    descriptor: 'Client Onboarding · Multi-Tenant Service',
     status: 'releasing',
-    headline: 'Three services, one implementation instead of three.',
+    headline: 'Client onboarding built once, as a shared service.',
     problem:
-      'Forms, secure file upload and client onboarding were heading toward separate implementations in the website and in Paragon.',
+      'Client onboarding was heading toward separate implementations in the website and in Paragon.',
     built:
-      'Three multi-tenant services published as headless packages, so every consumer shares one implementation rather than reinventing it.',
-    outcome: 'One codebase per capability instead of one per consumer.',
+      'A multi-tenant onboarding service published as a headless package, so every consumer shares one implementation.',
     stack: ['.NET', 'Clean Architecture', 'Multi-tenancy'],
-    isPersonal: false,
-  },
-  {
-    slug: 'external-payroll',
-    name: 'External Payroll Processing',
-    descriptor: 'Payroll Ingestion · No Per-Employer Setup',
-    category: 'Internal Tools',
-    status: 'building',
-    headline: 'Ingests any employer’s payroll file without being configured for it first.',
-    problem:
-      'Every employer sends payroll differently, and per-employer setup does not scale.',
-    built:
-      'A pipeline that ingests employer payroll files with no per-employer configuration, validates them against plan rules, resolves exceptions and exports to recordkeepers.',
-    stack: ['.NET', 'Azure', 'SQL Server'],
     isPersonal: false,
   },
   {
     slug: 'kingdoms-and-crowns',
     name: 'Kingdoms & Crowns',
-    descriptor: 'Homeschool Platform · In Beta',
-    category: 'Personal',
+    descriptor: 'Homeschool Platform · With a 3D World Inside',
     status: 'beta',
-    headline: 'A homeschool hub that tracks a full week per child, and makes them want to finish it.',
+    headline: 'A homeschool hub with a 3D world inside it.',
     problem:
       'Homeschool planning is fragmented across curriculum sites and paper, and none of it is built for the person actually doing the work: the kid.',
     built:
-      "A hub tracking a full week per child. Parents set each student's subjects, link their curriculum sites and build custom assignments; kids work through them on a timer that persists across tabs and devices, and earn rewards for staying on task.",
-    outcome: 'In beta with a small group of families.',
+      "A hub tracking a full week per child. Parents set each student's subjects, link their curriculum sites and build custom assignments; kids work through them on a timer that persists across tabs and devices, and earn rewards for staying on task. Finishing quests earns minutes in the Realm, a low-poly 3D world inside the app, where each deed raises a building in the hero’s village and there is a lost crown to win back.",
+    outcome: 'In beta, invite-only.',
     liveUrl: 'https://www.kingdomsandcrowns.com',
     media: {
       hero: { src: '/media/kingdoms-and-crowns/hero.jpg', alt: "A child's quest log listing today's lessons with start timers and XP rewards" },
@@ -190,6 +167,18 @@ export const projects: Project[] = [
         {
           src: '/media/kingdoms-and-crowns/marketing.jpg',
           alt: 'The Kingdoms & Crowns marketing site: “Be the Hero of Homeschool” over a mountain sunrise, with the three-step explainer beneath',
+        },
+        {
+          src: '/media/kingdoms-and-crowns/realm-village.jpg',
+          alt: 'The Realm, the low-poly 3D game inside Kingdoms & Crowns: the demo hero Emma stands on a path through a village of building plots and villagers, with her side quest, spell bar and map round the edges',
+        },
+        {
+          src: '/media/kingdoms-and-crowns/realm-fields.jpg',
+          alt: 'In the Realm, Emma walks up the village path under a wooden gateway, a quest marker by the well beside her and villagers at their plots on either side',
+        },
+        {
+          src: '/media/kingdoms-and-crowns/realm-ride.jpg',
+          alt: 'In the Realm, the demo hero Noah rides a horse by the village gateway, with villagers at their plots, a river beyond, and a prompt to talk to Miller Tessa',
         },
         { src: '/media/kingdoms-and-crowns/castle.jpg', alt: 'The castle screen, a student’s home base' },
         { src: '/media/kingdoms-and-crowns/tavern.jpg', alt: 'The tavern screen' },
@@ -199,124 +188,132 @@ export const projects: Project[] = [
         { src: '/media/kingdoms-and-crowns/hall-of-legends.jpg', alt: 'The hall of legends, a parent view of each child’s progress' },
       ],
     },
-    stack: ['Next.js', 'TypeScript', 'Drizzle', 'Vercel'],
-    isPersonal: true,
-  },
-  {
-    slug: 'wretched-few',
-    name: 'The Wretched Few',
-    descriptor: 'Multiplayer Roguelite · Unity · Headed for Steam',
-    category: 'Games',
-    status: 'building',
-    headline: 'You play the monsters, hunted by humans who were told you are evil.',
-    problem: 'Built with one friend, for the pleasure of building it.',
-    built:
-      'A multiplayer roguelite in Unity. I own the story, the HUD and player UI/UX, and the art.',
-    outcome: 'In development, headed for Steam.',
-    media: {
-      hero: {
-        src: '/media/wretched-few/hero.jpg',
-        alt: 'The Wretched Few title screen: a gothic mansion under a red crescent moon, with the tagline "Survive the hunt. Become the reckoning." and a Single Player, Multiplayer, Settings, Quit menu',
-      },
-    },
-    stack: ['Unity', 'C#'],
+    stack: ['Next.js', 'three.js', 'react-three-fiber', 'Drizzle', 'Turso', 'Vercel'],
     isPersonal: true,
   },
   {
     slug: 'eliminated',
     name: 'Eliminated',
-    descriptor: '3D Multiplayer Party Game · Unity',
-    category: 'Games',
+    descriptor: 'Party Game · 2–8 Players · Unity',
     status: 'building',
-    headline: 'My first solo game project: a lobby whittled down until one player is left.',
+    statusLabel: 'Coming soon to Steam',
+    headline: 'A wholesome party game where everyone dies.',
     problem: 'I wanted to find out whether I could build a game end to end on my own.',
     built:
-      'A 3D multiplayer party game in Unity and C#, where a lobby is cut down through a gauntlet of playground minigames until one player remains.',
+      'Childhood playground games with elimination-show stakes, run by a sinister Game Master. Nine games for two to eight players: solo against bots, on the couch, or online. Lose, and you are neatly boxed up with a little pink bow.',
     media: {
       hero: {
         src: '/media/eliminated/hero.jpg',
-        alt: 'The Eliminated main menu: the pink logo over a green sweep, the player’s donut character, a Marbles balance, and Play, Spectate, Settings and Quit',
+        alt: 'The Eliminated Steam capsule: the pink Eliminated logo over a sunny sandy court, where a clown, a capybara with an orange on its head, a fox, a donut and a gift box stand before a giant doll-like Game Master whose eyes cast a pink beam',
       },
       gallery: [
         {
+          src: '/media/eliminated/red-light.jpg',
+          alt: 'A round of Red Light: the pink-clad Game Master stands small under a bare tree at the far end of a sandy court, while a fox under two stacked gift boxes and a player in a wide-brimmed hat stand at the near end, another gift box beside them',
+        },
+        {
+          src: '/media/eliminated/glass-bridge.jpg',
+          alt: 'Glass Bridge: eight characters, among them a witch, a cowboy and a fox, seen from behind on a platform at the start of two parallel lanes of glass panels over a dark void',
+        },
+        {
+          src: '/media/eliminated/keepy-uppy.jpg',
+          alt: 'Keepy Uppy: players on a pink striped floor each have a balloon tied to them, seen from above',
+        },
+        {
           src: '/media/eliminated/mingle.jpg',
-          alt: 'A round of Mingle in play, seen from above: five players racing for rooms around a ring as the group size is called',
+          alt: 'Mingle: players spread around a pink and white carousel-tent ring in the middle of a large circular floor, seen from above',
         },
         {
-          src: '/media/eliminated/player.jpg',
-          alt: 'The Choose Your Player screen — a grid of unlockable characters with pun names, bought with Marbles',
+          src: '/media/eliminated/musical-chairs.jpg',
+          alt: 'Musical Chairs: players spread over a pink striped arena seen from above, round a ring of green fencing with small wooden chairs inside it',
         },
         {
-          src: '/media/eliminated/how-to-play.jpg',
-          alt: 'The How to Play screen',
+          src: '/media/eliminated/prop-hunt.jpg',
+          alt: 'Prop Hunt: a purple-lit playground at night with swing sets, hedges, trees and teddy bears scattered about, and a small yellow duck and a grey cat among the props',
         },
         {
-          src: '/media/eliminated/account.jpg',
-          alt: 'A player’s account: display name, Marbles, crowns, rounds survived and their current title',
+          src: '/media/eliminated/simon-says.jpg',
+          alt: 'Simon Says: the Game Master stands behind a row of five command tiles while a witch, a clown and a fox stand on a pink striped floor',
+        },
+        {
+          src: '/media/eliminated/tag.jpg',
+          alt: 'Tag: a snowy arena of low-poly ice peaks and ice blocks, with a cluster of players including a witch, a fox and a cow, and a pale blue player off to one side',
+        },
+        {
+          src: '/media/eliminated/tug-of-war.jpg',
+          alt: 'Tug of War: two teams on pink and blue platforms hold either end of a rope that stretches across a dark arena, seen from behind the pink team',
         },
       ],
     },
-    stack: ['Unity', 'C#'],
+    stack: ['Unity 6', 'C#'],
     isPersonal: true,
   },
   {
-    slug: 'eliminated-web',
-    name: 'Eliminated (web)',
-    descriptor: 'Browser Prototype · Authoritative Server',
-    category: 'Games',
+    slug: 'eliminated-site',
+    name: 'Eliminated — the website',
+    descriptor: 'Marketing Site · Press Kit',
     status: 'production',
-    headline: 'The prototype that proved the concept before the 3D build.',
-    problem: 'The 3D version was a large bet, and the core loop was unproven.',
+    headline: 'The front door for the game.',
     built:
-      "Twelve minigames with bot AI on an authoritative WebSocket server, so the server owns state and clients can't cheat.",
-    outcome: 'Proved the loop, and is still playable.',
-    liveUrl: 'https://www.eliminatedgame.com',
+      'A single page covering the games, the powerups, the players and the screenshots, with a downloadable press kit. A static Astro site on Cloudflare with a strict content security policy and no cookies or trackers.',
+    liveUrl: 'https://eliminatedgame.com/',
     autoCapture: true,
-    media: { hero: { src: '/media/eliminated-web/hero.jpg', alt: 'The Eliminated browser game landing screen' } },
-    stack: ['TypeScript', 'WebSockets'],
-    isPersonal: true,
-  },
-  {
-    slug: 'chemtree-games',
-    name: 'ChemTree Games',
-    descriptor: 'Indie Studio Site',
-    category: 'Games',
-    status: 'production',
-    headline: 'The studio site for the games. Branch out.',
-    problem: 'The games needed somewhere to live that was not a storefront listing.',
-    built:
-      'A single-scroll studio site with game detail pages, a mailing list and a private admin, that still renders from a code-defined fallback when the database is unreachable.',
-    liveUrl: 'https://chemtreegames.com',
-    autoCapture: true,
-    media: { hero: { src: '/media/chemtree-games/hero.jpg', alt: 'The ChemTree Games studio home page' } },
-    stack: ['Next.js', 'Drizzle', 'Postgres', 'Railway'],
-    isPersonal: true,
-  },
-  {
-    slug: 'chemtree-hq',
-    name: 'ChemTreeHQ',
-    descriptor: 'Shared Workspace · Real-Time CRDTs',
-    category: 'Personal',
-    status: 'building',
-    headline: 'A shared workspace where two people editing the same document both keep their work.',
-    problem:
-      'Running projects with a remote collaborator meant a dozen tools that did not talk to each other, and documents that overwrote each other when both of us typed.',
-    built:
-      'A shared workspace for remote projects. Documents edit live through Yjs CRDTs, so simultaneous edits merge instead of overwriting.',
     media: {
       hero: {
-        src: '/media/chemtree-hq/hero.jpg',
-        alt: 'The ChemTreeHQ dashboard: a project board of in-progress game ideas as colour-coded cards, quick stats, a team panel and a shared calendar',
+        src: '/media/eliminated-site/hero.jpg',
+        alt: 'The Eliminated website: the pink logo and the line “A wholesome party game where everyone dies.” over a close-up of the game’s characters and the doll-like Game Master, with a “Coming soon to Steam” button and tags for 2–8 players, solo with bots, couch co-op, online and controller plus keyboard',
       },
     },
-    stack: ['Next.js', 'Hono', 'Postgres', 'Redis', 'Yjs'],
+    stack: ['Astro', 'TypeScript', 'Cloudflare'],
+    isPersonal: true,
+  },
+  {
+    slug: 'jimothy-and-pidge',
+    name: 'Jimothy & Pidge: Shenanigans in Seattle',
+    descriptor: '3D Collect-a-thon Platformer · Unity',
+    status: 'building',
+    statusLabel: 'In development',
+    headline: 'A round raccoon and his pigeon pal take Seattle back from the Terrible Trapper.',
+    built:
+      'A single-player 3D collect-a-thon in the spirit of the late-90s classics. Jimothy and Pidge free the caged Elder Raccoons, recover stolen treats and face Seattle-flavoured bosses. Every model, animation, shader and song in it is generated by code.',
+    media: {
+      hero: {
+        src: '/media/jimothy-and-pidge/hero.jpg',
+        alt: 'Key art for Jimothy & Pidge: Shenanigans in Seattle: a fluffy round raccoon with a pigeon perched on its head stands before a brick Seattle storefront, beside the hand-lettered title',
+      },
+      gallery: [
+        {
+          src: '/media/jimothy-and-pidge/main.jpg',
+          alt: 'The wider key art: the fluffy raccoon with its pigeon pal beside a green dumpster, a small raccoon on the shop sign above and a pigeon on the title banner',
+        },
+      ],
+    },
+    stack: ['Unity 6', 'URP', 'C#'],
+    isPersonal: true,
+  },
+  {
+    slug: 'tiny-frenzy-games',
+    name: 'Tiny Frenzy Games',
+    descriptor: 'Studio Site · One Dev',
+    status: 'production',
+    headline: 'One dev. All the frenzy.',
+    built:
+      'The home of my one-person game studio: both games, a mailing list for playtest invites, a contact form and a private admin with its own newsletter editor.',
+    liveUrl: 'https://tinyfrenzygames.com/',
+    autoCapture: true,
+    media: {
+      hero: {
+        src: '/media/tiny-frenzy-games/hero.jpg',
+        alt: 'The Tiny Frenzy Games home page on a pale yellow background: a swirling galaxy-coloured tornado logo with a small black creature swinging from it, the line “One dev. All the frenzy.” and a My Games button',
+      },
+    },
+    stack: ['Next.js', 'Drizzle', 'Neon Postgres', 'Cloudflare Workers'],
     isPersonal: true,
   },
   {
     slug: 'ember-tattoo',
     name: 'Ember Tattoo & Piercing',
     descriptor: 'Studio Site · Booking, Artists, Gallery',
-    category: 'Personal',
     status: 'production',
     headline: "A friend's studio had a site that didn't match the work. Nobody hired me; I saw the gap.",
     problem:
@@ -331,49 +328,25 @@ export const projects: Project[] = [
     isPersonal: true,
   },
   {
-    slug: 'family-budgeting',
-    name: 'Family Budgeting',
+    slug: 'the-budget',
+    name: 'The Budget',
     descriptor: 'Budgeting by Pay Period, Not by Month',
-    category: 'Personal',
     status: 'production',
     headline: 'Every budgeting app assumes you get paid on the first. We do not.',
     problem:
       'Budgeting tools are built around the calendar month, which is not when money actually arrives.',
     built:
       'A budgeting app organised by pay period instead, covering accounts, expenses, debts and school funds.',
+    outcome: 'The public demo runs on made-up data and resets every Monday.',
+    liveUrl: 'https://the-budget-demo.kyleelinmccarthy.workers.dev/login',
+    liveLabel: 'Try the demo',
+    autoCapture: true,
+    captureClick: 'Explore as Person 1',
     media: {
       hero: {
-        src: '/media/family-budgeting/hero.jpg',
-        alt: 'The Budget dashboard: a four-week projection of income, expenses and surplus, with cash flow, accounts, expenses and debts beneath',
+        src: '/media/the-budget/hero.jpg',
+        alt: 'The Budget’s demo dashboard, under a banner saying the demo’s figures are made up: a four-week projection of income, expenses and surplus, quick actions, and counts of cash flow, accounts, expenses and debts beneath',
       },
-    },
-    stack: ['Next.js', 'TypeScript', 'SQLite'],
-    isPersonal: true,
-  },
-  {
-    slug: 'doing-the-thing',
-    name: 'Doing The Thing',
-    descriptor: 'Chore App · Built for My Kids',
-    category: 'Personal',
-    status: 'production',
-    headline: 'A chore app so my kids own their list instead of being nagged about it.',
-    problem:
-      'Keeping kids on top of chores meant nagging, and most to-do apps bury the one question that matters under features nobody needs.',
-    built:
-      'A zero-friction list that asks whether you did the thing. Snooze an item enough times and it stops asking yes-or-no and starts asking what is getting in the way, surfacing the real blocker behind a stalled task.',
-    outcome: 'Runs locally for my family, and they actually use it.',
-    media: {
-      hero: {
-        src: '/media/doing-the-thing/hero.jpg',
-        alt: 'Doing The Thing: each chore as a card asking whether you did it, with “Did the thing”, “Doing the thing” and “Can’t right now”, and a done list beside it',
-      },
-      gallery: [
-        { src: '/media/doing-the-thing/add.jpg', alt: 'Adding a thing to the list' },
-        {
-          src: '/media/doing-the-thing/add-advanced.jpg',
-          alt: 'The advanced options when adding a thing',
-        },
-      ],
     },
     stack: ['Next.js', 'TypeScript'],
     isPersonal: true,

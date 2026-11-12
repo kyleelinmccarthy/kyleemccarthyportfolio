@@ -55,7 +55,7 @@ export function Modal({
       onClick={(e) => {
         if (e.target === dialogRef.current) dialogRef.current?.close()
       }}
-      className="max-w-[min(92vw,44rem)] overflow-visible rounded-xl bg-surface-raised p-0 text-fg ring-1 ring-rule backdrop:bg-black/70"
+      className="glass max-w-[min(92vw,44rem)] overflow-visible p-0 text-ink backdrop:bg-[color-mix(in_srgb,var(--on-ink)_60%,transparent)]"
     >
       {/* Outside the scroller on purpose: an absolutely-positioned close
           button inside it would scroll away on a long entry. */}
@@ -63,11 +63,11 @@ export function Modal({
         type="button"
         onClick={() => dialogRef.current?.close()}
         aria-label="Close"
-        className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-surface text-xl leading-none text-fg-muted ring-1 ring-rule transition-colors hover:text-accent hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center border border-line text-xl leading-none text-ink transition-colors hover:border-ink"
       >
         <span aria-hidden="true">×</span>
       </button>
-      <div className="max-h-[86vh] overflow-y-auto rounded-xl p-6 pt-14">{children}</div>
+      <div className="max-h-[86vh] overflow-y-auto p-6 pt-14">{children}</div>
     </dialog>
   )
 }

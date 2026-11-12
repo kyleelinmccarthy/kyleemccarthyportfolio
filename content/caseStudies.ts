@@ -1,5 +1,5 @@
 /**
- * The seven pieces on the gallery wall, written from Kylee's own interview
+ * Case studies for the project places, written from Kylee's own interview
  * answers (see the spec's Source material section). Where she has a phrase,
  * it is kept. Nothing here is inferred.
  */
@@ -14,6 +14,15 @@ export interface Placard {
   builtFor: string
 }
 
+/** The visible words on a placard, shared by every component that shows one. */
+export const placardCopy = {
+  hint: 'More about this one',
+  hard: 'The hard part',
+  threwAway: 'Thrown away',
+  differently: 'Next time',
+  builtFor: 'Built for',
+} as const
+
 export interface CaseStudy {
   slug: string
   whatItIs: string
@@ -26,22 +35,6 @@ export interface CaseStudy {
    */
   placard?: Placard
 }
-
-/**
- * Wall order — the professional work only.
- *
- * The three personal pieces used to hang here too, which meant Kingdoms &
- * Crowns, ChemTreeHQ and The Wretched Few were shown twice: once on the wall
- * and again on their own shelf in the library. The gallery points at the
- * library instead (see rooms.floor.libraryNote).
- */
-export const FEATURED = [
-  'beacon',
-  '403hq',
-  'aura',
-  'ruckus',
-  'nbs-website',
-] as const
 
 export const caseStudies: CaseStudy[] = [
   {
@@ -116,30 +109,6 @@ export const caseStudies: CaseStudy[] = [
       threwAway: 'Integrations with other curriculum platforms. Parents can share links instead of the app embedding all of it — at least in iteration one.',
       differently: 'A browser-based quest to start an assignment, where students choose their path: go learn on another platform, or stay here and do a gamified lesson for a core subject.',
       builtFor: 'My kids and me, to stay organised in an easy, fun way while homeschooling.',
-    },
-  },
-  {
-    slug: 'chemtree-hq',
-    whatItIs: 'A shared workspace for remote projects. Documents merge instead of overwriting, and the whiteboard is multi-user.',
-    problem: 'Running a project with someone remote meant a dozen tools that didn’t talk to each other, and documents that clobbered each other when we both typed.',
-    whyBuiltThisWay: 'Documents edit live through CRDTs, so simultaneous edits merge instead of overwriting. The whiteboard follows the same idea — follow-along, and saving every user’s changes as they happen.',
-    placard: {
-      hard: 'The multi-user whiteboard — follow-along, and saving every user’s changes as they happen.',
-      threwAway: 'An earlier version of this built for a different company that got scrapped. I reused the concept here.',
-      differently: 'More brainstorming features, and prompts for prioritising and organising ideas.',
-      builtFor: 'Me and a friend, so we could collaborate on game development.',
-    },
-  },
-  {
-    slug: 'wretched-few',
-    whatItIs: 'A multiplayer roguelite in Unity where you play the monsters. I own the story, the HUD, the player UX and the art.',
-    problem: 'My friend had an initial idea for a game. I helped expand it into a full story concept, and that’s when we decided to build it together.',
-    whyBuiltThisWay: 'Iterative development — build the simple version, test it, throw it away, build it better.',
-    placard: {
-      hard: 'Everything. 3D modelling, the HUD, player UX, sfx, vfx, procedural map generation, and a story that stays coherent with combat and gameplay. It’s a lot, and I absolutely love it.',
-      threwAway: 'A lot, deliberately — early simple builds made to be seen, tested and then replaced with something better.',
-      differently: 'Still in progress, so I’m still learning. I’d spend more time on animation and 3D modelling and less on the in-game menu UI.',
-      builtFor: 'My friend brought the idea, I grew it into the story. It’s for gamers like us.',
     },
   },
 ]

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { artSlug } from '@/scripts/lib/artSlug'
+import { artSlug, slugFor } from '@/scripts/lib/artSlug'
 
 describe('artSlug', () => {
   it('lowercases and strips the extension', () => {
@@ -15,5 +15,16 @@ describe('artSlug', () => {
 
   it('never emits leading or trailing dashes', () => {
     expect(artSlug('  _weird_.jpg  ')).toBe('weird')
+  })
+})
+
+describe('slugFor', () => {
+  it('gives the Minecraft Christmas piece a neutral slug whatever precedes it', () => {
+    expect(slugFor('DigitalAnythingMinecraftXmas.jpg')).toBe('digitalminecraftxmas')
+    expect(slugFor('digitalcalcifer.jpg')).toBe('digitalcalcifer')
+  })
+
+  it('still applies the exact-name overrides', () => {
+    expect(slugFor('TattooIdeaBrandi.jpg')).toBe('wrench-and-daisies')
   })
 })

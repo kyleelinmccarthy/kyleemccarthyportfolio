@@ -72,9 +72,7 @@ export function Turnstile({
 
   if (!siteKey) {
     return (
-      /* card-ink, not fg-muted: this sits on the notebook page, and in dark
-         mode fg-muted is pale cream — invisible on cream paper. */
-      <p className="font-sans text-sm text-card-ink/80">
+      <p className="font-sans text-sm text-muted">
         (Spam protection is not configured in this environment.)
       </p>
     )

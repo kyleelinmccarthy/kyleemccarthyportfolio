@@ -3,24 +3,26 @@
 import { useState } from 'react'
 import { contactClientSchema } from '@/lib/contact/schema'
 import { site } from '@/content/site'
-import { rooms } from '@/content/rooms'
+import { contact } from '@/content/contact'
 import { Turnstile } from '@/components/primitives/Turnstile'
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'
 type Errors = Partial<Record<string, string>>
 
 /**
- * You write on the paper, not into a box: no fill, no border, just the ruled
- * line under the words. Card stock and its inks are theme-independent tokens —
- * a sheet of paper is the same sheet whichever way the lights are set — so
- * everything on the page is a card-* colour rather than a site colour.
+ * Fields sit straight on the glass: no fill, a hairline under each one. The
+ * message box is the one field you write in at length, so it gets a full box.
  */
 const fieldClass =
-  'w-full border-0 border-b border-card-rule bg-transparent px-1 py-2 font-sans text-card-ink focus-visible:border-card-ink focus-visible:outline-none focus-visible:ring-0'
+  'w-full border-0 border-b border-line bg-transparent px-1 py-2 font-sans text-[14.5px] text-ink focus-visible:border-ink'
 
-// 80%, not 60%: ink at 60% over this stock is 3.65:1, which axe fails for
-// small text. The hierarchy comes from the size and the letter-spacing.
-const labelClass = 'block font-sans text-xs uppercase tracking-wide text-card-ink/80'
+const messageClass =
+  'w-full resize-y border border-line bg-transparent px-2 py-2 font-sans text-[14.5px] leading-relaxed text-ink focus-visible:border-ink'
+
+const labelClass = 'block font-mono text-[10.5px] uppercase tracking-[0.13em] text-muted'
+
+/** A failure is said in ink, with a rule beside it: colour alone would not carry it. */
+const errorClass = 'm-0 border-l-2 border-accent pl-2 font-sans text-[13.5px] font-semibold text-ink'
 
 /**
  * `rows` sizes the message box. The default suits a page that can grow; the
@@ -100,12 +102,9 @@ export function ContactForm({ rows = 5, onSent }: { rows?: number; onSent?: () =
 
   if (status === 'success') {
     return (
-      <div
-        role="status"
-        className="rounded-xl border border-accent/40 bg-surface-raised p-8 text-center"
-      >
-        <p className="font-serif text-2xl text-fg">{rooms.wayOut.mailbox.sent}</p>
-        <p className="mt-2 font-sans text-fg-muted">{serverMessage}</p>
+      <div role="status" className="border border-line p-6">
+        <p className="m-0 font-display text-2xl font-extrabold text-ink">{contact.mailbox.sent}</p>
+        <p className="m-0 mt-2 font-sans text-[14.5px] text-muted">{serverMessage}</p>
       </div>
     )
   }
@@ -114,21 +113,15 @@ export function ContactForm({ rows = 5, onSent }: { rows?: number; onSent?: () =
     <form
       onSubmit={onSubmit}
       noValidate
-      // A page torn out of a notebook: card stock, a red margin rule down the
-      // left, and a little of the sheet showing past the writing area.
-      className="relative space-y-5 rounded-sm bg-card p-6 pl-8 shadow-lg shadow-black/25 ring-1 ring-black/10 sm:p-8 sm:pl-12"
+      className="relative space-y-5"
     >
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-5 w-px bg-card-margin sm:left-8"
-      />
       {/* Honeypot — visually hidden, off the tab order, hidden from AT. */}
       <div aria-hidden="true" className="absolute left-[-9999px] h-px w-px overflow-hidden">
         <label htmlFor="company_url">Company URL (leave blank)</label>
         <input id="company_url" name="company_url" type="text" tabIndex={-1} autoComplete="off" />
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-5">
         <Field id="name" label="Name" error={errors.name}>
           <input id="name" name="name" type="text" autoComplete="name" className={fieldClass}
             aria-invalid={!!errors.name} aria-describedby={errors.name ? 'name-error' : undefined} />
@@ -145,13 +138,11 @@ export function ContactForm({ rows = 5, onSent }: { rows?: number; onSent?: () =
       </Field>
 
       <Field id="message" label="Message" error={errors.message}>
-        {/* The one field you actually write in gets the ruled lines. Every
-            field having them made the page busier than a notebook is. */}
         <textarea
           id="message"
           name="message"
           rows={rows}
-          className={`${fieldClass} resize-y leading-[1.75rem] [background-image:repeating-linear-gradient(to_bottom,transparent_0,transparent_1.68rem,rgb(var(--card-rule)/0.55)_1.68rem,rgb(var(--card-rule)/0.55)_1.75rem)]`}
+          className={messageClass}
           aria-invalid={!!errors.message}
           aria-describedby={errors.message ? 'message-error' : undefined}
         />
@@ -166,11 +157,11 @@ export function ContactForm({ rows = 5, onSent }: { rows?: number; onSent?: () =
             to a human — the e2e test that claimed to cover this was passing off
             a static mailto link that happened to sit elsewhere on the page. */}
         {status === 'error' && serverMessage && (
-          <p role="alert" className="font-sans text-sm text-card-error">
+          <p role="alert" className={errorClass}>
             {serverMessage}{' '}
             <a
               href={`mailto:${site.email}`}
-              className="font-semibold underline underline-offset-4"
+              className="underline underline-offset-4"
             >
               Or email me directly.
             </a>
@@ -181,7 +172,7 @@ export function ContactForm({ rows = 5, onSent }: { rows?: number; onSent?: () =
       <button
         type="submit"
         disabled={status === 'submitting'}
-        className="inline-flex items-center justify-center rounded-full bg-fill px-8 py-3 font-sans font-semibold text-fill-fg transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:opacity-60"
+        className="glass hud-btn hud-btn-primary disabled:opacity-60"
       >
         {status === 'submitting' ? 'Sending…' : 'Send'}
       </button>
@@ -206,11 +197,11 @@ function Field({
     <div>
       <label htmlFor={id} className={labelClass}>
         {label}
-        {optional && <span className="ml-1 normal-case text-card-ink/80">(optional)</span>}
+        {optional && <span className="ml-1 normal-case">(optional)</span>}
       </label>
       <div className="mt-2">{children}</div>
       {error && (
-        <p id={`${id}-error`} role="alert" className="mt-1.5 font-sans text-sm text-card-error">
+        <p id={`${id}-error`} role="alert" className={`${errorClass} mt-1.5`}>
           {error}
         </p>
       )}

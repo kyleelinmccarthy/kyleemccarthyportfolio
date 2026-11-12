@@ -5,6 +5,7 @@
 
 # next.js
 /.next/
+/.next-e2e/
 /out/
 next-env.d.ts
 
@@ -34,3 +35,7 @@ npm-debug.log*
 
 # raw source assets (treated versions are committed instead)
 /Snapchat-*.jpg
+
+# Review screenshots are build evidence, kept locally only
+/docs/superpowers/review/*
+!/docs/superpowers/review/2026-11-10-handoff.md

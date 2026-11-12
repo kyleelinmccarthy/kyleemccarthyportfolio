@@ -1,35 +1,8 @@
-import { site } from './site'
-
+/** The contact panel's form: the line above it, and what it says once the letter is away. */
 export const contact = {
-  // The closing scene above points at the work; this is where someone who
-  // wants to reach her actually does it.
-  eyebrow: 'Say hello',
-  body: [
-    'If something here caught your interest — the platforms, the AI work, the design system, or one of the things I build after hours — I’d like to hear about it.',
-    'Tell me what you’re working on. It lands straight in my inbox and I reply personally.',
-  ],
-  options: {
-    email: site.email,
-    linkedin: site.linkedin,
-    // Derived, never typed out again. The hand-written label was a stale copy
-    // of a URL that had already been fixed in site.ts, so the page showed an
-    // address that went nowhere while the link itself worked.
-    linkedinLabel: site.linkedin.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''),
+  mailbox: {
+    label: 'Send me a letter',
+    hint: 'It goes straight to my inbox and I reply myself.',
+    sent: 'In the post. I’ll write back.',
   },
-} as const
-
-export const footer = {
-  // "Send me a letter" is in the pages column on the right, pointing at
-  // /connect. It was here too, pointing at the home page's own mailbox, so the
-  // footer offered the same thing twice on one line.
-  nav: [{ label: 'Start over', href: '/' }],
-  // Standalone, directly-linkable pages for each journey scene.
-  pages: [
-    { label: 'About', href: '/about' },
-    { label: 'Portfolio — plain view', href: '/work' },
-    { label: 'Send me a letter', href: '/connect' },
-    { label: 'My personal library', href: '/room' },
-  ],
-  copyright: '© 2026 Kylee McCarthy, MS · Saratoga Springs, UT',
-  tagline: 'Every detail designed and built on purpose.',
 } as const

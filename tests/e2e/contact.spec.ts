@@ -1,5 +1,6 @@
-import { test, expect, type Page } from '@playwright/test'
-import { rooms } from '@/content/rooms'
+import { test, expect, type Page } from './canvas'
+// Relative imports: Playwright does not know the `@/` alias.
+import { contact } from '../../content/contact'
 
 // Stub the Turnstile widget so the form gets a token without the external
 // Cloudflare script — keeps these UI tests deterministic and offline.
@@ -25,7 +26,7 @@ async function fillValid(page: Page) {
 
 test('shows inline validation errors on empty submit (no network)', async ({ page }) => {
   await stubTurnstile(page)
-  await page.goto('/#contact')
+  await page.goto('/places/post')
   await page.getByRole('button', { name: 'Send' }).click()
   await expect(page.getByText(/please enter your name/i)).toBeVisible()
   await expect(page.getByText(/valid email/i)).toBeVisible()
@@ -40,10 +41,10 @@ test('happy path: valid submit shows the success state', async ({ page }) => {
       body: JSON.stringify({ ok: true, message: 'Thank you — your message is on its way.' }),
     })
   )
-  await page.goto('/#contact')
+  await page.goto('/places/post')
   await fillValid(page)
   await page.getByRole('button', { name: 'Send' }).click()
-  await expect(page.getByText(rooms.wayOut.mailbox.sent)).toBeVisible()
+  await expect(page.getByText(contact.mailbox.sent)).toBeVisible()
 })
 
 test('spam/blocked path: server 422 surfaces a "email me directly" message', async ({ page }) => {
@@ -58,7 +59,7 @@ test('spam/blocked path: server 422 surfaces a "email me directly" message', asy
       }),
     })
   )
-  await page.goto('/#contact')
+  await page.goto('/places/post')
   await fillValid(page)
   await page.getByRole('button', { name: 'Send' }).click()
   await expect(page.getByText(/email me directly/i)).toBeVisible()

@@ -8,7 +8,8 @@
  * budget enforced at all.
  *
  *   npx playwright install chromium
- *   npm run capture:screenshots
+ *   npm run capture:screenshots            # every autoCapture project
+ *   npm run capture:screenshots -- the-budget tiny-frenzy-games   # only these
  */
 import { chromium } from '@playwright/test'
 import { mkdirSync } from 'node:fs'
@@ -17,7 +18,13 @@ import { projects } from '../content/projects'
 import { generateWithFallback, LadderReport } from './lib/imageLadder'
 
 async function main() {
-  const targets = projects.filter((p) => p.autoCapture && p.liveUrl)
+  // Optional slugs on the command line limit the run; none means every target.
+  const only = process.argv.slice(2)
+  const targets = projects.filter(
+    (p) => p.autoCapture && p.liveUrl && (only.length === 0 || only.includes(p.slug))
+  )
+  const unknown = only.filter((slug) => !targets.some((p) => p.slug === slug))
+  if (unknown.length > 0) console.warn(`  not capturable, ignored: ${unknown.join(', ')}`)
   const report = new LadderReport()
   const browser = await chromium.launch()
   const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } })
@@ -26,6 +33,13 @@ async function main() {
     try {
       console.log(`Capturing ${p.name} -> ${p.liveUrl}`)
       await page.goto(p.liveUrl!, { waitUntil: 'networkidle', timeout: 45_000 })
+      if (p.captureClick) {
+        await page.getByRole('button', { name: p.captureClick, exact: true }).click()
+        await page.waitForLoadState('networkidle')
+        // A demo entered from a login screen loads its data client-side after the
+        // click settles, so give it longer than a static page to leave its spinner.
+        await page.waitForTimeout(5000)
+      }
       await page.waitForTimeout(1500)
       const raw = await page.screenshot({ clip: { x: 0, y: 0, width: 1600, height: 1000 } })
 

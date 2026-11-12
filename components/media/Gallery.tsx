@@ -69,7 +69,9 @@ export function Gallery({
     <>
       <ul
         className={
-          wall ? "mt-4 flex flex-wrap gap-5" : "mt-4 flex flex-wrap gap-3"
+          wall
+            ? "m-0 mt-4 flex list-none flex-wrap gap-5 p-0"
+            : "m-0 mt-3 flex list-none flex-wrap gap-2 p-0"
         }
       >
         {items.map((m, i) => (
@@ -78,13 +80,12 @@ export function Gallery({
               type="button"
               onClick={(e) => open(i, e.currentTarget)}
               className={[
-                "relative block overflow-hidden bg-surface-raised ring-1 ring-rule",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                "relative block overflow-hidden border border-line bg-transparent transition-colors hover:border-ink",
                 wall
-                  ? // A frame: a deep mount, a heavier edge, and a shadow so it
-                    // sits off the wall. Lifts a touch when you go to look.
-                    "h-36 w-36 rounded-sm p-3 shadow-lg shadow-black/25 ring-4 transition-transform duration-200 ease-out hover:-translate-y-1 hover:ring-accent focus-visible:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-                  : "h-24 w-24 rounded-lg p-1 transition-shadow hover:ring-accent",
+                  ? // A mount: deeper padding so the picture sits off the edge.
+                    // Lifts a touch when you go to look.
+                    "h-36 w-36 rounded-[3px] p-3 [box-shadow:var(--shadow)] transition-transform duration-200 ease-out hover:-translate-y-1 focus-visible:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                  : "h-20 w-20 rounded-[3px] p-1",
               ].join(" ")}
             >
               {/* Square and contained. These were 2:1 and object-cover, which
@@ -96,7 +97,7 @@ export function Gallery({
                 src={m.src}
                 alt={m.alt}
                 fill
-                sizes={wall ? "9rem" : "6rem"}
+                sizes={wall ? "9rem" : "5rem"}
                 className="object-contain"
               />
             </button>
@@ -118,18 +119,18 @@ export function Gallery({
         // its only child was `w-full` — a percentage of a box being sized by
         // its own contents. The picture came out a couple of hundred pixels
         // wide whatever it was a picture of.
-        className="w-[min(90vw,72rem)] max-w-none rounded-xl bg-surface-raised p-0 text-fg ring-1 ring-rule backdrop:bg-black/70"
+        className="glass w-[min(90vw,72rem)] max-w-none p-0 text-ink backdrop:bg-[color-mix(in_srgb,var(--on-ink)_60%,transparent)]"
       >
         <button
           type="button"
           onClick={() => dialogRef.current?.close()}
           aria-label="Close"
-          className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-surface text-xl leading-none text-fg-muted ring-1 ring-rule transition-colors hover:text-accent hover:ring-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center border border-line text-xl leading-none text-ink transition-colors hover:border-ink"
         >
           <span aria-hidden="true">×</span>
         </button>
         <div className="p-4">
-          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg">
+          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[3px]">
             <Image
               src={current.src}
               alt={current.alt}
@@ -138,7 +139,7 @@ export function Gallery({
               className="object-contain"
             />
           </div>
-          <p className="mt-3 font-sans text-sm text-fg-muted">
+          <p className="m-0 mt-3 font-sans text-sm text-muted">
             {current.caption ?? current.alt}
           </p>
           <div className="mt-3 flex items-center justify-between gap-3">
@@ -146,14 +147,14 @@ export function Gallery({
               <button
                 type="button"
                 onClick={() => step(-1)}
-                className="rounded-full px-3 py-1.5 font-sans text-sm ring-1 ring-rule hover:text-accent hover:ring-accent"
+                className="glass hud-btn"
               >
                 ← Previous
               </button>
               <button
                 type="button"
                 onClick={() => step(1)}
-                className="rounded-full px-3 py-1.5 font-sans text-sm ring-1 ring-rule hover:text-accent hover:ring-accent"
+                className="glass hud-btn"
               >
                 Next →
               </button>
@@ -161,7 +162,7 @@ export function Gallery({
             <button
               type="button"
               onClick={() => dialogRef.current?.close()}
-              className="rounded-full bg-fill px-4 py-1.5 font-sans text-sm font-semibold text-fill-fg"
+              className="glass hud-btn hud-btn-primary"
             >
               Close
             </button>

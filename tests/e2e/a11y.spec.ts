@@ -1,47 +1,72 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from './canvas'
 import AxeBuilder from '@axe-core/playwright'
 
-const ROUTES = ['/', '/work', '/about', '/connect', '/room']
+const ROUTES = [
+  '/',
+  '/places/beacon',
+  '/places/on-the-go',
+  '/places/home',
+  '/places/three-things',
+  '/places/art',
+  '/places/off-the-clock',
+  '/places/post',
+]
+
+/**
+ * The page as a visitor sees it once the world has drawn: the map labels are part of it, and are added only after the
+ * canvas's first frame, so a scan before then would leave them unchecked.
+ */
+async function settled(page: Page, theme: 'day' | 'night') {
+  await expect(page.locator('html')).toHaveAttribute('data-theme', theme)
+  await expect(page.locator('#labels')).toBeAttached({ timeout: 30_000 })
+}
+
+/** Violations only: where a gradient sits behind text axe reports "incomplete", which is not a failure. */
+async function violationsOn(page: Page): Promise<string | null> {
+  const results = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+    // Turnstile injects a third-party iframe we don't control; scope it out.
+    .exclude('iframe[src*="challenges.cloudflare.com"]')
+    .analyze()
+  if (results.violations.length === 0) return null
+  return results.violations
+    .map((v) => `${v.id} (${v.nodes.length} node${v.nodes.length === 1 ? '' : 's'}: ${v.nodes[0]?.target.join(' ')})`)
+    .join(', ')
+}
 
 test.describe('axe sweep', () => {
-  for (const theme of ['light', 'dark'] as const) {
+  for (const theme of ['day', 'night'] as const) {
     test(`no axe violations in ${theme} mode`, async ({ page }) => {
-      await page.addInitScript((t) => localStorage.setItem('kym-theme', t), theme)
+      // Eight routes, each drawing the planet in software WebGL while other workers run: give it the slow budget.
+      test.slow()
+      await page.addInitScript((t) => sessionStorage.setItem('kym-theme', t), theme)
 
       const failures: string[] = []
       for (const route of ROUTES) {
         await page.goto(route)
-        await expect(page.locator('html')).toHaveAttribute('data-theme', theme)
-        // RevealOnActive (components/journey/sceneActive.tsx) fades content
-        // in via opacity, up to ~1.1s worst case (index 5: 0.5s delay +
-        // 0.6s duration). Scanning immediately after goto races that
-        // animation — and also races a framer-motion hydration quirk where
-        // useReducedMotion() can't resolve synchronously during SSR, so the
-        // server always emits the animated branch regardless of the
-        // browser's reduced-motion preference. Either way, axe can sample
-        // text mid-fade (a near-transparent blend of fg/bg) and report a
-        // false color-contrast violation unrelated to the actual, settled
-        // token colors (verified AA-compliant in app/globals.css). Waiting
-        // for the reveal to finish scans the steady state WCAG 1.4.3
-        // actually governs. 1800ms against a ~1100ms worst case leaves enough
-        // headroom for a loaded CI runner; 1500 was too thin.
-        await page.waitForTimeout(1800)
-
-        const results = await new AxeBuilder({ page })
-          .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
-          // Turnstile injects a third-party iframe we don't control; scope it out.
-          .exclude('iframe[src*="challenges.cloudflare.com"]')
-          .analyze()
-
-        if (results.violations.length > 0) {
-          const summary = results.violations
-            .map((v) => `${v.id} (${v.nodes.length} node${v.nodes.length === 1 ? '' : 's'})`)
-            .join(', ')
-          failures.push(`${route}: ${summary}`)
-        }
+        await settled(page, theme)
+        const found = await violationsOn(page)
+        if (found) failures.push(`${route}: ${found}`)
       }
 
       expect(failures, `axe violations by route (${theme} mode):\n${failures.join('\n')}`).toEqual([])
+    })
+  }
+
+  // With no stored theme the clock picks the sky, so check all four.
+  for (const [time, theme] of [
+    ['09:00', 'day'],
+    ['14:00', 'day'],
+    ['18:00', 'day'],
+    ['23:00', 'night'],
+  ] as const) {
+    test(`no axe violations on the home page at ${time}`, async ({ page }) => {
+      // The scan waits for the world's first frame, which software rendering draws slowly.
+      test.slow()
+      await page.clock.setFixedTime(new Date(`2026-11-10T${time}:00`))
+      await page.goto('/')
+      await settled(page, theme)
+      expect(await violationsOn(page)).toBeNull()
     })
   }
 })

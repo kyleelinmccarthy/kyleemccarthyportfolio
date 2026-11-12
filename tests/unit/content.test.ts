@@ -3,19 +3,49 @@ import { existsSync, statSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { readdirSync } from 'node:fs'
 import { projects } from '@/content/projects'
-import { journey } from '@/content/journey'
-import { artAlt, tattooAlt } from '@/content/room'
+import { caseStudies } from '@/content/caseStudies'
+import { build, lead } from '@/content/about'
+import { artAlt, tattooAlt } from '@/content/art'
 
 describe('projects content', () => {
-  it('has 8 professional and 9 personal projects', () => {
-    expect(projects.filter((p) => !p.isPersonal)).toHaveLength(8)
-    expect(projects.filter((p) => p.isPersonal)).toHaveLength(9)
+  it('has 7 professional and 7 personal projects', () => {
+    expect(projects.filter((p) => !p.isPersonal)).toHaveLength(7)
+    expect(projects.filter((p) => p.isPersonal)).toHaveLength(7)
+  })
+
+  it('has dropped the retired projects', () => {
+    const gone = [
+      'wretched-few',
+      'eliminated-web',
+      'chemtree-games',
+      'chemtree-hq',
+      'doing-the-thing',
+      'external-payroll',
+      'forms-suite',
+      'family-budgeting',
+    ]
+    for (const slug of gone) expect(projects.find((p) => p.slug === slug)).toBeUndefined()
+  })
+
+  it('has the new projects with their live links', () => {
+    const url = (slug: string) => projects.find((p) => p.slug === slug)?.liveUrl
+    expect(url('eliminated-site')).toBe('https://eliminatedgame.com/')
+    expect(url('tiny-frenzy-games')).toBe('https://tinyfrenzygames.com/')
+    expect(url('the-budget')).toBe('https://the-budget-demo.kyleelinmccarthy.workers.dev/login')
+    expect(projects.find((p) => p.slug === 'jimothy-and-pidge')?.name).toBe(
+      'Jimothy & Pidge: Shenanigans in Seattle'
+    )
+    expect(projects.find((p) => p.slug === 'eliminated')?.statusLabel).toBe('Coming soon to Steam')
+  })
+
+  it('only writes case studies for projects that exist', () => {
+    for (const c of caseStudies) expect(projects.some((p) => p.slug === c.slug), c.slug).toBe(true)
   })
 
   it('keeps the stated enterprise counts internally consistent', () => {
     // The résumé's 14 = 6 production + 4 releasing + 4 building, 11 built personally.
-    // The 8 cards consolidate (403HQ is two deployments; forms-suite is three
-    // services) and do not name all 14, so an exact per-bucket equality would be
+    // The 7 professional cards consolidate (403HQ is two deployments) and do
+    // not name all 14, so an exact per-bucket equality would be
     // false. Assert the arithmetic of the claim, and that no bucket overflows it.
     const STATED = { production: 6, releasing: 4, building: 4 } as const
     const TOTAL = 14
@@ -76,19 +106,18 @@ describe('projects content', () => {
     }
   })
 
-  it('requires problem + built copy on every project', () => {
+  it('requires built copy on every project', () => {
     for (const p of projects) {
-      expect(p.problem.length).toBeGreaterThan(10)
       expect(p.built.length).toBeGreaterThan(10)
     }
   })
 })
 
 /**
- * RoomSections builds its gallery srcs from these alt maps, so a slug with no
- * matching .jpg is a 404 on /room that no other test would catch.
+ * The gallery panel builds its srcs from these alt maps, so a slug with no
+ * matching .jpg is a 404 on the art and tattoo places that no other test would catch.
  */
-describe('room gallery media', () => {
+describe('gallery media', () => {
   const cases: Array<[string, Record<string, string>]> = [
     ['art', artAlt],
     ['tattoo', tattooAlt],
@@ -135,26 +164,47 @@ describe('committed media stays within the 250KB per-file budget', () => {
   })
 })
 
-describe('journey figures', () => {
+describe('about figures', () => {
   it('states build figures as literals, not as a count of cards on the page', () => {
     // The old BuildScene overwrote this with String(projects.length), which made
     // the headline number mean "cards on this page" — 17 after the rewrite,
     // presented as production apps for one year.
-    for (const f of journey.build.figures) {
+    for (const f of build.figures) {
       expect(f.value).not.toBe(String(projects.length))
       expect(f.value.length).toBeGreaterThan(0)
     }
   })
 
   it('splits lead vs build figures, all with non-empty labels', () => {
-    const all = [...journey.lead.figures, ...journey.build.figures]
+    const all = [...lead.figures, ...build.figures]
     expect(all.length).toBeGreaterThanOrEqual(4)
     for (const f of all) expect(f.label.length).toBeGreaterThan(0)
   })
 })
 
-describe('journey scenes', () => {
+describe('leadership context', () => {
   it('credits the team in the leadership context (not just Kylee)', () => {
-    expect(journey.lead.context.toLowerCase()).toContain('team')
+    expect(lead.context.toLowerCase()).toContain('team')
+  })
+})
+
+describe('the planet pictures', () => {
+  const pictures = ['poster-day.webp', 'poster-night.webp']
+
+  it('ships both, within the 250KB budget', () => {
+    for (const f of pictures) {
+      const p = resolve(process.cwd(), 'public/world', f)
+      expect(existsSync(p), f).toBe(true)
+      expect(statSync(p).size, f).toBeLessThan(250_000)
+    }
+  })
+
+  it('are real 1600 by 1000 WebP files, not a renamed other format', async () => {
+    const { default: sharp } = await import('sharp')
+    for (const f of pictures) {
+      const meta = await sharp(resolve(process.cwd(), 'public/world', f)).metadata()
+      expect(meta.format, f).toBe('webp')
+      expect([meta.width, meta.height], f).toEqual([1600, 1000])
+    }
   })
 })

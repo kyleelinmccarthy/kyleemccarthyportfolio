@@ -12,6 +12,8 @@ export const site = {
   locale: 'en_US',
   location: 'Saratoga Springs, UT',
   jobTitle: 'Director of Technology Operations',
+  // The line under the name on the home page.
+  roleLine: 'Director of Technology Operations · Builder · Artist',
   email: 'kyleelinmccarthy@gmail.com',
   linkedin: 'https://www.linkedin.com/in/kylee-mccarthy-ms-706499123/',
   resumePath: '/Kylee-McCarthy-Resume.pdf',

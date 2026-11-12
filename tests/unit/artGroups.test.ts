@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { groupArt } from '@/lib/artGroups'
-import { artAlt } from '@/content/room'
+import { artAlt } from '@/content/art'
 
 describe('groupArt', () => {
   it('groups by the medium prefix in the required render order', () => {

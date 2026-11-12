@@ -3,89 +3,43 @@
 @tailwind utilities;
 
 /*
- * Design tokens — single source of truth.
- * Raw palette swatches are locked by the brief; semantic aliases below
- * resolve per theme and respect the verified AA contrast table:
- *   - light accent text  -> #771606 (7.74:1 on cream)
- *   - dark  accent text  -> #D87F63 (6.32:1 on blackberry, DERIVED)
- *   - #BF4D3A / #A62E1A / #771606 on the opposite bg are large/non-text only
+ * Design tokens for the tiny planet. Day is the default; the inline init
+ * script (lib/theme.ts) sets data-theme="night" on <html> at night or when
+ * the visitor asks. Values come from the look test.
  */
-
-:root,
-[data-theme='dark'] {
-  color-scheme: dark;
-  --surface: 27 33 28; /* green-black, derived from #2f3b31 */
-  --surface-raised: 47 59 49; /* the green itself — cards and raised panels */
-  --fg: 233 213 189; /* cream — 11.49:1 on surface */
-  --fg-muted: 194 178 154; /* muted cream — 7.91:1 on surface */
-  --accent: 233 213 189; /* cream — accent text role */
-  --accent-strong: 233 213 189;
-  --rule: 63 77 65; /* green rule, visible against both greens */
-  --fill: 204 194 184; /* warm taupe — buttons; ink text for contrast, 10.61:1 */
-  --fill-fg: 27 33 28;
-  --decor: 204 194 184; /* warm taupe — background line-work (dark) */
-  /* How much of the library backdrop shows through. Dark mode can carry
-     more of it: the photo is dark-based, so it reads as depth rather than as
-     a picture competing with the copy. */
-  --photo-veil: 0.34;
-  /* Sticky notes are a real object being depicted, so they get real Post-it
-     colours rather than tints of the site palette — which cannot produce a
-     pack of them. Slightly deepened here so they sit in a dark room without
-     glaring. Note text is always --note-ink. */
-  --note-1: 214 186 78;  /* yellow */
-  --note-2: 214 122 148; /* pink */
-  --note-3: 116 168 200; /* blue */
-  --note-4: 132 182 124; /* green */
-  --note-5: 216 148 92;  /* orange */
-  --note-6: 168 142 206; /* violet */
-  --note-ink: 27 33 28;
-  /* Cloth book bindings for the library's shelf. Deliberately the same in both
-     themes — a book is the same colour whichever room's lights are on — and
-     all dark enough to carry --book-foil at 8:1 or better. */
-  --book-1: 90 42 46;   /* oxblood */
-  --book-2: 46 70 50;   /* forest */
-  --book-3: 43 58 85;   /* navy */
-  --book-4: 107 82 32;  /* ochre */
-  --book-5: 74 47 82;   /* plum */
-  --book-6: 31 74 74;   /* teal */
-  --book-foil: 233 213 189; /* cream, stamped into the spine */
-  /* Index cards, for the library's card-catalogue drawer. Also the same in
-     both themes, and for the same reason as the books: a card is an object
-     being depicted, not a surface. The site's own greens sat too close to the
-     veiled backdrop and the cards read as translucent panels rather than as
-     things lying on a table. --card-ink on --card is 14:1. */
-  --card: 238 231 216;      /* warm off-white stock */
-  --card-ink: 43 43 40;     /* pencil */
-  --card-rule: 150 168 196; /* the printed blue rule */
-  --card-margin: 186 118 118; /* the red margin line */
-  --card-error: 152 40 40;    /* corrections, in red pen — 6.9:1 on --card */
+:root {
+  --ink: #16193A;
+  --muted: #1E274B;
+  --on-ink: #FFFFFF;
+  --accent: #FF5C8A;
+  --glass: rgba(255, 255, 255, 0.72);
+  /* Behind HUD text that can have anything behind it: the name over the planet, the legend. See lib/tokens.ts. */
+  --plate: rgba(255, 255, 255, 0.8);
+  --edge: rgba(255, 255, 255, 0.95);
+  --line: rgba(22, 25, 58, 0.16);
+  --shadow: 0 14px 44px rgba(20, 35, 90, 0.2);
+  /* Map labels' leader lines and the ring round their pins, the same by day and night. */
+  --label-line: #FFFFFF;
+  --label-halo: rgba(255, 255, 255, 0.28);
 }
 
-[data-theme='light'] {
+[data-theme='night'] {
+  --ink: #F2F0FF;
+  --muted: #BAC1EE;
+  --on-ink: #12163A;
+  --glass: rgba(13, 17, 46, 0.62);
+  --plate: rgba(13, 17, 46, 0.8);
+  --edge: rgba(170, 185, 255, 0.3);
+  --line: rgba(240, 240, 255, 0.17);
+  --shadow: 0 14px 44px rgba(0, 0, 0, 0.5);
+}
+
+/* Native controls and scrollbars follow the theme. */
+:root {
   color-scheme: light;
-  --surface: 245 245 244; /* neutral off-white */
-  --surface-raised: 255 255 255;
-  --fg: 18 18 28; /* ink — 13.04:1 */
-  --fg-muted: 74 70 64; /* muted ink — ~6.6:1 on surface */
-  --accent: 47 59 49; /* deep green — 10.75:1 on surface; primary accent text/borders/rings/dots */
-  --accent-strong: 47 59 49;
-  --rule: 226 226 224;
-  --fill: 47 59 49; /* deep green — all buttons. Was gold, which read as a
-                       different brand from the dark theme's; the green is the
-                       colour the whole site is built on. */
-  --fill-fg: 233 213 189; /* cream on green — 10.75:1 */
-  --decor: 47 59 49; /* green — background line-work (light) */
-  /* Lighter than dark mode, but not so light the room disappears — at 0.14 the
-     photographs were invisible and every light-mode room was a flat panel. */
-  --photo-veil: 0.30;
-  /* Brighter in a lit room — closer to the packet. */
-  --note-1: 253 230 138;
-  --note-2: 250 172 194;
-  --note-3: 158 206 236;
-  --note-4: 176 220 168;
-  --note-5: 250 190 138;
-  --note-6: 206 186 240;
-  --note-ink: 27 33 28;
+}
+[data-theme='night'] {
+  color-scheme: dark;
 }
 
 @layer base {
@@ -95,8 +49,8 @@
   }
 
   body {
-    background-color: rgb(var(--surface));
-    color: rgb(var(--fg));
+    background-color: var(--on-ink);
+    color: var(--ink);
     font-feature-settings: 'kern';
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -105,82 +59,395 @@
       color 320ms cubic-bezier(0.65, 0, 0.35, 1);
   }
 
-  /* Visible terracotta focus ring on every interactive element. */
+  /* Visible accent focus ring on every interactive element. */
   :focus-visible {
-    outline: 2px solid rgb(var(--accent));
+    outline: 2px solid var(--accent);
     outline-offset: 3px;
     border-radius: 2px;
   }
 
   ::selection {
-    background-color: rgb(var(--accent));
-    color: rgb(var(--surface));
+    background-color: var(--accent);
+    color: var(--on-ink);
   }
 }
 
 @layer components {
   /*
-   * Always-dark context (hero + stats bar are blackberry in BOTH themes).
-   * Re-declares the dark token values locally so child utilities like
-   * text-fg / text-accent stay AA-correct on blackberry regardless of theme.
+   * The page's content floats over the canvas. Only what can be clicked, typed
+   * into or scrolled takes the pointer; everywhere else it reaches the planet.
+   * :where() keeps this at the weight of one class, so a utility still wins.
    */
-  .section-dark {
-    --surface: 27 33 28;
-    --surface-raised: 47 59 49;
-    --fg: 233 213 189;
-    --fg-muted: 194 178 154;
-    --accent: 233 213 189;
-    --accent-strong: 233 213 189;
-    --rule: 63 77 65;
-    --fill: 204 194 184;
-    --fill-fg: 27 33 28;
-    --decor: 204 194 184;
-    background-color: rgb(var(--surface));
-    color: rgb(var(--fg));
+  .world-content {
+    pointer-events: none;
+  }
+  .world-content :where(a, button, input, select, textarea, label, summary, dialog, iframe, [tabindex], .glass) {
+    pointer-events: auto;
+  }
+
+  /* The frosted panel every HUD element sits on. */
+  .glass {
+    background: var(--glass);
+    border: 1px solid var(--edge);
+    box-shadow: var(--shadow);
+    -webkit-backdrop-filter: blur(14px) saturate(1.35);
+    backdrop-filter: blur(14px) saturate(1.35);
+    border-radius: 4px;
+    transition:
+      background 900ms,
+      border-color 900ms;
+  }
+
+  /* HUD button: a glass plate with mono caps. `.hud-btn-primary` is the inked one. */
+  .hud-btn {
+    display: inline-block;
+    padding: 11px 15px;
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      transform 150ms,
+      background 900ms,
+      border-color 900ms;
+  }
+  .hud-btn:hover {
+    transform: translateY(-1px);
+  }
+  .hud-btn-primary {
+    background: var(--ink);
+    color: var(--on-ink);
+    border-color: transparent;
   }
 
   /*
-   * Reduced-motion safety net for the signature.
-   *
-   * NameLogo animates each letter in from the "hidden" variant (opacity 0).
-   * framer-motion's useReducedMotion cannot resolve during SSR, so the server
-   * always emits the animated branch; if the hook then fails to settle on the
-   * client, the letters stay hidden and the name is simply gone. That happened
-   * for real — the hero signature measured opacity 0 while the nav and footer
-   * copies were fine.
-   *
-   * The rule below cannot be defeated by a hook that never resolved, which is
-   * the point: someone who asked for less motion must not be the one person
-   * who cannot see whose site this is.
+   * The index of every place. It is always in the HTML. Without JavaScript it
+   * stays in place at the right; with it (<html data-js>) it is a drawer from
+   * the left, opened by the Index button or by #index in the URL.
    */
-  @media (prefers-reduced-motion: reduce) {
-    [data-signature],
-    [data-signature] > * {
-      opacity: 1 !important;
-      transform: none !important;
-      /* filter too: an earlier version reset only opacity and transform, and
-         the variant's blur survived — the name rendered fully opaque and
-         permanently smeared. Reset everything the hidden state can set. */
-      filter: none !important;
-    }
+  .index-panel {
+    position: fixed;
+    z-index: 9;
+    top: 98px;
+    bottom: 98px;
+    right: 40px;
+    width: 312px;
+    padding: 18px 20px;
+    overflow: auto;
+  }
+  [data-js] .index-panel {
+    right: auto;
+    left: 40px;
+    transform: translateX(calc(-100% - 60px));
+    visibility: hidden;
+    transition:
+      transform 450ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      visibility 0s linear 450ms,
+      background 900ms,
+      border-color 900ms;
+  }
+  [data-js] .index-panel[data-open='true'] {
+    transform: none;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  /*
+   * The role line, the headline, the greeting and the legend give way while
+   * the camera is in close (the canvas sets data-hud-away on <html>, see
+   * `hudGivesWay`): they fade out and let the pointer through to the planet.
+   * Focus brings one back to full strength for as long as it is inside it, so
+   * nothing that can be focused is ever invisible, and it covers the map again
+   * meanwhile. The name (on its plate) and the controls never fade (R31).
+   * Under reduced motion the change is immediate.
+   */
+  [data-gives-way] {
+    transition: opacity 300ms;
+  }
+  /*
+   * The name stays when the rest gives way, with the planet behind it, so it
+   * stands on a plate then: opaque enough to hold AA over anything (R31; the
+   * contrast test checks it over pure white and pure black). The plate's
+   * padding is taken back by a negative margin, so the name does not move.
+   */
+  .hud-name {
+    width: fit-content;
+    margin: -6px -12px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: background-color 300ms;
+  }
+  /* A frosted plate for HUD text that can have anything behind it, as the legend over a drifting cloud. */
+  .hud-plate {
+    padding: 8px 14px 9px 12px;
+    margin: -8px -14px -9px -12px;
+    background: var(--plate);
+    border: 1px solid var(--edge);
+    border-radius: 4px;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+  [data-hud-away] .hud-name {
+    background: var(--plate);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+  [data-hud-away] [data-gives-way]:not(:focus-within),
+  [data-hud-away] [data-gives-way]:not(:focus-within) * {
+    pointer-events: none;
+  }
+  [data-hud-away] [data-gives-way]:not(:focus-within) {
+    opacity: 0;
+  }
+  /*
+   * Map labels, from the look test. Each is a link whose own box is a 24px
+   * square on its anchor (room enough to press), with the pin at its middle
+   * and the leader line and the tag above. The canvas moves it with a transform
+   * and sets data-on while it can be seen (on the near side, on screen, not
+   * under the panel, in the tier the camera's distance calls for) and data-tier:
+   * place, district, or dot. A label without data-on is visibility: hidden, so
+   * it leaves the tab order and the accessibility tree.
+   */
+  #labels {
+    position: fixed;
+    inset: 0;
+    z-index: 3;
+    overflow: hidden;
+    pointer-events: none;
+    transition: opacity 250ms;
+  }
+  #labels[data-flying] {
+    opacity: 0;
+  }
+  .lm {
+    position: absolute;
+    left: -12px;
+    top: -12px;
+    display: block;
+    width: 24px;
+    height: 24px;
+    color: var(--ink);
+    text-decoration: none;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  /* A label fades in; it goes at once, so one round the back or off the screen is never left in view. */
+  .lm[data-on] {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 250ms;
+  }
+  #labels[data-flying] .lm {
+    pointer-events: none;
+  }
+  .lm:focus-visible {
+    outline: none;
+  }
+  .lm-pin {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow:
+      0 0 0 2px var(--label-line),
+      0 0 0 5px var(--label-halo);
+  }
+  /*
+   * --tag-rise is the leader line's reach, from the pin's centre to the tag's
+   * near edge (`TAG_GEOMETRY`, `DISTRICT_RISES`): 30px for a place, 38px for a
+   * district, longer where the canvas lifts a district's tag clear of the island.
+   * The pin's centre is 12px into the label's box.
+   */
+  .lm {
+    --tag-rise: 30px;
+  }
+  .lm-district {
+    --tag-rise: 38px;
+  }
+  .lm-stem {
+    position: absolute;
+    left: 12px;
+    bottom: 17px;
+    width: 1px;
+    height: calc(var(--tag-rise) - 4px);
+    background: var(--label-line);
+    opacity: 0.85;
+  }
+  .lm-tag {
+    position: absolute;
+    left: 11px;
+    bottom: calc(var(--tag-rise) + 12px);
+    display: grid;
+    gap: 1px;
+    padding: 5px 9px 6px;
+    white-space: nowrap;
+    text-align: left;
+    background: var(--glass);
+    border: 1px solid var(--edge);
+    border-radius: 3px;
+    box-shadow: var(--shadow);
+    -webkit-backdrop-filter: blur(12px) saturate(1.3);
+    backdrop-filter: blur(12px) saturate(1.3);
+    transition:
+      transform 150ms,
+      border-color 150ms;
+  }
+  .lm-name {
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 11.5px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+  .lm-note {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .lm:hover .lm-tag,
+  .lm[data-hot] .lm-tag,
+  .lm:focus-visible .lm-tag {
+    transform: translateY(-2px);
+    border-color: var(--c);
+  }
+  .lm:focus-visible .lm-tag {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+  /*
+   * Where its tag would cross the screen's edge, the header or the tour bar,
+   * the canvas turns it to the other side of its pin (data-flip-x: to the
+   * left; data-flip-y: below) or slides it across (--tag-shift), as
+   * `placeTag` decides.
+   */
+  .lm-tag {
+    translate: var(--tag-shift, 0px) 0;
+  }
+  .lm[data-flip-x] .lm-tag {
+    left: auto;
+    right: 11px;
+  }
+  .lm[data-flip-y] .lm-tag {
+    bottom: auto;
+    top: calc(var(--tag-rise) + 12px);
+  }
+  .lm[data-flip-y] .lm-stem {
+    bottom: auto;
+    top: 17px;
+  }
+  /*
+   * A tag that would overlap one nearer the focus, or a district's that would
+   * stand, or run a raised leader line, over a landmark or another pin (R33), collapses to its pin
+   * (data-tagless) until it is hovered, focused or opened by a tap. Its tag is
+   * faded, not hidden, so the link keeps its name for a screen reader, and it
+   * takes no pointer while faded, so nothing that cannot be seen catches a
+   * click.
+   */
+  .lm[data-tagless]:not(:hover, :focus, [data-hot], [data-open]) :is(.lm-tag, .lm-stem) {
+    opacity: 0;
+    pointer-events: none;
+  }
+  /*
+   * On a phone at a place, the nearest places are pins on the open view, at its
+   * edge when they are off it (data-tier nearby). A tap shows the tag
+   * (data-open) and a second goes there; focus shows it too. The pin takes a
+   * finger's tap across 44px, though it is drawn small.
+   */
+  .lm[data-on][data-tier='nearby']:not([data-open], :focus) :is(.lm-tag, .lm-stem) {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .lm[data-tier='nearby']::before {
+    content: '';
+    position: absolute;
+    inset: -10px;
+  }
+  /*
+   * From afar a place is its pin alone: a mark on the map, not a link, as the
+   * places crowd too close to press one by one (the districts' labels and the
+   * index are the way in). The link stays hidden while its pin shows, until
+   * the pointer finds the landmark on the planet; then it is a whole label,
+   * and stays one while the pointer is on it. Only its tag takes the pointer,
+   * so the pin never comes between the pointer and the landmark under it.
+   */
+  .lm[data-on][data-tier='dot'] {
+    pointer-events: none;
+  }
+  .lm[data-on][data-tier='dot']:not([data-hot], :hover, :focus-within) {
+    visibility: hidden;
+  }
+  .lm[data-on][data-tier='dot'] .lm-pin {
+    visibility: visible;
+  }
+  .lm[data-on][data-tier='dot'] .lm-tag {
+    pointer-events: auto;
+  }
+  .lm-district .lm-tag {
+    padding: 7px 11px 8px;
+    border-left: 3px solid var(--c);
+  }
+  .lm-district .lm-name {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.015em;
+    text-transform: none;
+  }
+  /*
+   * A constellation's name: small, widely spaced mono caps in a pale star
+   * colour, centred under the figure. Text on the sky, not a control, so it
+   * never takes the pointer.
+   */
+  .lm-const,
+  .lm-const[data-on] {
+    pointer-events: none;
+  }
+  .lm-const-name {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--c);
   }
 
-  /* Skip-to-content link — visible only when focused. */
-  .skip-link {
-    position: fixed;
-    top: 0.75rem;
-    left: 0.75rem;
-    z-index: 100;
-    transform: translateY(-150%);
-    padding: 0.625rem 1rem;
-    background-color: rgb(var(--fill));
-    color: rgb(var(--fill-fg));
-    border-radius: 0.375rem;
-    font-weight: 600;
-    transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .skip-link:focus {
-    transform: translateY(0);
+  @media (max-width: 820px) {
+    /* On a phone a district's tag is its name alone, smaller, so it does not cover the planet and the places' pins. */
+    .lm-district .lm-note {
+      display: none;
+    }
+    .lm-district .lm-tag {
+      padding: 4px 8px 5px;
+    }
+    .lm-district .lm-name {
+      font-size: 12.5px;
+    }
+    .index-panel {
+      left: 14px;
+      right: 14px;
+      width: auto;
+      top: 120px;
+      bottom: 84px; /* clears the controls */
+    }
+    [data-js] .index-panel {
+      top: 14px;
+      bottom: 14px;
+    }
   }
 }
 

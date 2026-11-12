@@ -1,35 +1,30 @@
 import type { Metadata, Viewport } from 'next'
-import { Bentham, Bellota_Text, Give_You_Glory, Sacramento } from 'next/font/google'
+import { Bricolage_Grotesque, DM_Mono, DM_Sans } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import { ThemeProvider } from '@/components/hud/ThemeProvider'
 import { site } from '@/content/site'
+import { looks } from '@/content/sky'
 import { personJsonLd } from '@/lib/structuredData'
 import { themeInitScript } from '@/lib/theme'
+import { testHooksOn } from '@/lib/world/quality'
 import './globals.css'
 
 // Self-hosted via next/font — no third-party request, size-adjusted to avoid CLS.
-const bentham = Bentham({
-  weight: '400',
+const display = Bricolage_Grotesque({
   subsets: ['latin'],
-  variable: '--font-bentham',
+  variable: '--font-display',
   display: 'swap',
 })
-const bellota = Bellota_Text({
-  weight: ['300', '400', '700'],
+const sans = DM_Sans({
   subsets: ['latin'],
-  variable: '--font-bellota',
+  variable: '--font-sans',
   display: 'swap',
 })
-const giveYouGlory = Give_You_Glory({
-  weight: '400',
+const mono = DM_Mono({
+  weight: ['400', '500'],
   subsets: ['latin'],
-  variable: '--font-give-you-glory',
-  display: 'swap',
-})
-const sacramento = Sacramento({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-sacramento',
+  variable: '--font-mono',
   display: 'swap',
 })
 
@@ -62,8 +57,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: dark)', color: '#1B211C' },
-    { media: '(prefers-color-scheme: light)', color: '#F5F5F4' },
+    { media: '(prefers-color-scheme: dark)', color: looks.night.top },
+    { media: '(prefers-color-scheme: light)', color: looks.afternoon.top },
   ],
 }
 
@@ -72,7 +67,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${bentham.variable} ${bellota.variable} ${giveYouGlory.variable} ${sacramento.variable}`}
+      // Marks a build made for the e2e suite, which the suite checks for (see tests/e2e/global-setup.ts). Absent otherwise.
+      data-e2e={testHooksOn(process.env.NEXT_PUBLIC_E2E) ? '' : undefined}
+      className={`${display.variable} ${sans.variable} ${mono.variable}`}
     >
       <head>
         {/* Set theme before first paint to prevent FOUC. */}
@@ -83,7 +80,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="font-sans antialiased">
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
         <Analytics />
         <SpeedInsights />
       </body>
