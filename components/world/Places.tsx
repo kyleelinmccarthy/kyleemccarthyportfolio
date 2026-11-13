@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, type ReactNode } from 'react'
 import { useThree, type ThreeEvent } from '@react-three/fiber'
-import { Matrix4, MeshBasicMaterial, Quaternion, SphereGeometry } from 'three'
+import { BackSide, Matrix4, MeshBasicMaterial, Quaternion, SphereGeometry } from 'three'
 import type { District, LatLon, Place } from '@/content/types'
 import { MODEL_SCALE } from '@/lib/world/camera'
 import { dirOf, surfaceFrame } from '@/lib/world/geo'
@@ -46,6 +46,8 @@ interface PlacesProps {
   districts: District[]
   /** Go to a place, as clicking its label would. */
   onVisit(id: string): void
+  /** The place open, if any: its sphere is caught on its far side, so what stands inside it and takes presses (the pets) comes first. */
+  open?: string | null
 }
 
 /**
@@ -53,20 +55,30 @@ interface PlacesProps {
  * catch the pointer. Hovering one lights its label and shows a pointer;
  * clicking it (not dragging across it) visits the place. The nearest landmark
  * under the pointer takes the event, and the planet keeps those behind it from
- * taking any (see `Planet`).
+ * taking any (see `Planet`). The open place's sphere is caught where a ray
+ * leaves it rather than where it enters, so anything inside it that takes
+ * presses of its own (the pets at Home, `PetPresses`) comes first; a press
+ * anywhere else on it still goes no further, never through to a landmark
+ * behind.
  */
-export function Places({ places, districts, onVisit }: PlacesProps) {
+export function Places({ places, districts, onVisit, open = null }: PlacesProps) {
   const canvas = useThree((state) => state.gl.domElement)
   // A hovered landmark's label stays lit a while after the pointer leaves, so the pointer can reach its tag.
   const grace = useMemo(() => hoverGrace(mark, HOVER_GRACE_MS), [])
   const hit = useMemo(
-    () => ({ geometry: new SphereGeometry(1, 10, 8), material: new MeshBasicMaterial({ visible: false }) }),
+    () => ({
+      geometry: new SphereGeometry(1, 10, 8),
+      material: new MeshBasicMaterial({ visible: false }),
+      // The open place's: a ray meets only its inside, where it leaves.
+      far: new MeshBasicMaterial({ visible: false, side: BackSide }),
+    }),
     [],
   )
   useEffect(
     () => () => {
       hit.geometry.dispose()
       hit.material.dispose()
+      hit.far.dispose()
     },
     [hit],
   )
@@ -109,7 +121,7 @@ export function Places({ places, districts, onVisit }: PlacesProps) {
             </Batched>
             <mesh
               geometry={hit.geometry}
-              material={hit.material}
+              material={place.id === open ? hit.far : hit.material}
               position={[0, place.height / 2, 0]}
               scale={hitRadius(place)}
               dispose={null}

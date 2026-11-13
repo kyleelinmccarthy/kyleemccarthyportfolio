@@ -17,7 +17,7 @@ import { projectToScreen } from './screenProject'
 const SIZE_GUESS: TagSize = { width: 310, height: 110 }
 
 /** What was last written to the bubble, so only what changes is written again. */
-interface Written {
+export interface Written {
   shown: boolean | null
   docked: boolean | null
   transform: string
@@ -25,7 +25,8 @@ interface Written {
   tail: string
 }
 
-const fresh = (w: Written) => Object.assign(w, { shown: null, docked: null, transform: '', side: '', tail: '' })
+/** Forgets what was written, so everything is written afresh. */
+export const fresh = (w: Written) => Object.assign(w, { shown: null, docked: null, transform: '', side: '', tail: '' })
 
 /** Writes the bubble's placement: only what changed. While the camera flies it is hidden (`data-away`); docked, the page places it. */
 export function writeBubble(el: HTMLElement, shown: boolean, p: BubblePlacement, last: Written): void {
