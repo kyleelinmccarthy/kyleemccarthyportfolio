@@ -12,13 +12,19 @@ import {
   homeGoal,
   isClick,
   placeGoal,
+  placeOrbit,
+  rigArmed,
   rigAutoRotates,
+  rigLeaves,
   rigPose,
   rigReduce,
   retargetFlight,
+  sceneryObstacles,
   type RigState,
 } from '@/lib/world/rig'
-import { districts, placeById } from '@/content/world'
+import { FOCUS_REACH, LEAVE, farDistance, nearDistance, orbitPose } from '@/lib/world/gestures'
+import { districts, placeById, places } from '@/content/world'
+import { SCATTER_SEEDS, sceneryLayout, scatterBlocks, scatterTrees } from '@/lib/world/scatter'
 
 const start: RigState = RIG_START
 /** The overview the canvas opens on. */
@@ -152,6 +158,215 @@ describe('rigReduce', () => {
   })
 })
 
+describe('looking at a place', () => {
+  const beacon = placeById('beacon')!
+  const orbit = placeOrbit(beacon, districts, places)
+  /** At beacon, landed, with the orbit the canvas hands the rig. */
+  const at = (): RigState => rigReduce(start, { type: 'route', placeId: 'beacon', current: a, goal: b, seconds: 0, orbit })
+  const distanceOf = (s: RigState) => rigPose(s)!.position.distanceTo(orbit.centre)
+  const elevationOf = (s: RigState) => {
+    const offset = rigPose(s)!.position.sub(orbit.centre)
+    return Math.asin(offset.dot(orbit.up) / offset.length())
+  }
+
+  it('lands on the pose the place has always had', () => {
+    expect(rigPose(at())!.position.distanceTo(b.position)).toBeLessThan(1e-9)
+    expect(at().elevation).toBeCloseTo(orbit.elevation, 12)
+    expect(at().distance).toBeCloseTo(orbit.distance, 12)
+  })
+
+  it('tilts up as the drag goes down and down as it goes up, between its lowest and nearly overhead', () => {
+    const up = rigReduce(at(), { type: 'drag', dx: 0, dy: 40 })
+    expect(elevationOf(up)).toBeCloseTo(orbit.elevation + 40 * FOCUS_REACH.tilt, 9)
+    const down = rigReduce(at(), { type: 'drag', dx: 0, dy: -10 })
+    expect(elevationOf(down)).toBeLessThan(orbit.elevation)
+    expect(elevationOf(rigReduce(at(), { type: 'drag', dx: 0, dy: 10000 }))).toBeCloseTo(FOCUS_REACH.high, 9)
+    expect(elevationOf(rigReduce(at(), { type: 'drag', dx: 0, dy: -10000 }))).toBeCloseTo(orbit.lowest, 9)
+    // Tilting leaves the distance and the swing as they were.
+    expect(distanceOf(up)).toBeCloseTo(orbit.distance, 9)
+    expect(up.azimuth).toBe(0)
+  })
+
+  it('zooms in and out between its nearest and its furthest, keeping its tilt', () => {
+    const tilted = rigReduce(at(), { type: 'drag', dx: 0, dy: 60 })
+    const inward = rigReduce(tilted, { type: 'zoom', scale: 0.8 })
+    expect(distanceOf(inward)).toBeCloseTo(orbit.distance * 0.8, 9)
+    expect(elevationOf(inward)).toBeCloseTo(elevationOf(tilted), 9)
+    const closest = rigReduce(tilted, { type: 'zoom', scale: 0.001 })
+    expect(distanceOf(closest)).toBeCloseTo(nearDistance(orbit, tilted.elevation), 9)
+    const furthest = rigReduce(tilted, { type: 'zoom', scale: 1000 })
+    expect(distanceOf(furthest)).toBeCloseTo(farDistance(orbit), 9)
+    // Still at the place.
+    expect(furthest.mode).toBe('focus')
+    expect(furthest.target).toBe('beacon')
+  })
+
+  it('stays clear of the landmark when tilted down close in', () => {
+    const close = rigReduce(rigReduce(at(), { type: 'drag', dx: 0, dy: 3000 }), { type: 'zoom', scale: 0.001 })
+    const low = rigReduce(close, { type: 'drag', dx: 0, dy: -3000 })
+    expect(low.distance).toBeCloseTo(nearDistance(orbit, low.elevation), 9)
+    expect(low.distance).toBeGreaterThan(close.distance)
+  })
+
+  /**
+   * A stream of zoom events `every` seconds apart, a frame ticking between each: `steps` of them, each scaling the
+   * distance by `scale`. Stops early if the rig asks to leave. Returns the state and whether it asked.
+   */
+  function stream(s: RigState, steps: number, scale: number, every = 1 / 60, byKey = false) {
+    for (let i = 0; i < steps; i++) {
+      s = rigReduce(s, { type: 'zoom', scale, byKey })
+      if (rigLeaves(s)) return { s, left: true }
+      s = run(s, every, Math.min(every, 0.05))
+    }
+    return { s, left: false }
+  }
+  /** Fingers going from `from` to `to` pixels apart over `steps` moves at 60 a second. */
+  const pinchOut = (s: RigState, from: number, to: number, steps = 30) => stream(s, steps, Math.pow(from / to, 1 / steps))
+
+  it('stays at the place through one long pinch out, however far it goes', () => {
+    // 2.5 times as far apart as they end: well past the furthest and the pull together.
+    const { s, left } = pinchOut(at(), 300, 120)
+    expect(left).toBe(false)
+    expect(distanceOf(s)).toBeCloseTo(farDistance(orbit), 9)
+    // Even five times over, in one go.
+    expect(pinchOut(at(), 500, 100, 60).left).toBe(false)
+  })
+
+  it('stays through a trackpad flick and all of its slowing tail', () => {
+    let s = at()
+    // A flick: 1800px of scroll in events a frame apart, each smaller than the last.
+    for (let i = 0, d = 120; i < 80 && d > 1; i++, d *= 0.93) {
+      s = rigReduce(s, { type: 'zoom', scale: Math.exp(d * 0.0012) })
+      expect(rigLeaves(s)).toBe(false)
+      s = run(s, 1 / 60, 1 / 60)
+    }
+    expect(distanceOf(s)).toBeCloseTo(farDistance(orbit), 9)
+  })
+
+  it('never leaves by the keys, pressed or held down', () => {
+    // Key repeat: thirty presses 1/30s apart, then more after a pause at the furthest.
+    let { s, left } = stream(at(), 30, 1.18, 1 / 30, true)
+    expect(left).toBe(false)
+    s = run(s, LEAVE.rest + 0.2)
+    expect(stream(s, 30, 1.18, 1 / 30, true).left).toBe(false)
+  })
+
+  it('leaves on a new gesture begun once the camera rests at the furthest', () => {
+    let { s } = pinchOut(at(), 300, 100)
+    expect(rigArmed(s)).toBe(false)
+    // A pause there: now a pinch out means leave.
+    s = run(s, LEAVE.rest + 0.05)
+    expect(rigArmed(s)).toBe(true)
+    const second = pinchOut(s, 300, 150)
+    expect(second.left).toBe(true)
+  })
+
+  it('needs several events of a gesture to leave, so a single large one cannot', () => {
+    let { s } = pinchOut(at(), 300, 100)
+    s = run(s, LEAVE.rest + 0.05)
+    const once = rigReduce(s, { type: 'zoom', scale: 50 })
+    expect(rigLeaves(once)).toBe(false)
+    expect(once.pull).toBeCloseTo(LEAVE.step, 12)
+    const events = Math.ceil(LEAVE.pull / LEAVE.step)
+    expect(stream(s, events - 1, 50).left).toBe(false)
+    expect(stream(s, events, 50).left).toBe(true)
+  })
+
+  it('forgets a pull after a pause, and stops meaning to leave when the visitor zooms back in', () => {
+    let { s } = pinchOut(at(), 300, 100)
+    s = run(s, LEAVE.rest + 0.05)
+    // Most of the way, then a pause: the pull is let go (it still rests at the furthest, so a fresh gesture may leave).
+    let partial = stream(s, Math.ceil(LEAVE.pull / LEAVE.step) - 1, 50).s
+    expect(partial.pull).toBeGreaterThan(0)
+    partial = run(partial, LEAVE.rest + 0.05)
+    expect(partial.pull).toBe(0)
+    // Back in a little: no longer at the furthest, so not armed, and a pinch out from there does not leave.
+    const back = rigReduce(s, { type: 'zoom', scale: 0.98 })
+    expect(rigArmed(back)).toBe(false)
+    expect(pinchOut(back, 300, 100).left).toBe(false)
+  })
+
+  it('does not arm while the visitor is zooming out to the furthest, only once they have stopped there', () => {
+    // A slow pinch, an event every fifth of a second: never a pause as long as the rest.
+    const { s, left } = stream(at(), 30, 1.05, 0.2)
+    expect(left).toBe(false)
+    expect(rigArmed(s)).toBe(false)
+  })
+
+  it('goes back to the view it landed on: at once, or eased', () => {
+    const moved = rigReduce(rigReduce(rigReduce(at(), { type: 'drag', dx: 300, dy: 80 }), { type: 'zoom', scale: 0.5 }), { type: 'drag', dx: 900, dy: 0 })
+    const instant = rigReduce(moved, { type: 'reset', ease: false })
+    expect(rigPose(instant)!.position.distanceTo(b.position)).toBeLessThan(1e-9)
+    let eased = rigReduce(moved, { type: 'reset', ease: true })
+    // Not there at once...
+    expect(rigPose(eased)!.position.distanceTo(b.position)).toBeGreaterThan(0.01)
+    eased = run(eased, 0.2, 1 / 60)
+    const partway = rigPose(eased)!.position.distanceTo(b.position)
+    expect(partway).toBeGreaterThan(1e-6)
+    expect(partway).toBeLessThan(rigPose(moved)!.position.distanceTo(b.position))
+    // ...but there in the end, exactly, and the short way round.
+    eased = run(eased, 2, 1 / 60)
+    expect(rigPose(eased)!.position.distanceTo(b.position)).toBeLessThan(1e-9)
+    expect(eased.resetting).toBe(false)
+    expect(Math.abs(eased.azimuth)).toBeLessThan(1e-9)
+    // A gesture during the ease takes over from it.
+    const grabbed = rigReduce(rigReduce(moved, { type: 'reset', ease: true }), { type: 'drag', dx: 1, dy: 0 })
+    expect(grabbed.resetting).toBe(false)
+  })
+
+  it('opens every new place on its own landing view', () => {
+    let s = rigReduce(rigReduce(at(), { type: 'drag', dx: 50, dy: 50 }), { type: 'zoom', scale: 0.5 })
+    s = rigReduce(s, { type: 'route', placeId: 'aura', current: b, goal: c, seconds: 0, orbit: placeOrbit(placeById('aura')!, districts, places) })
+    expect(rigPose(s)!.position.distanceTo(c.position)).toBeLessThan(1e-9)
+  })
+
+  it('does nothing with a tilt, a zoom or a reset away from a place', () => {
+    for (const event of [{ type: 'drag', dx: 0, dy: 40 }, { type: 'zoom', scale: 2 }, { type: 'reset', ease: false }] as const) {
+      expect(rigReduce(start, event)).toEqual(start)
+      const flying = rigReduce(start, { type: 'route', placeId: 'beacon', current: a, goal: b, seconds: 2, orbit })
+      expect(rigReduce(flying, event)).toEqual(flying)
+    }
+  })
+
+  it.each(places.map((p) => [p.id, p] as const))('never tilts the camera at %s into the ground, a building or a tree', (_, place) => {
+    const o = placeOrbit(place, districts, places)
+    expect(o.lowest).toBeGreaterThanOrEqual(FOCUS_REACH.low)
+    expect(o.lowest).toBeLessThanOrEqual(o.elevation)
+    const obstacles = sceneryObstacles(districts, places)
+    const faults: string[] = []
+    for (let k = 0; k < 48 && faults.length < 3; k++) {
+      for (const d of [nearDistance(o, o.lowest), (nearDistance(o, o.lowest) + o.distance) / 2, o.distance, farDistance(o)]) {
+        const eye = orbitPose(o, (k / 48) * Math.PI * 2, o.lowest, d).position
+        const dir = eye.clone().normalize()
+        const ground = 1 + heightAt(dir, districts)
+        if (eye.length() < ground + 0.03) faults.push(`azimuth ${k}: ${(eye.length() - ground).toFixed(3)} above the ground`)
+        for (const ob of obstacles) {
+          if (dir.angleTo(ob.dir) <= ob.reach && eye.length() < ob.top + 0.03) faults.push(`azimuth ${k}, distance ${d.toFixed(2)}: in something`)
+        }
+      }
+    }
+    expect(faults).toEqual([])
+  })
+
+  it('keeps out of the very buildings and trees the planet draws, laid out once', () => {
+    const layout = sceneryLayout(districts, places)
+    // The renderer's layout: the same seeds and arguments as Scatter draws with.
+    const buildings = scatterBlocks(SCATTER_SEEDS.blocks, districts, places)
+    expect(layout.buildings).toEqual(buildings)
+    expect(layout.trees).toEqual(scatterTrees(SCATTER_SEEDS.trees, districts, places, buildings))
+    // Laid out once, and shared.
+    expect(sceneryLayout(districts, places)).toBe(layout)
+    const obstacles = sceneryObstacles(districts, places)
+    expect(obstacles).toHaveLength(layout.buildings.length + layout.trees.length)
+    expect(obstacles[0].dir.distanceTo(layout.buildings[0].dir.clone().normalize())).toBeCloseTo(0, 12)
+  })
+
+  it('tilts lower than it lands wherever the ground round the place is open', () => {
+    const open = places.filter((p) => placeOrbit(p, districts, places).lowest < placeOrbit(p, districts, places).elevation - 0.05)
+    expect(open.length).toBeGreaterThan(places.length / 2)
+  })
+})
+
 describe('auto-rotation', () => {
   it('turns from the start, stops on touch and resumes after nine idle seconds', () => {
     expect(rigAutoRotates(start)).toBe(true)
@@ -175,6 +390,12 @@ describe('auto-rotation', () => {
     expect(rigAutoRotates(s)).toBe(false)
     s = run(s, AUTO_ROTATE_IDLE + 0.1)
     expect(rigAutoRotates(s)).toBe(true)
+  })
+
+  it('holds still for as long as the visitor is zoomed in on something', () => {
+    const s = run(rigReduce(start, { type: 'touch' }), AUTO_ROTATE_IDLE + 5)
+    expect(rigAutoRotates(s, false)).toBe(true)
+    expect(rigAutoRotates(s, true)).toBe(false)
   })
 })
 

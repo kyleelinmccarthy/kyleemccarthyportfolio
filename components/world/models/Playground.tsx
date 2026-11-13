@@ -12,8 +12,10 @@ import {
   Tube,
   Turned,
   blend,
+  bowOutline,
   heightWithin,
   pointing,
+  smileOutline,
   stackUp,
   type Point2,
   type Vec3,
@@ -40,21 +42,6 @@ const EGG_AT: Vec3 = [-0.06, 0, 0.42]
  */
 type Colours = Record<'sand' | 'kerb' | 'line' | 'white' | 'skin' | 'hair' | 'dress' | 'blue' | 'shoe' | 'blush' | 'eye' | 'bark' | 'box' | 'lid' | 'ribbon' | 'dough' | 'frosting', string>
 
-/** A smile: a thin crescent, its ends turned up, `width` across. */
-function smile(width: number, thick: number): Point2[] {
-  const steps = 8
-  const r = width / 2
-  const lower = Array.from({ length: steps + 1 }, (_, k) => {
-    const a = Math.PI * 1.15 + (k / steps) * Math.PI * 0.7
-    return [r * Math.cos(a), r * 0.7 * Math.sin(a)] as Point2
-  })
-  const upper = lower
-    .slice()
-    .reverse()
-    .map(([x, y]) => [x * 0.86, y * 0.86 + thick * (1 - Math.abs(x) / r) + thick * 0.35] as Point2)
-  return [...lower, ...upper]
-}
-
 /** How round the Doll's bob is (a `Rounded`'s `round`): a soft dome over straight sides. */
 const HAIR_ROUND = 0.62
 
@@ -72,26 +59,6 @@ function band(a: number, b: number, round: number, out: number, into: number): P
       return [ra * Math.sign(c) * Math.abs(c) ** round, rb * Math.sin(t) ** round] as Point2
     })
   return [...arc(a + out, b + out), ...arc(a - into, b - into).reverse()]
-}
-
-/** A bow: two loops either side of a knot, `width` across and `height` tall, facing +Z. */
-function bow(width: number, height: number): Point2[] {
-  const w = width / 2
-  const h = height / 2
-  return [
-    [0.12 * w, 0.25 * h],
-    [0.75 * w, h],
-    [w, 0.55 * h],
-    [w, -0.55 * h],
-    [0.75 * w, -h],
-    [0.12 * w, -0.25 * h],
-    [-0.12 * w, -0.25 * h],
-    [-0.75 * w, -h],
-    [-w, -0.55 * h],
-    [-w, 0.55 * h],
-    [-0.75 * w, h],
-    [-0.12 * w, 0.25 * h],
-  ]
 }
 
 /** A tube laid from one point to another (`pointing`), tapering from `bottom` to `top`; `sides` for a slender one seen small. */
@@ -157,7 +124,7 @@ function Doll({ at, colour }: { at: Vec3; colour: Colours }) {
       />
       {/* The sailor collar over the shoulders, and its bow at the front. */}
       <Turned profile={[[0, 0], [0.145, 0], [0.145, 0.015], [0.09, 0.06], [0, 0.065]]} at={[0, collar, 0]} sides={16} color={colour.blue} />
-      <Extruded shape={bow(0.13, 0.065)} depth={0.025} at={[0, collar, 0.13]} rot={[-0.25, 0, 0]} color={colour.blue} bevel={0.006} />
+      <Extruded shape={bowOutline(0.13, 0.065)} depth={0.025} at={[0, collar, 0.13]} rot={[-0.25, 0, 0]} color={colour.blue} bevel={0.006} />
       <Blob radius={0.018} at={[0, collar, 0.142]} color={colour.blue} />
       {/* Puffed sleeves, and white arms hanging a little out from her sides, with mitten hands. */}
       {[-1, 1].map((s) => (
@@ -231,7 +198,7 @@ function Head({ colour }: { colour: Colours }) {
       />
       {/* The band over her crown, and its bow at one side. */}
       <Extruded shape={band(hair[0] / 2, hair[1] / 2, HAIR_ROUND, 0.014, 0.03)} depth={0.06} at={[0, y, hairZ + 0.01]} color={colour.blue} bevel={0.006} />
-      <Extruded shape={bow(0.16, 0.08)} depth={0.03} at={[0.15, y + hair[1] / 2 + 0.03, hairZ + 0.06]} rot={[-0.35, 0.3, 0.35]} color={colour.blue} bevel={0.007} />
+      <Extruded shape={bowOutline(0.16, 0.08)} depth={0.03} at={[0.15, y + hair[1] / 2 + 0.03, hairZ + 0.06]} rot={[-0.35, 0.3, 0.35]} color={colour.blue} bevel={0.007} />
       {/* Red eyes, lit at every hour, each with a glint; pink cheeks; a small smile. */}
       {[-1, 1].map((s) => (
         <group key={s}>
@@ -240,7 +207,7 @@ function Head({ colour }: { colour: Colours }) {
           <Blob radius={0.038} squash={[1, 0.5, 0.25]} at={[s * 0.14, eyeY - 0.06, faceFront - 0.002]} color={colour.blush} outline={false} />
         </group>
       ))}
-      <Extruded shape={smile(0.1, 0.013)} depth={0.012} at={[0, eyeY - 0.09, faceFront + 0.002]} color={colour.hair} bevel={0.003} outline={false} />
+      <Extruded shape={smileOutline(0.1, 0.013)} depth={0.012} at={[0, eyeY - 0.09, faceFront + 0.002]} color={colour.hair} bevel={0.003} outline={false} />
     </group>
   )
 }

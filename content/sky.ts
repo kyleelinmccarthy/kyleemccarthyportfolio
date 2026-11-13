@@ -64,6 +64,60 @@ export const landmark = {
 } as const
 
 /**
+ * The people on the planet: the guide (the owner) and the visitor's own
+ * character (`content/characters.ts`), who stand at each place. Their skin,
+ * hair and clothes come from here, named so the characters' descriptions read
+ * as words rather than hex values. Soft, as the landmark palette is: no flat
+ * primaries, and the darks are indigo rather than black, so even black
+ * clothes read as painted.
+ */
+export const people = {
+  /** Skin tones, light to deep. */
+  skin: {
+    porcelain: '#F5DCCD',
+    peach: '#F0A983',
+    olive: '#D1A57B',
+    golden: '#C48D60',
+    brown: '#93603F',
+    deep: '#5F3B2B',
+  },
+  /** Hair, including silver and grey. */
+  hair: {
+    black: '#2E2632',
+    espresso: '#4A3328',
+    chestnut: '#7A4426',
+    honey: '#D3A863',
+    silver: '#C9CAD3',
+    grey: '#8F8E96',
+  },
+  /** The coloured part of an eye, where a look gives one (otherwise the eyes are the palette's indigo). */
+  eyes: {
+    blueGrey: '#5F86AE',
+    hazel: '#8A6B3E',
+  },
+  /** Clothes, shoes and the small things worn: a belt's buckle, glasses' frames, a nose ring. */
+  cloth: {
+    /** Near-black, for black trousers, boots and a belt: deep indigo, never black. */
+    ink: '#1E1C2D',
+    navy: '#28315F',
+    denim: '#57729F',
+    slate: '#6F7891',
+    charcoal: '#45465A',
+    teal: '#2F9C93',
+    mustard: '#D3A443',
+    plum: '#7E4E79',
+    sage: '#7FA383',
+    forest: '#3F6F55',
+    lilac: '#B7A2DA',
+    rust: '#B9643F',
+    cream: '#F3E6CF',
+    white: '#F7F3F9',
+    tan: '#9C7352',
+    silver: '#CDD0DA',
+  },
+} as const
+
+/**
  * The small life on the planet: trees, background buildings, routes and the
  * paddleboarder. Everything here is muted, so it sits behind the landmarks.
  * A traveller on a route takes the colour of the district it leaves

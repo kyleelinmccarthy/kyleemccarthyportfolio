@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useRef, type RefObject } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { Vector3, type Camera } from 'three'
 import { constellations } from '@/content/sky'
 import type { District, Place } from '@/content/types'
@@ -37,14 +37,13 @@ import { PHONE_WIDTH, type Quality } from '@/lib/world/quality'
 import { CLOUD_SEEDS, FAR_DRIFT, SKY_RADIUS, constellationAnchor, constellationPoints, farCloudSpheres } from '@/lib/world/starfield'
 import { groundOf } from '@/lib/world/terrain'
 import type { RigReport } from './CameraRig'
-import { HUD_AWAY, useLabelMeasures, useLabelTaps, useLabelsCleanup, useReadout, type ProjectorState } from './labelHooks'
+import { HUD_AWAY, useLabelGestures, useLabelMeasures, useLabelTaps, useLabelsCleanup, useReadout, type ProjectorState } from './labelHooks'
+import { projectToScreen } from './screenProject'
 import { freshWritten, writeLabel, type Written } from './labelWrite'
 import { lookUniforms } from './lookUniforms'
 
 /** The readout changes at most this often, in seconds: it is read, not watched. */
 const READOUT_EVERY = 0.1
-/** A label is drawn only while its anchor is on the screen. */
-const ON_SCREEN = 1
 /** A tag's size until it has been measured: about a place's. */
 const TAG_GUESS: TagSize = { width: 170, height: 38 }
 /** A constellation's name hides once at least this share of its stars is behind a far cloud. */
@@ -87,19 +86,11 @@ interface LabelProjectorProps {
   quality: Quality
 }
 
-const ndc = new Vector3()
 const ahead = new Vector3()
 const focus = { x: 0, y: 0, behind: false, inView: false }
 
-/** A point in the world on the screen, written into `out`: where it falls, whether it is behind the camera and whether it is in view. */
-function project(at: Vector3, camera: Camera, size: TagSize, out: ScreenPoint & { behind?: boolean; inView?: boolean }) {
-  ndc.copy(at).project(camera)
-  out.x = (ndc.x * 0.5 + 0.5) * size.width
-  out.y = (-ndc.y * 0.5 + 0.5) * size.height
-  out.behind = ndc.z > 1
-  out.inView = ndc.z < 1 && Math.abs(ndc.x) < ON_SCREEN && Math.abs(ndc.y) < ON_SCREEN
-  return out as ScreenPoint & { behind: boolean; inView: boolean }
-}
+/** A point in the world on the screen (`projectToScreen`, shared with the guide's bubble). */
+const project = projectToScreen
 
 /**
  * Pins the HTML labels (see `Labels`) to the planet. Each frame it projects
@@ -149,6 +140,7 @@ export function LabelProjector({ places, districts, placeId, rig, quality }: Lab
   const measured = useLabelMeasures()
   const readout = useReadout(places.length, districts.length, placeId !== null)
   useLabelTaps()
+  useLabelGestures(useThree((s) => s.gl.domElement))
   const state = useRef<ProjectorState>({ away: false, landmark: false, layer: null })
   useLabelsCleanup(state)
 

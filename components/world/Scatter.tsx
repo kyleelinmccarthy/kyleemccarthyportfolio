@@ -5,7 +5,7 @@ import { BufferAttribute, BufferGeometry } from 'three'
 import { landmark, scatter } from '@/content/sky'
 import type { District, Place } from '@/content/types'
 import type { Quality } from '@/lib/world/quality'
-import { SCATTER_SEEDS, scatterBlocks, scatterTrees } from '@/lib/world/scatter'
+import { sceneryLayout } from '@/lib/world/scatter'
 import { SCATTER_LINES, scatterMeshes, type PlacedMesh } from '@/lib/world/scatterShapes'
 import { celMaterial, contactShadowMaterial, glassMaterial, outlineShellMaterial } from './materials'
 
@@ -40,8 +40,8 @@ function solid(mesh: PlacedMesh): BufferGeometry {
  */
 export function Scatter({ districts, places, quality }: { districts: District[]; places: Place[]; quality: Quality }) {
   const meshes = useMemo(() => {
-    const buildings = scatterBlocks(SCATTER_SEEDS.blocks, districts, places)
-    const trees = scatterTrees(SCATTER_SEEDS.trees, districts, places, buildings)
+    // The one layout, shared with the camera, which keeps out of these very buildings and trees.
+    const { buildings, trees } = sceneryLayout(districts, places)
     return scatterMeshes(trees, buildings, districts)
   }, [districts, places])
 

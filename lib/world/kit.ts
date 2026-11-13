@@ -1265,6 +1265,58 @@ export function flowerOutline(petals: number, outer: number, inner: number): Poi
   })
 }
 
+/**
+ * A ribbon bow seen from the front, round its middle: two loops `width`
+ * across and `height` tall either side of a pinched knot, from the knot's
+ * upper right round the right loop, through the knot and round the left. A
+ * pattern's bow, a gift's, a hair ribbon's (the Doll's, and the band's on
+ * her collar). Nothing for a size that is not usable.
+ */
+export function bowOutline(width: number, height: number): Point2[] {
+  const w = nonNegative(width) / 2
+  const h = nonNegative(height) / 2
+  if (!(w > 0 && h > 0) || !Number.isFinite(w + h)) return []
+  return [
+    [0.12 * w, 0.25 * h],
+    [0.75 * w, h],
+    [w, 0.55 * h],
+    [w, -0.55 * h],
+    [0.75 * w, -h],
+    [0.12 * w, -0.25 * h],
+    [-0.12 * w, -0.25 * h],
+    [-0.75 * w, -h],
+    [-w, -0.55 * h],
+    [-w, 0.55 * h],
+    [-0.75 * w, h],
+    [-0.12 * w, 0.25 * h],
+  ]
+}
+
+/**
+ * A smile seen from the front: a thin crescent `width` across, `thick` toward
+ * its middle and tapering to its upturned ends, round the middle of the
+ * circle its arc is cut from (its lowest point 0.35 of `width` below it). A
+ * face's mouth (the Doll's, and every character's). Nothing for a size that
+ * is not usable.
+ */
+export function smileOutline(width: number, thick: number): Point2[] {
+  const r = nonNegative(width) / 2
+  const t = nonNegative(thick)
+  if (!(r > 0 && t > 0) || !Number.isFinite(r + t)) return []
+  const steps = 8
+  // The lower edge: an arc from one upturned end round under the middle to the other.
+  const lower = Array.from({ length: steps + 1 }, (_, k) => {
+    const a = Math.PI * 1.15 + (k / steps) * Math.PI * 0.7
+    return [r * Math.cos(a), r * 0.7 * Math.sin(a)] as Point2
+  })
+  // The upper edge, back along it, drawn in a little and lifted, thickest in the middle.
+  const upper = lower
+    .slice()
+    .reverse()
+    .map(([x, y]) => [x * 0.86, y * 0.86 + t * (1 - Math.abs(x) / r) + t * 0.35] as Point2)
+  return [...lower, ...upper]
+}
+
 /* ───────────── rings, beams, water and flags ───────────── */
 
 /**
@@ -1313,6 +1365,105 @@ export function ringMesh(radius: number, thickness: number, sides: number, aroun
 
 /** How strongly a ring catches the edge light, as a share of a bevel's. */
 export const RING_EDGE = 0.35
+
+/** A `Swept`'s limits: the most steps along it and round it; and how strongly it catches the edge light, as a share of a bevel's (a ribbon is round all over, and much of that light would wash its colour out). */
+export const SWEPT = { steps: 96, sides: 16, edge: 0.08 } as const
+
+/** The point `t` of the way (0 to 1) along the smooth curve through `points` (a Catmull-Rom spline, its ends held). */
+function alongCurve(points: Vector3[], t: number, into: Vector3): Vector3 {
+  const last = points.length - 1
+  const x = Math.min(Math.max(t, 0), 1) * last
+  const i = Math.min(Math.floor(x), last - 1)
+  const u = x - i
+  const [p0, p1, p2, p3] = [points[Math.max(i - 1, 0)], points[i], points[i + 1], points[Math.min(i + 2, last)]]
+  const blend = (a: number, b: number, c: number, d: number) => 0.5 * (2 * b + (c - a) * u + (2 * a - 5 * b + 4 * c - d) * u * u + (3 * b - a - 3 * c + d) * u * u * u)
+  return into.set(blend(p0.x, p1.x, p2.x, p3.x), blend(p0.y, p1.y, p2.y, p3.y), blend(p0.z, p1.z, p2.z, p3.z))
+}
+
+/**
+ * A `Swept`: a soft ribbon whose middle runs along the smooth curve through
+ * `path`, its cross-section an ellipse `widths[i]` ([across, thick]) at the
+ * path's i-th point and shading smoothly between: a lock of hair, a scarf's
+ * tail, a tail, a vine. Its thin side faces `facing` as nearly as the curve
+ * allows, so a ribbon hanging down a head lies flat against it. Both ends are
+ * closed; a width of nothing brings an end to a point. `sides` steps round
+ * it, `steps` along it. Fewer than two points, a point that is not a number, or a
+ * ribbon with no width anywhere draws nothing.
+ */
+export function sweptMesh(path: Vec3[], widths: Point2[], facing: Vec3, sides: number, steps: number): MeshData {
+  const points = path.filter((p) => p.every(Number.isFinite)).map((p) => new Vector3(...p))
+  if (points.length < 2 || points.length !== path.length || widths.length !== path.length) return emptyMesh()
+  const s = Math.min(SWEPT.sides, Math.max(6, sideCount(sides, 8)))
+  const m = Math.min(SWEPT.steps, Math.max(points.length - 1, sideCount(steps, (points.length - 1) * 3)))
+  const half = widths.map(([w, d]) => [nonNegative(w) / 2, nonNegative(d) / 2] as Point2)
+  if (!half.some(([a, b]) => a > 1e-6 && b > 1e-6)) return emptyMesh()
+  const face = new Vector3(...facing)
+  if (!(face.lengthSq() > 1e-12) || !facing.every(Number.isFinite)) face.set(0, 0, 1)
+  face.normalize()
+
+  const ring = s + 1
+  const count = (m + 1) * ring + 2
+  const positions = new Float32Array(count * 3)
+  const normals = new Float32Array(count * 3)
+  const [c, ahead, behind, T, N, B, n] = [new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3()]
+  const lastN = new Vector3()
+  const ends: Array<{ at: Vector3; out: Vector3 }> = []
+  for (let i = 0; i <= m; i++) {
+    const t = i / m
+    alongCurve(points, t, c)
+    T.copy(alongCurve(points, t + 0.5 / m, ahead)).sub(alongCurve(points, t - 0.5 / m, behind))
+    if (!(T.lengthSq() > 1e-16)) T.set(0, -1, 0)
+    T.normalize()
+    // The thin side toward `facing`, square to the curve; where the curve runs along `facing`, as it was a step before.
+    N.copy(face).addScaledVector(T, -face.dot(T))
+    if (!(N.lengthSq() > 1e-6)) N.copy(lastN).addScaledVector(T, -lastN.dot(T))
+    if (!(N.lengthSq() > 1e-6)) N.set(T.y, -T.x, 0)
+    if (!(N.lengthSq() > 1e-6)) N.set(0, T.z, -T.y)
+    lastN.copy(N.normalize())
+    B.crossVectors(T, N)
+    // Its width here, between the path's points.
+    const x = t * (points.length - 1)
+    const k = Math.min(Math.floor(x), points.length - 2)
+    const a = half[k][0] + (half[k + 1][0] - half[k][0]) * (x - k)
+    const b = half[k][1] + (half[k + 1][1] - half[k][1]) * (x - k)
+    for (let j = 0; j <= s; j++) {
+      const angle = (j / s) * Math.PI * 2
+      const [ca, sa] = j === s ? [1, 0] : [Math.cos(angle), Math.sin(angle)]
+      const v = (i * ring + j) * 3
+      positions.set([c.x + a * ca * B.x + b * sa * N.x, c.y + a * ca * B.y + b * sa * N.y, c.z + a * ca * B.z + b * sa * N.z], v)
+      // An ellipse's normal; on a ribbon drawn to a point, straight out from its middle.
+      n.set(0, 0, 0).addScaledVector(B, b * ca).addScaledVector(N, a * sa)
+      if (!(n.lengthSq() > 1e-16)) n.set(0, 0, 0).addScaledVector(B, ca).addScaledVector(N, sa)
+      n.normalize()
+      normals.set([n.x, n.y, n.z], v)
+    }
+    // Each end is closed by one point just past it, as far as the ribbon is thin there.
+    if (i === 0) ends.push({ at: c.clone().addScaledVector(T, -Math.min(a, b)), out: T.clone().negate() })
+    if (i === m) ends.push({ at: c.clone().addScaledVector(T, Math.min(a, b)), out: T.clone() })
+  }
+  const poles = [(m + 1) * ring, (m + 1) * ring + 1]
+  ends.forEach(({ at, out }, e) => {
+    positions.set([at.x, at.y, at.z], poles[e] * 3)
+    normals.set([out.x, out.y, out.z], poles[e] * 3)
+  })
+
+  const index = new Uint32Array(m * s * 6 + s * 6)
+  let w = 0
+  for (let i = 0; i < m; i++) {
+    for (let j = 0; j < s; j++) {
+      const p = i * ring + j
+      const q = p + ring
+      index.set([p, q, p + 1, p + 1, q, q + 1], w)
+      w += 6
+    }
+  }
+  for (let j = 0; j < s; j++) {
+    index.set([poles[0], j, j + 1, poles[1], m * ring + j + 1, m * ring + j], w)
+    w += 6
+  }
+  const mesh = { positions, normals, bevel: new Float32Array(count).fill(SWEPT.edge), index }
+  return finiteMesh(mesh) ? mesh : emptyMesh()
+}
 
 /**
  * How a lighthouse beam shows: by day a soft, pale shaft (`alpha` its

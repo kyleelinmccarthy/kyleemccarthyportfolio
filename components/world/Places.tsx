@@ -34,7 +34,7 @@ export function OnGround({ at, districts, children }: { at: LatLon; districts: D
 }
 
 /** The hit sphere round a landmark, in model units: wide enough to catch on a small one, as tall as a tall one. */
-const hitRadius = (place: Place) => Math.max(0.7, place.height * 0.62)
+export const hitRadius = (place: Place) => Math.max(0.7, place.height * 0.62)
 
 /** Marks a place's label as hovered, or not. */
 function mark(id: string, hot: boolean) {

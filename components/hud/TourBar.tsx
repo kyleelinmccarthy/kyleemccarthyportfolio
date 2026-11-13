@@ -1,24 +1,18 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import type { CSSProperties } from 'react'
 import { districts, placeById, tourOrder } from '@/content/world'
+import { keyIsThePages } from '@/lib/keys'
 import { placeHref } from '@/lib/world/route'
 import { tourIndex, tourStep } from '@/lib/world/tour'
 
-const pad = (n: number) => String(n).padStart(2, '0')
+/** Set on the bar, to the place's id, once its keys are listened for: what a test waits on before pressing one. */
+export const KEYS_READY = 'data-keys-for'
 
-function isEditable(target: EventTarget | null): boolean {
-  if (!(target instanceof HTMLElement)) return false
-  return (
-    target.isContentEditable ||
-    target instanceof HTMLInputElement ||
-    target instanceof HTMLTextAreaElement ||
-    target instanceof HTMLSelectElement
-  )
-}
+const pad = (n: number) => String(n).padStart(2, '0')
 
 /**
  * The stops the arrow keys have asked for and not yet reached, in order. A
@@ -34,6 +28,7 @@ let requested: string[] = []
  */
 export function TourBar({ placeId }: { placeId: string }) {
   const router = useRouter()
+  const bar = useRef<HTMLElement>(null)
 
   // Arriving at the last stop asked for, or somewhere else entirely, ends the run of presses.
   useEffect(() => {
@@ -47,7 +42,8 @@ export function TourBar({ placeId }: { placeId: string }) {
       router.push(placeHref(to))
     }
     const onKey = (e: KeyboardEvent) => {
-      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || isEditable(e.target)) return
+      // Not while typing, and not while the character picker is open: its Escape closes it and nothing more.
+      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || !keyIsThePages(e.target)) return
       if (e.key === 'ArrowRight') step(1)
       else if (e.key === 'ArrowLeft') step(-1)
       else if (e.key === 'Escape') {
@@ -56,7 +52,12 @@ export function TourBar({ placeId }: { placeId: string }) {
       }
     }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    const el = bar.current
+    el?.setAttribute(KEYS_READY, placeId)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      el?.removeAttribute(KEYS_READY)
+    }
   }, [router, placeId])
 
   const here = tourIndex(placeId)
@@ -65,6 +66,7 @@ export function TourBar({ placeId }: { placeId: string }) {
 
   return (
     <nav
+      ref={bar}
       aria-label="Tour"
       data-covers-labels
       className="fixed bottom-8 left-1/2 z-[8] flex -translate-x-1/2 items-center gap-2 max-[820px]:bottom-auto max-[820px]:left-3.5 max-[820px]:right-3.5 max-[820px]:top-3.5 max-[820px]:translate-x-0"

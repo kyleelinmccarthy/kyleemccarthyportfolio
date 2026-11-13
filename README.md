@@ -91,7 +91,40 @@ Look at every captured picture before committing it.
 | [`components/world/`](components/world/) | The 3D scene: planet, sky, clouds, camera rig, labels, effects. |
 | [`components/world/models/`](components/world/models/) | The landmarks and the modelling kit (`kit.tsx`) they are built from. **Read its [README](components/world/models/README.md) before touching a model**: the parts table, the rules, the footprints and the budgets. |
 | [`components/panels/`](components/panels/), [`components/hud/`](components/hud/) | The panel beside a place, and the heading, tour bar, index and legend over the planet. |
-| [`lib/world/`](lib/world/) | Pure maths for the world (geometry, camera poses, labels, scatter, the kit's meshes): three's maths classes only, no React and no DOM, so it is all unit tested. |
+| [`lib/world/`](lib/world/) | Pure maths for the world (geometry, camera poses, labels, scatter, the kit's meshes): three's maths classes only, no React and no DOM, so it is all unit tested. Every number the hands and the keys move the camera by is in [`lib/world/gestures.ts`](lib/world/gestures.ts). |
+
+### Moving round the world
+
+The same gestures work with a mouse, a trackpad and a finger.
+
+- **On the planet:** drag to turn it (the ground stays under the finger at
+  every zoom, and a flick coasts on), pinch or scroll to zoom. It turns by
+  itself after nine seconds left alone, but not while zoomed in.
+- **At a place:** drag across to walk round the landmark and up or down to
+  tilt; pinch, scroll or pinch the trackpad to come in or go out. Over the
+  canvas, Ctrl + wheel and a trackpad pinch zoom the camera, not the page
+  (Ctrl + plus and minus still zoom the page, and the panel's text zooms as
+  usual). Zooming out stops at the furthest; to go back to the planet, let it
+  rest there and then zoom out again (one long pinch or a flick never leaves
+  by accident; the keys never leave, Esc does). Double-click or double-tap to
+  return to the view the place opens on. A drag or pinch that starts on a map
+  label moves the planet too; a tap on a label follows it.
+
+Keys at a place (with focus anywhere on the page but a form field, and not
+while the character picker is open):
+
+| Key | Does |
+|---|---|
+| `←` `→` | The previous or next place on the tour |
+| `Esc` | Back to the planet |
+| `[` `]` | Walk round the landmark |
+| `{` `}` (Shift + `[` `]`) | Tilt down or up |
+| `-` and `+` (or `=`) | Zoom out or in |
+| `0` | Back to the view the place opens on |
+
+On a phone a place's details open as a sheet showing just its name; press
+or drag its handle up for the rest, and the landmark stays centred above it.
+Without JavaScript the sheet is open in full.
 
 ### Budgets
 

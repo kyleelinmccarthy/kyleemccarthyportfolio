@@ -13,6 +13,9 @@ const WorldCanvas = dynamic(() => import('./WorldCanvas').then((m) => m.WorldCan
 /** waiting: for the page to settle. loading: the 3D code is on its way. running: the canvas is drawing. */
 type Status = 'waiting' | 'loading' | 'running' | 'failed'
 
+/** Set on <html> once the world cannot be drawn (no WebGL, or the canvas failed). */
+export const WORLD_NONE = 'data-world-none'
+
 /** The longest the page waits for an idle moment before fetching the 3D code anyway. */
 const IDLE_TIMEOUT_MS = 2000
 
@@ -100,6 +103,13 @@ export function WorldLoader({ districts, places }: { districts: District[]; plac
   }, [])
 
   const fail = useCallback(() => setStatus('failed'), [])
+
+  // Without the world the guide cannot speak from it: the page shows her line itself (`.guide-note`, globals.css).
+  useEffect(() => {
+    if (status !== 'failed') return
+    document.documentElement.setAttribute(WORLD_NONE, '')
+    return () => document.documentElement.removeAttribute(WORLD_NONE)
+  }, [status])
   const ready = useCallback(() => setStatus((now) => (now === 'loading' ? 'running' : now)), [])
 
   return (

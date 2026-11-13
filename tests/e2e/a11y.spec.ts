@@ -71,6 +71,20 @@ test.describe('axe sweep', () => {
   }
 })
 
+test('no axe violations with the guide’s bubble showing and the character picker open', async ({ page }) => {
+  test.slow()
+  for (const route of ['/', '/places/beacon']) {
+    await page.goto(route)
+    await settled(page, 'day')
+    await expect(page.locator('#guide-said')).not.toHaveText('', { timeout: 30_000 })
+    expect(await violationsOn(page), `${route}, the bubble showing`).toBeNull()
+    await page.getByRole('button', { name: 'Change your character' }).click()
+    await expect(page.getByRole('dialog', { name: 'Pick your character' })).toBeVisible()
+    expect(await violationsOn(page), `${route}, the picker open`).toBeNull()
+    await page.keyboard.press('Escape')
+  }
+})
+
 test('heading order is logical with a single h1', async ({ page }) => {
   await page.goto('/')
   await expect(page.locator('h1')).toHaveCount(1)

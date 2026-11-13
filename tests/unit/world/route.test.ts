@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { districtFromSearch, districtHref, placeHref, placeIdFromPath } from '@/lib/world/route'
+import { districtFromSearch, districtHref, placeHref, placeIdFromPath, visitHref } from '@/lib/world/route'
 import { districts, places } from '@/content/world'
 
 describe('place URLs', () => {
@@ -40,5 +40,13 @@ describe('district links', () => {
 
   it('round-trips every district', () => {
     for (const d of districts) expect(districtFromSearch(districtHref(d.id).slice(1)), d.id).toBe(d.id)
+  })
+})
+
+describe('pressing a landmark', () => {
+  it('goes to its place, unless the visitor is already there: then nothing happens (no new history entry, no flight)', () => {
+    expect(visitHref('beacon', null)).toBe('/places/beacon')
+    expect(visitHref('beacon', 'aura')).toBe('/places/beacon')
+    expect(visitHref('beacon', 'beacon')).toBeNull()
   })
 })

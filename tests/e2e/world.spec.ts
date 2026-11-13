@@ -1,9 +1,10 @@
-import { drivesTheCanvas, expect, rig, test, type Page } from './canvas'
+import { drivesTheCanvas, expect, expectThePageHeld, pageAt, recordRigModes, rig, test, touchOf, type Page } from './canvas'
 import { PerspectiveCamera, type Vector3 } from 'three'
 // Relative imports: Playwright does not know the `@/` alias.
 import { districts, places } from '../../content/world'
 import { MODEL_SCALE, orbitPose, overviewDistance } from '../../lib/world/camera'
 import { angleDeg, dirOf } from '../../lib/world/geo'
+import { ORBIT_NEAREST, orbitRotateSpeed } from '../../lib/world/gestures'
 import { landmarkBox, landmarkTop, tagOverLandmark } from '../../lib/world/labels'
 import { groundOf, isLand } from '../../lib/world/terrain'
 
@@ -112,17 +113,6 @@ test('clicks pass through empty sky to the canvas while the controls still work'
   await page.getByRole('button', { name: 'Index' }).click()
   await expect(page.locator('#index')).toBeVisible()
 })
-
-/** Records every mode the rig reports from the page's first moment, so a passing one is not missed. */
-async function recordRigModes(page: Page) {
-  await page.addInitScript(() => {
-    const seen: string[] = ((window as unknown as { rigModes: string[] }).rigModes = [])
-    new MutationObserver((records) => {
-      for (const r of records) seen.push((r.target as Element).getAttribute('data-rig-mode') ?? '')
-    }).observe(document, { subtree: true, attributes: true, attributeFilter: ['data-rig-mode'] })
-  })
-  return () => page.evaluate(() => (window as unknown as { rigModes: string[] }).rigModes)
-}
 
 test('an island link turns the planet to it and leaves it in orbit', async ({ page }) => {
   drivesTheCanvas()
@@ -508,7 +498,8 @@ test.describe('the labels landmark', () => {
     // Turn the planet 132 degrees west, to open sea between the islands, and come in as close as the controls allow:
     // no district label (too close) and no place on screen.
     const { width, height } = page.viewportSize()!
-    const dx = -((132 / 360) * height) / 0.55
+    // A drag the canvas's height turns it `orbitRotateSpeed` turns at the overview's distance.
+    const dx = -((132 / 360) * height) / orbitRotateSpeed(overviewDistance(width / height))
     const from = await canvasPointNear(page, width * 0.7, height * 0.5)
     await page.mouse.move(from.x, from.y)
     await page.mouse.down()
@@ -517,12 +508,13 @@ test.describe('the labels landmark', () => {
     // Zoom in over the canvas itself, not over a label.
     const middle = await canvasPointNear(page, width * 0.5, height * 0.5)
     await page.mouse.move(middle.x, middle.y)
-    // Wheel until the controls stop at their nearest (the readout's zoom stops growing at 2.1×).
-    for (let i = 0; i < 60 && !/2\.1×/.test((await page.locator('#view-readout').textContent()) ?? ''); i++) {
+    // Wheel until the controls stop at their nearest (the readout's zoom stops growing there).
+    const nearest = `${(overviewDistance(width / height) / ORBIT_NEAREST).toFixed(1)}×`
+    for (let i = 0; i < 80 && !((await page.locator('#view-readout').textContent()) ?? '').includes(nearest); i++) {
       await page.mouse.wheel(0, -200)
       await page.waitForTimeout(80)
     }
-    await expect(page.locator('#view-readout')).toContainText(/2\.1×/, { timeout: 20000 })
+    await expect(page.locator('#view-readout')).toContainText(nearest, { timeout: 20000 })
     await expect.poll(async () => (await state()).links, { timeout: 20000 }).toBe(0)
     expect((await state()).role).toBeNull()
     await expect(page.getByRole('navigation', { name: 'Places on the map' })).toHaveCount(0)
@@ -570,13 +562,17 @@ test.describe('with reduced motion, from afar', () => {
     const tag = label.locator('.lm-tag')
     await expect(tag).toBeVisible()
     const box = (await tag.boundingBox())!
-    // Off the landmark onto bare canvas beside it, a moment there, then up onto the tag, as a hand often goes: the label is
-    // still there when the pointer arrives.
+    // Off the landmark onto bare canvas beside it, a moment there, then up onto the tag, as a hand often goes: the
+    // label is still there when the pointer arrives. The moment is not a fixed time (under a full run each pointer
+    // event waits on a busy main thread, and a fixed pause could use the 700ms grace up on its own): it lasts until the
+    // canvas has seen the pointer leave the landmark (its cursor is no longer a hand), with the label still lit by the
+    // grace. Then straight up onto the tag.
     const beside = { x: box.x + box.width / 2, y: target.y }
     expect(await page.evaluate(({ x, y }) => document.elementFromPoint(x, y)?.tagName, beside)).toBe('CANVAS')
-    await page.mouse.move(beside.x, beside.y, { steps: 3 })
-    await page.waitForTimeout(250)
-    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 3 })
+    await page.mouse.move(beside.x, beside.y)
+    await expect(page.locator('canvas')).not.toHaveCSS('cursor', 'pointer')
+    await expect(label).toHaveAttribute('data-hot', '')
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
     await expect(tag).toBeVisible()
     expect(await page.evaluate(({ x, y }) => document.elementFromPoint(x, y)?.closest('.lm')?.id, { x: box.x + box.width / 2, y: box.y + box.height / 2 })).toBe(
       `label-${target.id}`,
@@ -643,11 +639,14 @@ test.describe('on a phone, from afar', () => {
     await page.goto('/')
     await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-autorotate', 'false')
-    // Held still (reduced motion: no coasting), a 60px diagonal drag turns the planet the same way every time.
+    // Held still (reduced motion: no coasting), a short diagonal drag turns the planet the same way every time. It was
+    // found as 60px when a drag turned the planet at a fixed 0.55; the speed now follows the distance
+    // (`orbitRotateSpeed`), so the drag is scaled to make the same turn.
+    const step = 6 * (0.55 / orbitRotateSpeed(overviewDistance(320 / 900)))
     const from = await canvasPointNear(page, 160, 450)
     await page.mouse.move(from.x, from.y)
     await page.mouse.down()
-    for (let i = 1; i <= 10; i++) await page.mouse.move(from.x - 6 * i, from.y + 6 * i)
+    for (let i = 1; i <= 10; i++) await page.mouse.move(from.x - step * i, from.y + step * i)
     await page.mouse.up()
     const collapsed = page.locator('#labels a.lm-district[data-on][data-tagless]')
     // This view is known to crowd at least one district: zero would mean the rule was never reached.
@@ -723,6 +722,84 @@ test.describe('on a phone, at a place', () => {
     await expect.poll(() => isOpen(first)).toBe(true)
     await first.locator('.lm-tag').tap()
     await expect(page).toHaveURL(href)
+  })
+})
+
+test.describe('a gesture that starts on a map label', () => {
+  /** The readout's view line: where the camera looks from. It changes as the planet turns. */
+  const view = (page: Page) => page.locator('#view-readout').evaluate((el) => el.lastElementChild?.textContent ?? '')
+
+  test('a drag from a district’s label turns the planet and goes nowhere; a click on it still follows it', async ({ page, isMobile }) => {
+    drivesTheCanvas()
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto('/')
+    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(rig(page)).toHaveAttribute('data-rig-autorotate', 'false')
+    const tag = page.locator('#labels a.lm-district[data-on]:not([data-tagless]) .lm-tag').first()
+    await expect(tag).toBeVisible()
+    const href = (await tag.evaluate((el) => el.closest('a')!.getAttribute('href')))!
+    const box = (await tag.boundingBox())!
+    const from = { x: box.x + box.width / 2, y: box.y + box.height / 2 }
+    const before = await view(page)
+    if (isMobile) await (await touchOf(page)).drag(from, 80, 0)
+    else {
+      await page.mouse.move(from.x, from.y)
+      await page.mouse.down()
+      await page.mouse.move(from.x + 80, from.y, { steps: 8 })
+      await page.mouse.up()
+    }
+    await expect.poll(() => view(page)).not.toBe(before)
+    await page.waitForTimeout(300)
+    await expect(page).toHaveURL('/')
+    // A tap or click on a label still goes where it says: from the start, with the planet as it opened.
+    await page.reload()
+    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    const again = page.locator(`#labels a[href="${href}"] .lm-tag`)
+    await expect(again).toBeVisible()
+    if (isMobile) await again.tap()
+    else await again.click()
+    await expect(page).toHaveURL(href)
+  })
+})
+
+test.describe('on a phone, on the planet, by touch', () => {
+  test.skip(({ isMobile }) => !isMobile, 'touch input on the phone profile')
+
+  test('the ground stays under the finger, a pinch zooms in step with the fingers, and the page never moves', async ({ page }) => {
+    drivesTheCanvas()
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto('/')
+    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(rig(page)).toHaveAttribute('data-rig-autorotate', 'false')
+    const still = await pageAt(page)
+    await expectThePageHeld(page)
+    const touch = await touchOf(page)
+    const { width, height } = page.viewportSize()!
+    const pins = () =>
+      page.locator('#labels a[data-on] .lm-pin').evaluateAll((els) =>
+        els.map((el) => {
+          const r = el.getBoundingClientRect()
+          return { id: el.closest('a')!.id, x: r.left + r.width / 2, y: r.top + r.height / 2 }
+        }),
+      )
+    // A pin near the middle, and a finger on bare canvas just below it.
+    const pin = (await pins()).sort((a, b) => Math.hypot(a.x - width / 2, a.y - height / 2) - Math.hypot(b.x - width / 2, b.y - height / 2))[0]
+    expect(pin).toBeTruthy()
+    const from = await canvasPointNear(page, pin.x, pin.y + 30)
+    await touch.drag(from, 60, 0)
+    // Held still under reduced motion, so the pin ends where the finger left it: about 60px across (a pin stands on its
+    // landmark's top, a little nearer the camera than the ground, so a little more).
+    await expect.poll(async () => (await pins()).find((p) => p.id === pin.id)?.x ?? NaN).toBeGreaterThan(pin.x + 45)
+    expect((await pins()).find((p) => p.id === pin.id)!.x).toBeLessThan(pin.x + 80)
+    expect(await pageAt(page)).toEqual(still)
+
+    // Fingers twice as far apart: twice as close to the ground, near enough (the readout's zoom is the overview's distance over the camera's).
+    const zoom = async () => Number(/(\d+\.\d)×/.exec((await page.locator('#view-readout').textContent()) ?? '')?.[1])
+    const before = await zoom()
+    const centre = await canvasPointNear(page, width / 2, height / 2)
+    await touch.pinch(centre, 110, 220)
+    await expect.poll(zoom).toBeGreaterThan(before * 1.5)
+    expect(await pageAt(page)).toEqual(still)
   })
 })
 

@@ -42,6 +42,7 @@ import {
   clothWave,
   gableRoofParts,
   ringMesh,
+  sweptMesh,
   waterMesh,
   geometryKey,
   outlineScale,
@@ -141,6 +142,7 @@ export {
   TRIANGLE_BUDGET,
   archOutline,
   blend,
+  bowOutline,
   ellipseOutline,
   flameOutline,
   flowerOutline,
@@ -152,6 +154,7 @@ export {
   turnedTop,
   outlineScale,
   roundedRectOutline,
+  smileOutline,
   starOutline,
 } from '@/lib/world/kit'
 export type { Opening, Point2, RoofStyle, Vec3 } from '@/lib/world/kit'
@@ -481,6 +484,25 @@ export function Ring({ radius, thickness, sides = 8, around, ...rest }: Solid & 
   const steps = around ?? roundSides(radius) + 8
   const geometry = useShared(geometryKey('ring', radius, thickness, sides, steps), () => fromMeshData(ringMesh(radius, thickness, sides, steps)))
   return <Inked geometry={geometry} {...rest} />
+}
+
+/**
+ * A soft ribbon along the smooth curve through `path` (points from `at`): a
+ * lock of hair, a scarf's tail, a tail, a vine. `widths` gives its
+ * cross-section at each of the path's points, [across, thick]; nothing brings
+ * an end to a point. Its thin side faces `facing` as nearly as the curve
+ * allows. One smooth closed shape, so it shades and outlines as a single
+ * form, with a line as fine as it is broad.
+ */
+export function Swept({ path, widths, facing = [0, 0, 1], sides = 8, steps, ...rest }: Solid & { path: Vec3[]; widths: Point2[]; facing?: Vec3; sides?: number; steps?: number }) {
+  const along = steps ?? (path.length - 1) * 3
+  const geometry = useShared(geometryKey('swept', path.flat(), widths.flat(), facing, sides, along), () => fromMeshData(sweptMesh(path, widths, facing, sides, along)))
+  // Its line by how broad it is, not by how long.
+  const members = useMemo<Vec3>(() => {
+    const broad = Math.max(0, ...widths.map(([w]) => (Number.isFinite(w) ? w : 0)))
+    return [broad, broad, broad]
+  }, [widths])
+  return <Inked geometry={geometry} members={members} {...rest} />
 }
 
 /**

@@ -678,6 +678,27 @@ function varyRoofs(city: Building[]): void {
   }
 }
 
+const layoutCache = new WeakMap<Place[], Map<District[], { buildings: Building[]; trees: Tree[] }>>()
+
+/**
+ * The planet's buildings and trees, as drawn (`Scatter`) and as the camera at a
+ * place keeps out of (`sceneryObstacles`): one layout from the scatter's seeds,
+ * laid out once for the same places and districts and shared by both, so the
+ * camera measures against what is actually there, and arriving at a place does
+ * not lay it all out again.
+ */
+export function sceneryLayout(districts: District[], places: Place[]): { buildings: Building[]; trees: Tree[] } {
+  let byDistricts = layoutCache.get(places)
+  if (!byDistricts) layoutCache.set(places, (byDistricts = new Map()))
+  let layout = byDistricts.get(districts)
+  if (!layout) {
+    const buildings = scatterBlocks(SCATTER_SEEDS.blocks, districts, places)
+    layout = { buildings, trees: scatterTrees(SCATTER_SEEDS.trees, districts, places, buildings) }
+    byDistricts.set(districts, layout)
+  }
+  return layout
+}
+
 /* ───────────── routes and the paddleboarder ───────────── */
 
 /** The six routes, each from the district it leaves to the one it reaches. */

@@ -6,6 +6,8 @@ import { dirOf, surfaceFrame } from '@/lib/world/geo'
 import { footprintRadius } from '@/lib/world/kit'
 import { groundOf } from '@/lib/world/terrain'
 import { CLOUD_CLEAR, CLOUD_SEEDS, cloudAt, easeShare, lowClouds, placeView, puffMatrix, viewClearance } from '@/lib/world/starfield'
+import { FOCUS_REACH, farDistance, nearDistance, orbitPose } from '@/lib/world/gestures'
+import { placeOrbit } from '@/lib/world/rig'
 
 /*
  * Item 9: a low cloud never comes between a place's camera and its landmark,
@@ -104,6 +106,39 @@ describe('low clouds at a place', () => {
             if (centre.distanceTo(eye) - r < CLOUD_CLEAR.near) faults.push(`cloud ${c} crowds the camera at step ${s}`)
             for (const target of targets) if (toSegment(centre, eye, target) < r) faults.push(`cloud ${c} cuts the view at step ${s}`)
           }
+        }
+      }
+    }
+    expect(faults).toEqual([])
+  })
+
+  it.each(places.map((p) => [p.id, p] as const))('never cut the view of %s from as low, as high, as near or as far as the visitor can take the camera', (_, place) => {
+    const view = placeView(place, districts, places)
+    const orbit = placeOrbit(place, districts, places)
+    const ground = groundOf(place.at, districts)
+    const targets = lookedAt(place)
+    const extremes = [
+      [orbit.lowest, nearDistance(orbit, orbit.lowest)],
+      [orbit.lowest, farDistance(orbit)],
+      [orbit.elevation, farDistance(orbit)],
+      [FOCUS_REACH.high, nearDistance(orbit, FOCUS_REACH.high)],
+      [FOCUS_REACH.high, farDistance(orbit)],
+    ]
+    const eyes = extremes.flatMap(([e, d]) => Array.from({ length: 8 }, (_, k) => orbitPose(orbit, (k / 8) * Math.PI * 2, e, d).position))
+    const reach = Math.max(...[...eyes, ...targets].map((p) => p.distanceTo(ground)))
+    const m = new Matrix4()
+    const faults: string[] = []
+    for (const [c, cloud] of clouds.entries()) {
+      for (let s = 0; s < 120 && faults.length < 3; s++) {
+        const t = ((s / 120) * Math.PI * 2) / cloud.speed
+        const at = cloudAt(cloud, t, view)
+        if (at.scale === 0) continue
+        for (const puff of cloud.puffs) {
+          puffMatrix(at.matrix, puff, m)
+          const centre = new Vector3().setFromMatrixPosition(m)
+          const r = m.getMaxScaleOnAxis()
+          if (centre.distanceTo(ground) - r > reach) continue
+          for (const eye of eyes) for (const target of targets) if (toSegment(centre, eye, target) < r) faults.push(`cloud ${c} cuts the view at step ${s}`)
         }
       }
     }

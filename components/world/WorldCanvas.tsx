@@ -5,16 +5,21 @@ import { createPortal } from 'react-dom'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Canvas, useFrame } from '@react-three/fiber'
 import type { District, Place } from '@/content/types'
+import { companions, useCompanions } from '@/components/hud/companionStore'
+import { GuideLayer } from '@/components/hud/GuideLayer'
 import { Hint } from '@/components/hud/Hint'
 import { Labels } from '@/components/hud/Labels'
 import { useTheme } from '@/components/hud/ThemeProvider'
 import { CAMERA_FOV } from '@/lib/world/camera'
+import type { GuideRoute } from '@/lib/world/guide'
 import { DOWNGRADE_SAMPLES, hookedRenderScale, postProcessing, shouldDowngrade, testHooksOn, type Quality } from '@/lib/world/quality'
-import { districtFromSearch, placeHref, placeIdFromPath } from '@/lib/world/route'
+import { districtFromSearch, placeIdFromPath, visitHref } from '@/lib/world/route'
 import { placeView } from '@/lib/world/starfield'
 import { Ambient } from './Ambient'
+import { BubbleProjector } from './BubbleProjector'
 import { CameraRig, type RigReport } from './CameraRig'
 import { Clouds } from './Clouds'
+import { Companions } from './Companions'
 import { Effects } from './Effects'
 import { LabelProjector } from './LabelProjector'
 import { Lights } from './Lights'
@@ -25,6 +30,7 @@ import { NightSky } from './NightSky'
 import { PauseWhenHidden } from './PauseWhenHidden'
 import { Places } from './Places'
 import { Planet } from './Planet'
+import { PortraitCanvas } from './Portrait'
 import { Scatter } from './Scatter'
 import { SkyDome } from './SkyDome'
 
@@ -111,6 +117,10 @@ export function WorldCanvas({ districts, places, quality: initialQuality, reduce
   const placeId = placeIdFromPath(usePathname())
   const search = useSearchParams()
   const district = placeId === null ? districtFromSearch(search.toString()) : null
+  const route: GuideRoute = placeId !== null ? { kind: 'place', id: placeId } : district !== null ? { kind: 'district', id: district } : { kind: 'overview' }
+  const { guest } = useCompanions()
+  // A test hook, read once, and only in an e2e build: one character alone instead of the world (`PortraitCanvas`).
+  const [portrait] = useState(() => (TEST_HOOKS && typeof window !== 'undefined' ? (window.__characterPortrait ?? null) : null))
   // At a place, what its visitor sees the landmark across: the low clouds, the routes and their travellers keep out of it.
   const focusedView = useMemo(() => {
     const place = placeId === null ? undefined : places.find((p) => p.id === placeId)
@@ -131,7 +141,8 @@ export function WorldCanvas({ districts, places, quality: initialQuality, reduce
   const leave = useCallback(() => router.push('/'), [router])
   const visit = useCallback(
     (id: string) => {
-      if (id !== placeId) router.push(placeHref(id))
+      const href = visitHref(id, placeId)
+      if (href !== null) router.push(href)
     },
     [router, placeId],
   )
@@ -171,6 +182,12 @@ export function WorldCanvas({ districts, places, quality: initialQuality, reduce
 
   // The shared materials outlive any one mesh; they go when the world does.
   useEffect(() => disposeMaterials, [])
+
+  // The visitor's stored choices for the characters, read once on the client.
+  useEffect(() => companions.load(), [])
+  const pickGuest = useCallback(() => companions.openPicker(), [])
+
+  if (portrait) return <PortraitCanvas request={portrait} onReady={onReady} />
 
   return (
     <>
@@ -213,6 +230,8 @@ export function WorldCanvas({ districts, places, quality: initialQuality, reduce
           <Scatter districts={districts} places={places} quality={quality} />
           <Ambient districts={districts} places={places} quality={quality} still={reducedMotion} view={focusedView} />
           <Places places={places} districts={districts} onVisit={visit} />
+          <Companions places={places} districts={districts} placeId={placeId} guest={guest} onPickGuest={pickGuest} />
+          <BubbleProjector places={places} districts={districts} placeId={placeId} guest={guest} rig={rigNow} />
           {effects === 'none' ? null : <Effects bloom={effects === 'bloom'} />}
         </Canvas>
       </div>
@@ -221,6 +240,7 @@ export function WorldCanvas({ districts, places, quality: initialQuality, reduce
             <>
               <Labels districts={districts} places={places} />
               {placeId === null && hint !== 'gone' ? <Hint fading={hint === 'fading'} /> : null}
+              <GuideLayer route={route} />
             </>,
             document.body,
           )

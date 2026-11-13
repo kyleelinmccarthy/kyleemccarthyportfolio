@@ -54,8 +54,18 @@ declare global {
     __worldRenderScale?: number
     /** A test hook: the number of frames the world has drawn. Counted only in an e2e build. */
     __worldFrames?: number
+    /**
+     * A test hook: at a place, the camera's swing, tilt (radians) and distance from the landmark's middle, and whether it
+     * rests at the furthest so a new gesture out would leave (`rigArmed`). Written only in an e2e build.
+     */
+    __rigView?: { azimuth: number; elevation: number; distance: number; armed: boolean }
     /** A test hook: how many times the map labels have measured the page's layout. Counted only in an e2e build. */
     __labelMeasures?: number
+    /**
+     * A test hook: draw one character alone instead of the world, for the picker's pictures and for review
+     * (`PortraitCanvas`; scripts/capture-characters.ts). Read once, and honoured only in an e2e build.
+     */
+    __characterPortrait?: { look: 'guide' | { age: string; style: string; skin: string }; sky?: 'morning' | 'afternoon' | 'evening' | 'night'; turn?: number; frame?: number }
   }
 }
 

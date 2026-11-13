@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type RefObject } from 'react'
 import { COVERS_LABELS, LABELS_ID, type ScreenRect, type TagSize } from '@/lib/world/labels'
+import { labelPressIsTheMaps } from '@/lib/world/pointers'
 import { testHooksOn } from '@/lib/world/quality'
 
 /** Marks a covering part of the page that fades when the camera is in close. */
@@ -132,6 +133,118 @@ export function useLabelTaps(): void {
       closeAll(null)
     }
   }, [])
+}
+
+/** How long after a press on a label turned into the map's a click on that label is swallowed, in milliseconds. */
+const FORWARDED_CLICK_MS = 600
+
+/**
+ * A drag or a pinch that begins on a map label moves the planet, as one that
+ * begins on the canvas does; a tap still follows the label's link, and the
+ * keyboard is untouched. Labels take no touch gestures of their own
+ * (`touch-action: none`), so while a press on one is still a tap it is the
+ * label's; once it moves further than a click may, or at once if another
+ * finger is already down (`labelPressIsTheMaps`), it is handed to the canvas:
+ * a pointerdown is sent there from where the press began, and the canvas's
+ * handlers capture the pointer, so every move and the lift after go to them.
+ * The click the lift would then make on the label is swallowed.
+ */
+export function useLabelGestures(canvas: HTMLCanvasElement): void {
+  useEffect(() => {
+    const down = new Set<number>()
+    const pending = new Map<number, { x: number; y: number; init: PointerEventInit }>()
+    // When each pointer's press was handed to the map: only that pointer's click is swallowed, not another label's tap.
+    const handedOver = new Map<number, number>()
+    const labelOf = (target: EventTarget | null) => (target instanceof Element ? target.closest(`#${LABELS_ID} .lm`) : null)
+    const handOver = (init: PointerEventInit) => {
+      handedOver.set(init.pointerId ?? 0, performance.now())
+      canvas.dispatchEvent(new PointerEvent('pointerdown', init))
+    }
+    const press = (e: PointerEvent) => {
+      // The first finger of a new touch (a real one: the map's own hand-overs are not): any pointer still counted is
+      // one whose lift was lost.
+      if (e.isTrusted && e.isPrimary && e.pointerType !== 'mouse') forgetAll()
+      down.add(e.pointerId)
+      if (!labelOf(e.target) || (e.pointerType === 'mouse' && e.button !== 0)) return
+      const init: PointerEventInit = {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        pointerId: e.pointerId,
+        pointerType: e.pointerType,
+        isPrimary: e.isPrimary,
+        clientX: e.clientX,
+        clientY: e.clientY,
+        screenX: e.screenX,
+        screenY: e.screenY,
+        button: e.button,
+        buttons: e.buttons,
+        width: e.width,
+        height: e.height,
+        pressure: e.pressure,
+      }
+      if (labelPressIsTheMaps(0, down.size - 1)) handOver(init)
+      else pending.set(e.pointerId, { x: e.clientX, y: e.clientY, init })
+    }
+    const move = (e: PointerEvent) => {
+      const p = pending.get(e.pointerId)
+      if (!p || !labelPressIsTheMaps(Math.hypot(e.clientX - p.x, e.clientY - p.y), 0)) return
+      pending.delete(e.pointerId)
+      handOver(p.init)
+    }
+    const lift = (e: PointerEvent) => {
+      down.delete(e.pointerId)
+      pending.delete(e.pointerId)
+    }
+    // Lifts that never arrive (the window losing focus, the page hidden, capture lost) must not leave a pointer
+    // counted as down: the next tap on a label would count as a pinch's second finger and lose its click.
+    const forgetAll = () => {
+      down.clear()
+      pending.clear()
+    }
+    const hidden = () => {
+      if (document.visibilityState === 'hidden') forgetAll()
+    }
+    // Capture lost is a lift, unless it is the label letting go of a press it has just handed to the map.
+    const lostCapture = (e: PointerEvent) => {
+      if (!handedOver.has(e.pointerId)) lift(e)
+    }
+    // A press handed to the map is not also a click on the label. A keyboard's click (detail 0) always goes through.
+    const click = (e: MouseEvent) => {
+      if (e.detail === 0 || !labelOf(e.target)) return
+      // The click names its pointer where the browser says (a click is a PointerEvent in Chromium and Firefox).
+      const id = (e as Partial<PointerEvent>).pointerId
+      const at = id !== undefined && id >= 0 ? handedOver.get(id) : Math.max(0, ...handedOver.values())
+      if (at === undefined || performance.now() - at > FORWARDED_CLICK_MS) return
+      if (id !== undefined) handedOver.delete(id)
+      e.preventDefault()
+      e.stopPropagation()
+    }
+    // A link is draggable: a drag from a label would take the pointer away from the map.
+    const dragStart = (e: DragEvent) => {
+      if (labelOf(e.target)) e.preventDefault()
+    }
+    document.addEventListener('pointerdown', press, true)
+    document.addEventListener('pointermove', move, true)
+    document.addEventListener('pointerup', lift, true)
+    document.addEventListener('pointercancel', lift, true)
+    document.addEventListener('click', click, true)
+    document.addEventListener('dragstart', dragStart, true)
+    document.addEventListener('lostpointercapture', lostCapture, true)
+    document.addEventListener('visibilitychange', hidden)
+    window.addEventListener('blur', forgetAll)
+    return () => {
+      document.removeEventListener('pointerdown', press, true)
+      document.removeEventListener('pointermove', move, true)
+      document.removeEventListener('pointerup', lift, true)
+      document.removeEventListener('pointercancel', lift, true)
+      document.removeEventListener('click', click, true)
+      document.removeEventListener('dragstart', dragStart, true)
+      document.removeEventListener('lostpointercapture', lostCapture, true)
+      document.removeEventListener('visibilitychange', hidden)
+      window.removeEventListener('blur', forgetAll)
+    }
+  }, [canvas])
 }
 
 /** What the projector last set on the page: the HUD faded, the layer a landmark, and the layer itself. */

@@ -13,6 +13,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "capture:poster": "tsx scripts/capture-poster.ts",
+    "capture:characters": "tsx scripts/capture-characters.ts",
     "capture:screenshots": "tsx scripts/capture-screenshots.ts",
     "capture:realm": "tsx scripts/capture-realm.ts",
     "import:art": "tsx scripts/import-art.ts",
