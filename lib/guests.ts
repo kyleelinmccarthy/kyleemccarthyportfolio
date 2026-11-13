@@ -61,3 +61,6 @@ export const guestPicture = (choice: GuestChoice) => `/world/characters/${guestK
 
 /** The guide's face, for her folded bubble: captured with the guests' pictures. */
 export const GUIDE_FACE = '/world/characters/guide-face.webp'
+
+/** The guide's whole figure, as a guest's picture is, for her welcome when its live canvas cannot be had: captured with them. */
+export const GUIDE_FIGURE = '/world/characters/guide.webp'

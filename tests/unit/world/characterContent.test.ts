@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { existsSync, readdirSync, statSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { GUIDE_FACE, everyGuest, guestKey, guestLook, guestPicture } from '@/lib/guests'
+import { GUIDE_FACE, GUIDE_FIGURE, everyGuest, guestKey, guestLook, guestPicture } from '@/lib/guests'
 import { DEFAULT_GUEST, defaultStand, guestOptions, guideLook, hairForSkin, standAt, wardrobe, type Look, type Outfit } from '@/content/characters'
 import { guide } from '@/content/guide'
 import { people } from '@/content/sky'
@@ -137,7 +137,7 @@ describe('the visitor’s choices', () => {
   })
 
   it('keeps no picture the picker cannot show', () => {
-    const wanted = new Set([...everyGuest().map((c) => `${guestKey(c)}.webp`), GUIDE_FACE.split('/').pop()])
+    const wanted = new Set([...everyGuest().map((c) => `${guestKey(c)}.webp`), GUIDE_FACE.split('/').pop(), GUIDE_FIGURE.split('/').pop()])
     const dir = resolve(process.cwd(), 'public/world/characters')
     for (const file of readdirSync(dir)) expect(wanted.has(file), file).toBe(true)
   })
@@ -152,6 +152,17 @@ describe('the characters’ looks', () => {
     const meta = await sharp(file).metadata()
     expect(meta.format).toBe('webp')
     expect([meta.width, meta.height]).toEqual([96, 96])
+  })
+
+  it('has a picture of the guide’s whole figure, for the welcome when no second canvas can be had: a 192 by 240 WebP like the looks’', async () => {
+    const { default: sharp } = await import('sharp')
+    const file = resolve(process.cwd(), 'public', `.${GUIDE_FIGURE}`)
+    expect(existsSync(file), `${GUIDE_FIGURE} is missing: run npm run capture:characters`).toBe(true)
+    expect(statSync(file).size).toBeLessThan(40_000)
+    const meta = await sharp(file).metadata()
+    expect(meta.format).toBe('webp')
+    expect([meta.width, meta.height]).toEqual([192, 240])
+    expect(meta.hasAlpha).toBe(true)
   })
 
   it('names only colours the people palette has', () => {

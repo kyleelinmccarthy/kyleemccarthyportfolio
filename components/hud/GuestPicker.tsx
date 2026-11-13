@@ -8,7 +8,7 @@ import { people } from '@/content/sky'
 import { GUEST_FIELDS, guestPicture, type GuestField } from '@/lib/guests'
 import { Modal, useModal } from '@/components/primitives/Modal'
 import { companions, useCompanions } from './companionStore'
-import { CHANGE_CHARACTER_ID } from './GuideBubble'
+import { CHANGE_CHARACTER_ID } from './ChangeCharacter'
 
 /** The size the picture of the character is drawn at, in CSS pixels (its file is 192 by 240: one and a half times that). */
 const PICTURE = { width: 128, height: 160 }

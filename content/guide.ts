@@ -69,6 +69,10 @@ export const guide = {
     show: 'Show guide hints',
     /** Opens the character picker. */
     change: 'Change your character',
+    /** The visitor's character beside her greeting: who it is, over the button's word. DRAFT for Kylee's review. */
+    you: 'This is you',
+    /** The word on the character control: under "This is you", and beside the visitor's own small picture in her bubble. DRAFT for Kylee's review. */
+    changeShort: 'Change',
     /** On the folded bubble: opens what she says. */
     open: 'What Kylee says',
     /** Folds the bubble down to her face. */

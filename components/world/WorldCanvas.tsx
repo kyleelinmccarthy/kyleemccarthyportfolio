@@ -240,7 +240,7 @@ export function WorldCanvas({ districts, places, quality: initialQuality, reduce
             <>
               <Labels districts={districts} places={places} />
               {placeId === null && hint !== 'gone' ? <Hint fading={hint === 'fading'} /> : null}
-              <GuideLayer route={route} />
+              <GuideLayer route={route} reducedMotion={reducedMotion} />
             </>,
             document.body,
           )

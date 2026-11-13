@@ -7,11 +7,11 @@ import { guide } from '@/content/guide'
 import { BUBBLE_ID } from '@/lib/world/bubble'
 import { guideSays, type GuideAction, type GuideRoute, type GuideSays } from '@/lib/world/guide'
 import { GUIDE_FACE } from '@/lib/guests'
+import { welcomeShows } from '@/lib/world/welcome'
+import { ChangeCharacter } from './ChangeCharacter'
 import { companions, useCompanions } from './companionStore'
 import { useTheme } from './ThemeProvider'
-
-/** The id of the button that opens the character picker: focus comes back to it when the picker closes. */
-export const CHANGE_CHARACTER_ID = 'change-character'
+import { Welcome } from './Welcome'
 
 /** A key for a route, so a new route (and only a new route) asks the guide again. */
 const routeKey = (route: GuideRoute) => (route.kind === 'overview' ? 'overview' : `${route.kind}:${route.id}`)
@@ -107,14 +107,31 @@ function Face() {
  * The guide's speech bubble, as the eye sees it (a screen reader hears her
  * from the layer's live region, `GuideLayer`): her line as real text and what
  * it offers as real links and buttons, with the "Change your character" button
- * and the button that hides her hints for the visit at its corner. At a place
+ * (`ChangeCharacter`: the visitor's own picture) and the button that hides
+ * her hints for the visit at its corner. At a place
  * the canvas pins it over her head (`BubbleProjector`); over the planet, where
  * she cannot be seen, or while it is folded, it is docked in the HUD
  * (`data-docked`, and `data-pin="off"` tells the canvas not to pin it). On a
  * phone at a place it starts folded to a chip with her face, and opens on a
  * tap. With hints hidden it is that chip alone, which brings them back.
+ *
+ * While her greeting is open the welcome pair stands beside it (`Welcome`,
+ * `welcomeShows`), and the character control is the one under the visitor's
+ * figure there, in place of the bubble's own.
  */
-export function GuideBubble({ route, says, closed, onAlone }: { route: GuideRoute; says: GuideSays | null; closed: boolean; onAlone(): void }) {
+export function GuideBubble({
+  route,
+  says,
+  closed,
+  onAlone,
+  reducedMotion = false,
+}: {
+  route: GuideRoute
+  says: GuideSays | null
+  closed: boolean
+  onAlone(): void
+  reducedMotion?: boolean
+}) {
   const { hintsOff } = useCompanions()
   const narrow = useNarrow()
   const key = routeKey(route)
@@ -125,67 +142,66 @@ export function GuideBubble({ route, says, closed, onAlone }: { route: GuideRout
   const chip = quiet || folded
   // On a phone there is seldom room beside her for the bubble: it stays in the dock, folded or open.
   const docked = chip || narrow || says?.anchor === 'hud'
+  const welcome = welcomeShows({ says, open: !chip })
   return (
-    <div
-      id={BUBBLE_ID}
-      className="guide-bubble"
-      data-where={route.kind === 'place' ? 'place' : 'overview'}
-      data-docked={docked ? '' : undefined}
-      data-pin={docked ? 'off' : undefined}
-      data-chip={chip ? '' : undefined}
-    >
-      {chip ? (
-        hintsOff ? (
-          <button type="button" className="guide-chip" onClick={() => companions.setHints(true)}>
-            <Face />
-            <span>{guide.controls.show}</span>
-          </button>
-        ) : says && !closed ? (
-          <button type="button" className="guide-chip" aria-expanded={false} onClick={() => setChosen({ route: key, folded: false })}>
-            <Face />
-            <span>{guide.controls.open}</span>
-          </button>
+    <>
+      <Welcome shows={welcome} reducedMotion={reducedMotion} />
+      <div
+        id={BUBBLE_ID}
+        className="guide-bubble"
+        data-where={route.kind === 'place' ? 'place' : 'overview'}
+        data-docked={docked ? '' : undefined}
+        data-pin={docked ? 'off' : undefined}
+        data-chip={chip ? '' : undefined}
+      >
+        {chip ? (
+          hintsOff ? (
+            <button type="button" className="guide-chip" onClick={() => companions.setHints(true)}>
+              <Face />
+              <span>{guide.controls.show}</span>
+            </button>
+          ) : says && !closed ? (
+            <button type="button" className="guide-chip" aria-expanded={false} onClick={() => setChosen({ route: key, folded: false })}>
+              <Face />
+              <span>{guide.controls.open}</span>
+            </button>
+          ) : (
+            <span className="guide-chip guide-chip-plain">
+              <Face />
+            </span>
+          )
         ) : (
-          <span className="guide-chip guide-chip-plain">
-            <Face />
-          </span>
-        )
-      ) : (
-        says && (
-          <>
-            <p key={says.key} className="guide-line">
-              {says.line.title && <strong className="guide-title">{says.line.title} </strong>}
-              {says.line.text}
-              {says.line.aside && <span className="guide-aside"> {says.line.aside}</span>}
-            </p>
-            {says.actions.length > 0 && (
-              <div className="guide-actions">
-                {says.actions.map((action) => (
-                  <Action key={action.kind} action={action} onAlone={onAlone} />
-                ))}
-              </div>
-            )}
-          </>
-        )
-      )}
-      <div className="guide-tools">
-        <button id={CHANGE_CHARACTER_ID} type="button" aria-haspopup="dialog" aria-label={guide.controls.change} title={guide.controls.change} className="guide-tool" onClick={() => companions.openPicker()}>
-          <svg aria-hidden viewBox="0 0 16 16" width="15" height="15">
-            <circle cx="8" cy="5" r="3" fill="none" stroke="currentColor" strokeWidth="1.6" />
-            <path d="M2.5 14.5c0-3 2.5-5 5.5-5s5.5 2 5.5 5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-          </svg>
-        </button>
-        {!chip && narrow && (
-          <button type="button" className="guide-tool" aria-expanded aria-label={guide.controls.fold} title={guide.controls.fold} onClick={() => setChosen({ route: key, folded: true })}>
-            <span aria-hidden>▾</span>
-          </button>
+          says && (
+            <>
+              <p key={says.key} className="guide-line">
+                {says.line.title && <strong className="guide-title">{says.line.title} </strong>}
+                {says.line.text}
+                {says.line.aside && <span className="guide-aside"> {says.line.aside}</span>}
+              </p>
+              {says.actions.length > 0 && (
+                <div className="guide-actions">
+                  {says.actions.map((action) => (
+                    <Action key={action.kind} action={action} onAlone={onAlone} />
+                  ))}
+                </div>
+              )}
+            </>
+          )
         )}
-        {!chip && (
-          <button type="button" className="guide-tool" aria-label={guide.controls.hide} title={guide.controls.hide} onClick={() => companions.setHints(false)}>
-            <span aria-hidden>✕</span>
-          </button>
-        )}
+        <div className="guide-tools">
+          {!welcome && <ChangeCharacter kind="tool" word={chip} />}
+          {!chip && narrow && (
+            <button type="button" className="guide-tool" aria-expanded aria-label={guide.controls.fold} title={guide.controls.fold} onClick={() => setChosen({ route: key, folded: true })}>
+              <span aria-hidden>▾</span>
+            </button>
+          )}
+          {!chip && (
+            <button type="button" className="guide-tool" aria-label={guide.controls.hide} title={guide.controls.hide} onClick={() => companions.setHints(false)}>
+              <span aria-hidden>✕</span>
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
