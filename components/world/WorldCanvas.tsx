@@ -4,11 +4,13 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { createPortal } from 'react-dom'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Canvas, useFrame } from '@react-three/fiber'
+import { PETS_LIVE_AT } from '@/content/pets'
 import type { District, Place } from '@/content/types'
 import { companions, useCompanions } from '@/components/hud/companionStore'
 import { GuideLayer } from '@/components/hud/GuideLayer'
 import { Hint } from '@/components/hud/Hint'
 import { Labels } from '@/components/hud/Labels'
+import { PetLayer } from '@/components/hud/PetLayer'
 import { useTheme } from '@/components/hud/ThemeProvider'
 import { CAMERA_FOV } from '@/lib/world/camera'
 import type { GuideRoute } from '@/lib/world/guide'
@@ -28,6 +30,8 @@ import { DrawOnResize } from './DrawOnResize'
 import { disposeMaterials } from './materials'
 import { NightSky } from './NightSky'
 import { PauseWhenHidden } from './PauseWhenHidden'
+import { PetBubbleProjector } from './PetBubbleProjector'
+import { PetPresses } from './PetPresses'
 import { Places } from './Places'
 import { Planet } from './Planet'
 import { PortraitCanvas } from './Portrait'
@@ -109,7 +113,9 @@ function FrameWatch({ onSlow }: { onSlow(): void }) {
  * Once drawn, it also puts the map labels and the hint over the page. They are
  * HTML, outside the canvas (whose wrapper is hidden from assistive technology),
  * at the end of the body so they come after the page's own content in the tab
- * order. The canvas pins the labels to the planet (`LabelProjector`).
+ * order. The canvas pins the labels to the planet (`LabelProjector`). At the
+ * pets' place it also puts the pets' word bubble and live region over the
+ * page (`PetLayer`).
  */
 export function WorldCanvas({ districts, places, quality: initialQuality, reducedMotion, onReady, onFail }: WorldCanvasProps) {
   const { look } = useTheme()
@@ -229,9 +235,11 @@ export function WorldCanvas({ districts, places, quality: initialQuality, reduce
           <Planet districts={districts} quality={quality} />
           <Scatter districts={districts} places={places} quality={quality} />
           <Ambient districts={districts} places={places} quality={quality} still={reducedMotion} view={focusedView} />
-          <Places places={places} districts={districts} onVisit={visit} />
+          <Places places={places} districts={districts} onVisit={visit} open={placeId} />
           <Companions places={places} districts={districts} placeId={placeId} guest={guest} onPickGuest={pickGuest} />
           <BubbleProjector places={places} districts={districts} placeId={placeId} guest={guest} rig={rigNow} />
+          <PetPresses places={places} districts={districts} placeId={placeId} reducedMotion={reducedMotion} />
+          <PetBubbleProjector places={places} districts={districts} placeId={placeId} rig={rigNow} />
           {effects === 'none' ? null : <Effects bloom={effects === 'bloom'} />}
         </Canvas>
       </div>
@@ -241,6 +249,7 @@ export function WorldCanvas({ districts, places, quality: initialQuality, reduce
               <Labels districts={districts} places={places} />
               {placeId === null && hint !== 'gone' ? <Hint fading={hint === 'fading'} /> : null}
               <GuideLayer route={route} />
+              {placeId !== null && places.find((p) => p.id === placeId)?.model === PETS_LIVE_AT ? <PetLayer /> : null}
             </>,
             document.body,
           )
