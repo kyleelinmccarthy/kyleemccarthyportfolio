@@ -44,6 +44,8 @@ export interface Project {
   autoCapture?: boolean
   /** Button text to click before capturing, e.g. to enter a demo past a login screen. */
   captureClick?: string
+  /** Which of the site's themes the capture shows, for a site that follows the visitor's system: light unless it says dark. */
+  captureScheme?: 'light' | 'dark'
   /** Resume-grounded tech chips, rendered by StackChips on the project cards. */
   stack?: string[]
   isPersonal: boolean

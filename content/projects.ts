@@ -301,10 +301,11 @@ export const projects: Project[] = [
       'The home of my one-person game studio: both games, a mailing list for playtest invites, a contact form and a private admin with its own newsletter editor.',
     liveUrl: 'https://tinyfrenzygames.com/',
     autoCapture: true,
+    captureScheme: 'dark',
     media: {
       hero: {
         src: '/media/tiny-frenzy-games/hero.jpg',
-        alt: 'The Tiny Frenzy Games home page on a pale yellow background: a swirling galaxy-coloured tornado logo with a small black creature swinging from it, the line “One dev. All the frenzy.” and a My Games button',
+        alt: 'The Tiny Frenzy Games home page in its dark theme: on black, a swirling galaxy-coloured tornado logo with a small cream creature swinging from it, the line “One dev. All the frenzy.” and a My Games button',
       },
     },
     stack: ['Next.js', 'Drizzle', 'Neon Postgres', 'Cloudflare Workers'],

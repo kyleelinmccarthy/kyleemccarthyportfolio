@@ -32,6 +32,8 @@ async function main() {
   for (const p of targets) {
     try {
       console.log(`Capturing ${p.name} -> ${p.liveUrl}`)
+      // A site that follows the system's theme is shown in the one its project asks for.
+      await page.emulateMedia({ colorScheme: p.captureScheme ?? 'light' })
       await page.goto(p.liveUrl!, { waitUntil: 'networkidle', timeout: 45_000 })
       if (p.captureClick) {
         await page.getByRole('button', { name: p.captureClick, exact: true }).click()
