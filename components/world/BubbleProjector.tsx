@@ -141,6 +141,8 @@ export function BubbleProjector({ places, districts, placeId, guest: { age, styl
     fresh(written.current)
   }, [placeId])
 
+  // Whether the canvas, not the page, was placing the bubble at the last frame.
+  const pinning = useRef(false)
   useFrame(({ camera, size: viewSize }) => {
     if (!el.current?.isConnected) {
       el.current = document.getElementById(BUBBLE_ID)
@@ -151,7 +153,13 @@ export function BubbleProjector({ places, districts, placeId, guest: { age, styl
     // Over the planet, or docked by the page itself: nothing to pin. Whatever pinning left on it goes, once.
     if (!anchors || bubble.dataset.pin === 'off') {
       if (written.current.docked !== true || written.current.shown !== true) writeBubble(bubble, true, DOCKED, written.current)
+      pinning.current = false
       return
+    }
+    // The page has handed the bubble back (it was folded, or quiet) and has taken its own marks off it: everything is written afresh.
+    if (!pinning.current) {
+      fresh(written.current)
+      pinning.current = true
     }
     camera.updateMatrixWorld()
     const shown = (rig.current?.mode ?? 'orbit') !== 'fly'

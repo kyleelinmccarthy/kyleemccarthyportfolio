@@ -63,6 +63,19 @@ test.describe('the guide', () => {
     expect(await said(page).evaluate((el) => getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none' && !el.closest('#guide-bubble'))).toBe(true)
   })
 
+  test('at every stop the open bubble stands by her or in its dock, never loose in the page’s corner over her name', async ({ page }) => {
+    drivesTheCanvas()
+    for (const id of ['home', 'beacon', 'post']) {
+      await page.goto(`/places/${id}`)
+      await arrived(page, id)
+      // By her: the canvas has given it a place. Docked: the dock places it. Never neither.
+      await expect.poll(() => bubble(page).evaluate((el) => el.hasAttribute('data-docked') || (el as HTMLElement).style.transform !== ''), { timeout: 15_000 }).toBe(true)
+      const name = await page.locator('.hud-name').boundingBox()
+      const box = await bubble(page).boundingBox()
+      expect(box && name && box.x < name.x + name.width && box.x + box.width > name.x && box.y < name.y + name.height && box.y + box.height > name.y, `${id}: over her name`).toBe(false)
+    }
+  })
+
   test('on a phone at a place the bubble starts folded to her face, and opens on a tap', async ({ page }) => {
     drivesTheCanvas()
     await page.setViewportSize({ width: 412, height: 915 })
