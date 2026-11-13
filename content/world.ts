@@ -20,7 +20,7 @@ export const places: Place[] = [
   { id: 'nbs-website', district: 'works', name: 'NBS Website', descriptor: 'Company site, 66 pages rebuilt', at: { lat: 27, lon: -27 }, model: 'civic', height: 1.1, content: { kind: 'project', slug: 'nbs-website' } },
   { id: 'on-the-go', district: 'works', name: 'Also on the go', descriptor: 'Under construction', at: { lat: 16, lon: 2 }, model: 'construction', height: 2.2, content: { kind: 'collection', items: onTheGo } },
   { id: 'tiny-frenzy-games', district: 'frenzy', name: 'Tiny Frenzy Games', descriptor: 'Studio site', at: { lat: -1, lon: 60 }, model: 'studio', height: 1.5, content: { kind: 'project', slug: 'tiny-frenzy-games' } },
-  { id: 'eliminated', district: 'frenzy', name: 'Eliminated', descriptor: 'Party game, 2–8 players', at: { lat: -13, lon: 53 }, model: 'playground', height: 1.9, content: { kind: 'project', slug: 'eliminated' } },
+  { id: 'eliminated', district: 'frenzy', name: 'Eliminated', descriptor: 'Party game, 4–16 players', at: { lat: -13, lon: 53 }, model: 'playground', height: 1.9, content: { kind: 'project', slug: 'eliminated' } },
   { id: 'eliminated-site', district: 'frenzy', name: 'Eliminated — the website', descriptor: 'Marketing site and press kit', at: { lat: -19, lon: 67 }, model: 'billboard', height: 1.7, content: { kind: 'project', slug: 'eliminated-site' }, poster: '/media/eliminated/hero.jpg', posterSize: [920, 430] },
   { id: 'jimothy-and-pidge', district: 'frenzy', name: 'Jimothy & Pidge', descriptor: 'Shenanigans in Seattle', at: { lat: -5, lon: 74 }, model: 'alley', height: 2.5, content: { kind: 'project', slug: 'jimothy-and-pidge' }, weather: 'rain', poster: '/media/jimothy-and-pidge/hero.jpg', posterSize: [920, 430] },
   { id: 'kingdoms-and-crowns', district: 'hours', name: 'Kingdoms & Crowns', descriptor: 'Homeschool platform, new: the Realm', at: { lat: -24, lon: -96 }, model: 'castle', height: 2.3, content: { kind: 'project', slug: 'kingdoms-and-crowns' } },
@@ -42,8 +42,12 @@ export const districtOrder: District['id'][] = ['home', 'works', 'hours', 'frenz
 /** The districts as the visitor meets them: legend, index and tour. */
 export const tourDistricts: District[] = districtOrder.map((id) => districts.find((d) => d.id === id)!)
 
-/** The tour: district by district in `districtOrder`, each district's places as listed above. */
-export const tourOrder: string[] = tourDistricts.flatMap((d) => places.filter((p) => p.district === d.id).map((p) => p.id))
+/** Where the tour ends, whichever district it stands in: the letterbox, so writing to her comes after everything there is to see. */
+export const tourFinale = 'post'
+
+/** The tour: district by district in `districtOrder`, each district's places as listed above, and the finale last of all. */
+const byDistrict = tourDistricts.flatMap((d) => places.filter((p) => p.district === d.id).map((p) => p.id))
+export const tourOrder: string[] = [...byDistrict.filter((id) => id !== tourFinale), ...byDistrict.filter((id) => id === tourFinale)]
 
 export function placeById(id: string): Place | undefined {
   return places.find((p) => p.id === id)

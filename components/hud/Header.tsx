@@ -5,6 +5,7 @@ import { tourOrder } from '@/content/world'
 import { placeHref } from '@/lib/world/route'
 import { Greeting } from './Greeting'
 import { IndexButton } from './IndexDrawer'
+import { NameLogo } from './NameLogo'
 import { ThemeToggle } from './ThemeToggle'
 
 /**
@@ -14,9 +15,8 @@ import { ThemeToggle } from './ThemeToggle'
  * button on the home page (it opens the drawer) and a link to /#index elsewhere.
  */
 export function Header({ home }: { home: boolean }) {
-  const wordmark = `font-display font-extrabold leading-none tracking-[-0.012em] text-ink no-underline ${
-    home ? 'text-[31px] max-[820px]:text-[22px]' : 'text-[31px] max-[820px]:text-base'
-  }`
+  // The signature's hands run small for their size, so it is set larger than the print it replaced.
+  const wordmark = `m-0 block text-ink no-underline ${home ? 'text-[46px] max-[820px]:text-[34px]' : 'text-[46px] max-[820px]:text-[26px]'}`
   // A place page's second row is cramped on a phone, so its controls shrink.
   const compact = home ? '' : 'max-[820px]:px-2 max-[820px]:py-2 max-[820px]:text-[10px] max-[820px]:tracking-[0.06em]'
 
@@ -33,11 +33,13 @@ export function Header({ home }: { home: boolean }) {
         */}
         <div data-covers-labels className="hud-name">
           {home ? (
-            <h1 className={wordmark}>{site.name}</h1>
+            <h1 className={wordmark}>
+              <NameLogo />
+            </h1>
           ) : (
             <p className="m-0">
               <Link href="/" className={wordmark}>
-                {site.name}
+                <NameLogo />
               </Link>
             </p>
           )}

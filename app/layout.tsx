@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Bricolage_Grotesque, DM_Mono, DM_Sans } from 'next/font/google'
+import { Bricolage_Grotesque, DM_Mono, DM_Sans, Give_You_Glory, Sacramento } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { ThemeProvider } from '@/components/hud/ThemeProvider'
@@ -25,6 +25,19 @@ const mono = DM_Mono({
   weight: ['400', '500'],
   subsets: ['latin'],
   variable: '--font-mono',
+  display: 'swap',
+})
+// The two hands of the signature (`components/hud/NameLogo.tsx`), and nothing else.
+const signatureCaps = Give_You_Glory({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-signature-caps',
+  display: 'swap',
+})
+const signature = Sacramento({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-signature',
   display: 'swap',
 })
 
@@ -69,7 +82,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
       // Marks a build made for the e2e suite, which the suite checks for (see tests/e2e/global-setup.ts). Absent otherwise.
       data-e2e={testHooksOn(process.env.NEXT_PUBLIC_E2E) ? '' : undefined}
-      className={`${display.variable} ${sans.variable} ${mono.variable}`}
+      className={`${display.variable} ${sans.variable} ${mono.variable} ${signatureCaps.variable} ${signature.variable}`}
     >
       <head>
         {/* Set theme before first paint to prevent FOUC. */}

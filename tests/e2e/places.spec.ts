@@ -19,7 +19,7 @@ async function hydrated(page: Page) {
 test('the home page names her and lists every place', async ({ page }) => {
   await page.goto('/')
   await hydrated(page)
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Kylee McCarthy')
+  await expect(page.getByRole('heading', { level: 1, name: 'Kylee McCarthy', exact: true })).toBeVisible()
   await expect(page.getByText(hero.headline)).toBeVisible()
   await page.getByRole('button', { name: 'Index' }).click()
   await expect(page.locator('#index')).toBeVisible()

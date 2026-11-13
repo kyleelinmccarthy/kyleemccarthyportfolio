@@ -194,13 +194,13 @@ export const projects: Project[] = [
   {
     slug: 'eliminated',
     name: 'Eliminated',
-    descriptor: 'Party Game · 2–8 Players · Unity',
+    descriptor: 'Party Game · 4–16 Players · Unity',
     status: 'building',
     statusLabel: 'Coming soon to Steam',
     headline: 'A wholesome party game where everyone dies.',
     problem: 'I wanted to find out whether I could build a game end to end on my own.',
     built:
-      'Childhood playground games with elimination-show stakes, run by a sinister Game Master. Nine games for two to eight players: solo against bots, on the couch, or online. Lose, and you are neatly boxed up with a little pink bow.',
+      'Childhood playground games with elimination-show stakes, run by a sinister Game Master. Nine games for four to sixteen players: solo against bots, on the couch, or online. Lose, and you are neatly boxed up with a little pink bow.',
     media: {
       hero: {
         src: '/media/eliminated/hero.jpg',

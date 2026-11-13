@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { guide } from '@/content/guide'
-import { places, tourOrder } from '@/content/world'
+import { places, tourFinale, tourOrder } from '@/content/world'
 import { WAVE_SECONDS, announcedAs, guideSays, isWaving, shouldAnnounce, spoken, type GuideInput } from '@/lib/world/guide'
 import { tourStep } from '@/lib/world/tour'
 
@@ -119,8 +119,8 @@ describe('when the guide is quiet, and when a line is new', () => {
 
 describe('what a screen reader hears, and when', () => {
   it('hears a new line once, as plain text with her hello and the aside', () => {
-    const first = at('tattoo-designs', { firstArrival: true })!
-    expect(spoken(first)).toBe(`${guide.hello} ${guide.places['tattoo-designs']} ${guide.tour.last}`)
+    const first = at(tourFinale, { firstArrival: true })!
+    expect(spoken(first)).toBe(`${guide.hello} ${guide.places[tourFinale]} ${guide.tour.last}`)
     expect(shouldAnnounce(null, first)).toBe(true)
     expect(shouldAnnounce(announcedAs(first), first)).toBe(false)
   })

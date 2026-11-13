@@ -76,7 +76,7 @@ describe('the guide’s bubble', () => {
     show({ kind: 'place', id: 'beacon' })
     expect(screen.getByRole('status')).toHaveTextContent(guide.places.beacon)
     expect(screen.getByRole('link', { name: new RegExp(`^${guide.tour.next} ?: 403HQ$`) })).toHaveAttribute('href', '/places/403hq')
-    expect(screen.getByRole('link', { name: new RegExp(`^${guide.tour.back} ?: Send me a letter$`) })).toHaveAttribute('href', '/places/post')
+    expect(screen.getByRole('link', { name: new RegExp(`^${guide.tour.back} ?: Off the clock$`) })).toHaveAttribute('href', '/places/off-the-clock')
   })
 
   it('hides the hints for the visit when closed, and brings them back from the HUD', () => {

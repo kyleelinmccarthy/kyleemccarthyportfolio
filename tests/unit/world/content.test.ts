@@ -3,7 +3,7 @@ import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { jpegSize } from './jpeg'
 import { projects } from '@/content/projects'
-import { districts, places, tourOrder, placeById } from '@/content/world'
+import { districts, places, tourFinale, tourOrder, placeById } from '@/content/world'
 import { looks, greetings, constellations, welcome, dayHours } from '@/content/sky'
 import { onTheGo } from '@/content/onTheGo'
 
@@ -31,10 +31,10 @@ describe('world content', () => {
       : p.content.kind === 'collection' ? p.content.items.flatMap((i) => 'project' in i ? [i.project] : []) : [])
     expect([...shown].sort()).toEqual(projects.map((p) => p.slug).sort())
   })
-  it('tours every place exactly once, district by district in the numbered order, starting at home', () => {
+  it('tours every place exactly once, district by district in the numbered order, starting at home and ending at the letterbox', () => {
     expect([...tourOrder].sort()).toEqual(places.map((p) => p.id).sort())
-    expect(tourOrder[0]).toBe('home'); expect(tourOrder[1]).toBe('three-things'); expect(tourOrder.at(-1)).toBe('tattoo-designs')
-    const run = tourOrder.map((id) => placeById(id)!.district).filter((d, i, all) => d !== all[i - 1])
+    expect(tourOrder[0]).toBe('home'); expect(tourOrder[1]).toBe('three-things'); expect(tourOrder.at(-1)).toBe(tourFinale); expect(placeById(tourFinale)?.content.kind).toBe('contact')
+    const run = tourOrder.slice(0, -1).map((id) => placeById(id)!.district).filter((d, i, all) => d !== all[i - 1])
     expect(run).toEqual(['home', 'works', 'hours', 'frenzy', 'studio'])
   })
   it('gives every poster a file on disk and its size in pixels, as the file stores them', () => {

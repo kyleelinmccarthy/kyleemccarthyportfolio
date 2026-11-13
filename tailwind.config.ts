@@ -33,6 +33,9 @@ const config: Config = {
         display: ['var(--font-display)', 'system-ui', 'sans-serif'],
         sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
+        // The signature's two hands: its capitals, and the letters that run on from them.
+        'signature-caps': ['var(--font-signature-caps)', 'cursive'],
+        signature: ['var(--font-signature)', 'cursive'],
       },
       keyframes: {
         'grow-bar': { from: { transform: 'scaleY(0)' }, to: { transform: 'scaleY(1)' } },
