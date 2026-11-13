@@ -145,6 +145,11 @@ export function spoken(says: GuideSays | null): string {
   return [says.line.title, says.line.text, says.line.aside].filter(Boolean).join(' ')
 }
 
+/** Whether `says` is her greeting (by day or by night): the line a first-time visitor hears over the planet. */
+export function isGreeting(says: GuideSays | null): boolean {
+  return says !== null && says.key.startsWith('greeting:')
+}
+
 /**
  * Which line a screen reader has heard, as far as announcing goes: the line's
  * key, except that the greeting is one line whether it is said by day or by
@@ -153,7 +158,7 @@ export function spoken(says: GuideSays | null): string {
  */
 export function announcedAs(says: GuideSays | null): string | null {
   if (!says) return null
-  return says.key.startsWith('greeting:') ? 'greeting' : says.key
+  return isGreeting(says) ? 'greeting' : says.key
 }
 
 /**
