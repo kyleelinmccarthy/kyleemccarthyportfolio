@@ -229,7 +229,7 @@ function Body({ f, look, c }: { f: Figure; look: Look; c: Colours }) {
  * or with its hand in a pocket. Its sleeve runs to the wrist, is pushed up to
  * the elbow with a rolled cuff, or stops above the elbow.
  */
-function Arm({ f, look, c, side, pose }: { f: Figure; look: Look; c: Colours; side: -1 | 1; pose: 'down' | 'wave' | 'pocket' }) {
+function Arm({ f, look, c, side, pose, phase = 0 }: { f: Figure; look: Look; c: Colours; side: -1 | 1; pose: 'down' | 'wave' | 'pocket'; phase?: number }) {
   const { shoulder, elbow, hand } = armPose(f, side, pose)
   const a = f.arm
   const sleeves = look.top.sleeves ?? 'long'
@@ -257,7 +257,7 @@ function Arm({ f, look, c, side, pose }: { f: Figure; look: Look; c: Colours; si
       )}
       <Blob radius={a.elbow} at={elbow} color={bare ? c.skin : c.top} outline={false} />
       {pose === 'wave' ? (
-        <Sway at={elbow} axis="z" amount={0.35} speed={3}>
+        <Sway at={elbow} axis="z" amount={0.35} speed={3} phase={phase}>
           {forearm([0, 0, 0], [hand[0] - elbow[0], hand[1] - elbow[1], hand[2] - elbow[2]])}
         </Sway>
       ) : (
@@ -457,10 +457,11 @@ function Extras({ f, look, c }: { f: Figure; look: Look; c: Colours }) {
 /**
  * A person, from their look: standing on their feet facing +Z, as tall as
  * `characterHeight` says. `waving` raises their right arm (at -x) and rocks
- * its forearm from the elbow; a look with a hand in a pocket keeps its left
- * hand there. Named `character` so a test can find it.
+ * its forearm from the elbow, `wavePhase` radians along its swing (so two
+ * side by side need not wave in unison); a look with a hand in a pocket keeps
+ * its left hand there. Named `character` so a test can find it.
  */
-export function Character({ look, waving = false }: { look: Look; waving?: boolean }) {
+export function Character({ look, waving = false, wavePhase = 0 }: { look: Look; waving?: boolean; wavePhase?: number }) {
   const f = figureOf(look)
   const c = coloursOf(look)
   const left = look.pose === 'hand-in-pocket' ? 'pocket' : 'down'
@@ -468,7 +469,7 @@ export function Character({ look, waving = false }: { look: Look; waving?: boole
     <group name="character">
       <Legs f={f} look={look} c={c} />
       <Body f={f} look={look} c={c} />
-      <Arm f={f} look={look} c={c} side={-1} pose={waving ? 'wave' : 'down'} />
+      <Arm f={f} look={look} c={c} side={-1} pose={waving ? 'wave' : 'down'} phase={wavePhase} />
       <Arm f={f} look={look} c={c} side={1} pose={left} />
       <Extras f={f} look={look} c={c} />
       <Rod from={[0, f.neck.from, 0]} to={[0, f.neck.to, 0]} radius={f.neck.radius} sides={LIMB_SIDES} color={c.skin} outline={false} />
