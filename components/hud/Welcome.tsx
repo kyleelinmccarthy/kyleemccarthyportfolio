@@ -55,7 +55,7 @@ function Stills() {
  * one thing exposed is the character control under it (`ChangeCharacter`),
  * which reaches up over the figure, so pressing the figure opens the picker
  * too. While it shows, it is the character control, in place of the
- * bubble's.
+ * bubble's. No map label shows under the pair (`data-covers-labels`).
  */
 export function Welcome({ shows, reducedMotion }: { shows: boolean; reducedMotion: boolean }) {
   const [stage, setStage] = useState<WelcomeStage>(shows ? 'in' : 'gone')
@@ -83,7 +83,7 @@ export function Welcome({ shows, reducedMotion }: { shows: boolean; reducedMotio
     '--welcome-out': `${WELCOME_TIMING.outMs}ms`,
   } as CSSProperties
   return (
-    <div className="welcome" data-stage={stage} data-still={still ? '' : undefined} inert={stage === 'out'} style={timing}>
+    <div className="welcome" data-covers-labels data-stage={stage} data-still={still ? '' : undefined} inert={stage === 'out'} style={timing}>
       <div aria-hidden className="welcome-figures">
         {still ? (
           <Stills />

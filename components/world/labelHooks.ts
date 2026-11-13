@@ -26,8 +26,9 @@ const isOwn = (target: EventTarget | Node | null) => target instanceof Element &
 /**
  * Measures what covers the map and every tag's size, only when they may have
  * changed: when a covering element is resized, the window is resized, the page
- * gains or loses elements (a panel opens), a transition ends (the index
- * drawer slides, the HUD fades) or the fonts arrive. Never in the frame loop,
+ * gains or loses elements (a panel opens), a transition or an animation ends
+ * (the index drawer slides, the HUD fades, the welcome pair pops up) or the
+ * fonts arrive. Never in the frame loop,
  * and never because of the labels' own moves.
  *
  * Each covering element is observed once: a new observation always reports
@@ -78,6 +79,7 @@ export function useLabelMeasures(): RefObject<Measured> {
     changed.observe(document.body, { childList: true, subtree: true })
     window.addEventListener('resize', soon)
     document.addEventListener('transitionend', transitioned)
+    document.addEventListener('animationend', transitioned)
     void document.fonts?.ready.then(soon)
     measure()
     return () => {
@@ -86,6 +88,7 @@ export function useLabelMeasures(): RefObject<Measured> {
       changed.disconnect()
       window.removeEventListener('resize', soon)
       document.removeEventListener('transitionend', transitioned)
+      document.removeEventListener('animationend', transitioned)
     }
   }, [])
 
