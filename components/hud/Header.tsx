@@ -16,7 +16,7 @@ import { ThemeToggle } from './ThemeToggle'
  */
 export function Header({ home }: { home: boolean }) {
   // The signature's hands run small for their size, so it is set larger than the print it replaced.
-  const wordmark = `m-0 block text-ink no-underline ${home ? 'text-[46px] max-[820px]:text-[34px]' : 'text-[46px] max-[820px]:text-[26px]'}`
+  const wordmark = `m-0 block text-ink no-underline ${home ? 'text-[46px] max-[820px]:text-[34px]' : 'text-[46px] max-[820px]:text-[22px]'}`
   // A place page's second row is cramped on a phone, so its controls shrink.
   const compact = home ? '' : 'max-[820px]:px-2 max-[820px]:py-2 max-[820px]:text-[10px] max-[820px]:tracking-[0.06em]'
 
