@@ -2,8 +2,10 @@
 
 import type { ReactNode } from 'react'
 import { Euler, Matrix4, Quaternion, Vector3 } from 'three'
+import { usePetCue } from '@/components/hud/petStore'
+import { pets, type PetId } from '@/content/pets'
 import { landmark } from '@/content/sky'
-import { Blob, Block, Extruded, Sway, Tufted, blend, pointing, type Point2, type Vec3 } from './kit'
+import { Blob, Block, Extruded, Gesture, Sway, Tufted, blend, pointing, type Point2, type Vec3 } from './kit'
 
 /*
  * The owner's five pets, who live in the House's garden: two dogs and three
@@ -97,6 +99,23 @@ function limb(from: Vec3, to: Vec3, r: number) {
   return { at: from.map((v, i) => (v + to[i]) / 2) as Vec3, rot, radius: r, squash: [1, (length / 2 + r * 0.5) / r, 1] as Vec3 }
 }
 
+/**
+ * A pet where it stands: its group, named `pet:<id>` so the House's test can
+ * find it, at its feet and turned, and everything of it in a `Gesture` round
+ * its feet that plays its move (`content/pets.ts`) each time the visitor
+ * presses it (`usePetCue`). At rest it is batched with the rest of the House.
+ */
+function PetBody({ id, at, turn, children }: { id: PetId; at: Vec3; turn: number; children: ReactNode }) {
+  const cue = usePetCue(id)
+  return (
+    <group name={`pet:${id}`} position={at} rotation={[0, turn, 0]}>
+      <Gesture cue={cue} move={pets[id].move}>
+        {children}
+      </Gesture>
+    </group>
+  )
+}
+
 /* ───────────── heads and faces ───────────── */
 
 /** A pointed ear: a thin square turned on its corner, its lower half set into the head, so a triangle stands above it. */
@@ -175,7 +194,8 @@ type Tail = { path: Vec3[]; radius: number; color: string; tip?: string; twitch?
 
 /** A sitting cat, as `Cat` builds it: where it is, its size against a grown cat (1), its coat, ears, paws, tail, face and markings. */
 type CatSpec = {
-  name: string
+  /** Which pet it is, by what it is (`content/pets.ts`). */
+  id: PetId
   at: Vec3
   turn: number
   size: number
@@ -204,10 +224,10 @@ function catBalls(k: number): { body: Ball; head: Ball } {
  * A cat sitting up: a pear of a body on the ground, two forepaws in front, a
  * head on its top with pointed ears, eyes and a pink nose, and a tail of
  * tapering segments along `tail.path`, its tip in its own colour, its end
- * twitching in a `Sway` if it says so. Named `pet:<name>` so the House's test
- * can find it. Built round its feet, facing +Z.
+ * twitching in a `Sway` if it says so. Stood as `PetBody` stands a pet.
+ * Built round its feet, facing +Z.
  */
-function Cat({ name, at, turn, size: k, coat, ears, paws, tail, fluffy, eyes, markings }: CatSpec) {
+function Cat({ id, at, turn, size: k, coat, ears, paws, tail, fluffy, eyes, markings }: CatSpec) {
   const { body, head } = catBalls(k)
   const joints = tail.path.map((p) => p.map((v) => v * k) as Vec3)
   const segments = joints.slice(1).map((to, i) => ({ from: joints[i], to, r: tail.radius * k * (1 - (0.3 * i) / Math.max(1, joints.length - 2)) }))
@@ -218,7 +238,7 @@ function Cat({ name, at, turn, size: k, coat, ears, paws, tail, fluffy, eyes, ma
   const pivot = moving[0]?.from ?? [0, 0, 0]
   const local = (p: Vec3) => p.map((v, i) => v - pivot[i]) as Vec3
   return (
-    <group name={`pet:${name}`} position={at} rotation={[0, turn, 0]}>
+    <PetBody id={id} at={at} turn={turn}>
       {fluffy ? <Tufted {...body} tufts={6} depth={0.3} color={coat} /> : <Blob {...body} color={coat} />}
       {[-1, 1].map((s) => (
         <Blob key={s} radius={0.009 * k} squash={[1, 0.7, 1.4]} at={[s * 0.012 * k, 0.0063 * k, 0.03 * k]} color={paws} outline={false} />
@@ -243,7 +263,7 @@ function Cat({ name, at, turn, size: k, coat, ears, paws, tail, fluffy, eyes, ma
           ))}
         </Sway>
       )}
-    </group>
+    </PetBody>
   )
 }
 
@@ -274,7 +294,7 @@ export function MaskCat({ at, turn }: { at: Vec3; turn: number }) {
   const cap = (head: Ball): Ball => ({ at: [head.at[0], head.at[1] + 0.0085, head.at[2] + 0.003], radius: 0.0325, squash: [1, 0.646, 0.898] })
   return (
     <Cat
-      name="maskCat"
+      id="maskCat"
       at={at}
       turn={turn}
       size={1}
@@ -347,7 +367,7 @@ function Swirl({ body }: { body: Ball }) {
 export function SwirlCat({ at, turn }: { at: Vec3; turn: number }) {
   return (
     <Cat
-      name="swirlCat"
+      id="swirlCat"
       at={at}
       turn={turn}
       size={1}
@@ -369,7 +389,7 @@ export function SwirlCat({ at, turn }: { at: Vec3; turn: number }) {
 export function Kitten({ at, turn }: { at: Vec3; turn: number }) {
   return (
     <Cat
-      name="kitten"
+      id="kitten"
       at={at}
       turn={turn}
       size={0.62}
@@ -414,7 +434,7 @@ const LARGE_DOG = (() => {
 export function LargeDog({ at, turn }: { at: Vec3; turn: number }) {
   const { rump, chest, head, neck } = LARGE_DOG
   return (
-    <group name="pet:largeDog" position={at} rotation={[0, turn, 0]}>
+    <PetBody id="largeDog" at={at} turn={turn}>
       <Blob {...rump} color={WHITE} />
       <Blob radius={chest.radius} squash={chest.squash} at={chest.at} rot={[chest.lean, 0, 0]} color={WHITE} />
       {[-1, 1].map((s) => (
@@ -436,7 +456,7 @@ export function LargeDog({ at, turn }: { at: Vec3; turn: number }) {
       <Sway at={[0.03, 0.016, -0.085]} axis="y" amount={0.35} speed={3}>
         <Blob radius={0.016} squash={[1, 0.9, 3.6]} at={[0.045, 0, -0.02]} rot={[0, 1.99, 0]} color={WHITE} />
       </Sway>
-    </group>
+    </PetBody>
   )
 }
 
@@ -464,7 +484,7 @@ const MEDIUM_DOG = (() => {
 export function MediumDog({ at, turn }: { at: Vec3; turn: number }) {
   const { leg, chest, rump, head } = MEDIUM_DOG
   return (
-    <group name="pet:mediumDog" position={at} rotation={[0, turn, 0]}>
+    <PetBody id="mediumDog" at={at} turn={turn}>
       {[0.04, -0.045].flatMap((z) =>
         [-1, 1].map((s) => <Block key={`${z}${s}`} size={[leg.width, leg.height, leg.width]} bevel={0.012} at={[s * 0.024, leg.height / 2, z]} color={WHITE} />),
       )}
@@ -487,6 +507,6 @@ export function MediumDog({ at, turn }: { at: Vec3; turn: number }) {
         <Blob {...laid(head, [0, 0.55, 1], [0, 1, 0], [0.017, 0.01, 0.0065])} color={WHITE} outline={false} />
       </Head>
       <Blob {...limb([0, 0.088, -0.07], [0, 0.06, -0.125], 0.0105)} color={MERLE} />
-    </group>
+    </PetBody>
   )
 }

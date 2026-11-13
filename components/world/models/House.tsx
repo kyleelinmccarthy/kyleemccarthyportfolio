@@ -1,6 +1,7 @@
 'use client'
 
 import { landmark } from '@/content/sky'
+import { PET_SPOTS, SEAT_STONE, STONE_HEIGHT } from '@/lib/world/pets'
 import { Blob, Block, Door, Extruded, Lit, Ring, Roof, Spin, Tube, Water, Window, blend, ellipseOutline, heightWithin, type Vec3 } from './kit'
 import { Kitten, LargeDog, MaskCat, MediumDog, SwirlCat } from './HousePets'
 import type { ModelProps } from './registry'
@@ -30,16 +31,14 @@ const DORMER = { x: -0.18, width: 0.2, riseShare: 0.62 }
 const POND = { at: [0.46, 0, 0.36] as Vec3, radius: 0.2, rim: 0.034 }
 /** The cottage is turned a little toward its garden, so it is seen three-quarters on, a gable end showing. */
 const TURN = 0.38
-/** The stepping stones from the door, each [x, z, turn]. The senior cat sits on the last. */
+/** The stepping stones from the door, each [x, z, turn]. The senior cat sits on the last (`SEAT_STONE`; the pets' places are in `lib/world/pets.ts`). */
 const STONES: Array<[number, number, number]> = [
   [-0.04, 0.27, 0.2],
   [0.0, 0.42, -0.25],
-  [-0.03, 0.57, 0.35],
+  SEAT_STONE,
 ]
 /** How thick the stepping stones are: the top the senior cat sits on. */
-export const STONE_HEIGHT = 0.022
-/** The senior cat on the last stone: her turn, and how far back of its middle she sits, so her tail lies on it in front of her paws. */
-const MASK_CAT_SEAT = { turn: 0.3, back: 0.022 }
+export { STONE_HEIGHT }
 
 type Colours = Record<'walls' | 'roof' | 'trim' | 'door' | 'shutter' | 'stone' | 'wood' | 'leaf' | 'bloom' | 'koi' | 'koiPale' | 'rim' | 'rock' | 'pond', string>
 
@@ -179,7 +178,6 @@ export function House({ place, district }: ModelProps) {
   }
   const height = heightWithin(place.height, House.heights)
   const water = 0.026
-  const [seatX, seatZ] = STONES[2]
 
   return (
     <group>
@@ -228,18 +226,12 @@ export function House({ place, district }: ModelProps) {
         ))}
       </group>
 
-      {/* The senior cat on the last stepping stone, greeting whoever comes up the path, turned a little to show her spotted side. */}
-      <MaskCat
-        at={[seatX - MASK_CAT_SEAT.back * Math.sin(MASK_CAT_SEAT.turn), STONE_HEIGHT, seatZ - MASK_CAT_SEAT.back * Math.cos(MASK_CAT_SEAT.turn)]}
-        turn={MASK_CAT_SEAT.turn}
-      />
-      {/* The young cat on the grass at the pond's west edge, facing the koi, his right side, his swirl and his tail to the visitor. */}
-      <SwirlCat at={[0.19, 0, 0.44]} turn={1.65} />
-      {/* The kitten on the grass in front of the fence. */}
-      <Kitten at={[-0.38, 0, 0.5]} turn={0.3} />
-      {/* The medium dog standing at the fence's end; the large dog sitting past the pond, both clear of the cottage's front and its neighbours as the visitor sees them. */}
-      <MediumDog at={[-0.6, 0, 0.62]} turn={0.8} />
-      <LargeDog at={[0.86, 0, 0.45]} turn={-0.5} />
+      {/* The five pets about the garden, each where `PET_SPOTS` stands it: the senior cat on the last stepping stone, the young cat at the pond's edge, the kitten by the fence, the medium dog at the fence's end, the large dog past the pond. */}
+      <MaskCat {...PET_SPOTS.maskCat} />
+      <SwirlCat {...PET_SPOTS.swirlCat} />
+      <Kitten {...PET_SPOTS.kitten} />
+      <MediumDog {...PET_SPOTS.mediumDog} />
+      <LargeDog {...PET_SPOTS.largeDog} />
     </group>
   )
 }

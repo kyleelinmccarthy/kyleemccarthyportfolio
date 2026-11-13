@@ -1,4 +1,5 @@
 import { DEFAULT_GUEST, type GuestChoice } from '@/content/characters'
+import { readStored as read, writeStored as write } from '@/lib/deviceStorage'
 import { guestChoiceFrom } from '@/lib/guests'
 
 /*
@@ -10,7 +11,7 @@ import { guestChoiceFrom } from '@/lib/guests'
  * is checked against what it may be and falls back to the default on
  * anything else (nothing stored, an unknown or tampered value, storage that is
  * blocked or throws); no read or write ever throws. The same defensive shape
- * as `lib/theme.ts`.
+ * as `lib/theme.ts`; storage is reached through `lib/deviceStorage.ts`.
  */
 
 /** localStorage: the visitor's character, as JSON of its three ids. (`kym-guest`, a retired preset's id, is ignored.) */
@@ -19,37 +20,6 @@ export const GUEST_STORAGE_KEY = 'kym-guest-v2'
 export const HINTS_STORAGE_KEY = 'kym-guide-hints'
 /** sessionStorage: '1' once the guide has greeted the visitor this visit. */
 export const GREETED_STORAGE_KEY = 'kym-guide-greeted'
-
-/** The storage of that kind, or null on the server or where reaching it throws (a sandboxed frame, blocked site data). */
-function storage(kind: 'local' | 'session'): Storage | null {
-  if (typeof window === 'undefined') return null
-  try {
-    return kind === 'local' ? window.localStorage : window.sessionStorage
-  } catch {
-    return null
-  }
-}
-
-/** The stored value for `key`, or null if there is none or it cannot be read. */
-function read(kind: 'local' | 'session', key: string): string | null {
-  try {
-    return storage(kind)?.getItem(key) ?? null
-  } catch {
-    return null
-  }
-}
-
-/** Stores `value` under `key` (null removes it). Blocked storage only means it is not remembered. */
-function write(kind: 'local' | 'session', key: string, value: string | null): void {
-  try {
-    const s = storage(kind)
-    if (!s) return
-    if (value === null) s.removeItem(key)
-    else s.setItem(key, value)
-  } catch {
-    // Not remembered; nothing else changes.
-  }
-}
 
 /** A stored value longer than this is not a choice of three short ids: it is not even parsed. */
 const MOST_STORED = 200
