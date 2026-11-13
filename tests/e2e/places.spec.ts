@@ -159,17 +159,17 @@ test('hammering next on the tour ends on the place the URL names', async ({ page
   drivesTheCanvas()
   // Review Focus 3
   await page.goto('/places/home')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   for (let i = 0; i < 5; i++) await page.keyboard.press('ArrowRight')
-  await expect(page).toHaveURL('/places/403hq')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('403HQ')
+  await expect(page).toHaveURL('/places/aura')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('AURA')
   // The camera lands on the place the URL names, not on one it was sent to on the way. Both are
   // read together, so a camera stuck in focus somewhere else cannot pass.
   await expect
     .poll(async () => [await rig(page).getAttribute('data-rig-target'), await rig(page).getAttribute('data-rig-mode')], {
       timeout: 10000,
     })
-    .toEqual(['403hq', 'focus'])
+    .toEqual(['aura', 'focus'])
 })
 
 test.describe('on a wide screen, at a place', () => {
@@ -178,7 +178,7 @@ test.describe('on a wide screen, at a place', () => {
   test('the open view takes the pointer, and the panel scrolls under the wheel without moving the camera', async ({ page }) => {
     drivesTheCanvas()
     await page.goto('/places/beacon')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-mode', 'focus', { timeout: 10000 })
     const { width, height } = page.viewportSize()!
     const hit = await page.evaluate(
@@ -203,7 +203,7 @@ test.describe('on a wide screen, at a place', () => {
   }) => {
     drivesTheCanvas()
     await page.goto('/places/beacon')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-mode', 'focus', { timeout: 10000 })
     const distance = async () => (await rigView(page))?.distance ?? null
     await expect.poll(distance).not.toBeNull()
@@ -219,7 +219,7 @@ test.describe('on a wide screen, at a place', () => {
     // On out to the furthest in one run of scrolling, however long (a burst, as a flick's events come): still at the place.
     await page.evaluate(
       ([x, y]) => {
-        const canvas = document.querySelector('canvas')!
+        const canvas = document.querySelector('[data-quality] canvas')!
         for (let i = 0; i < 30; i++) canvas.dispatchEvent(new WheelEvent('wheel', { deltaY: 200, clientX: x, clientY: y, bubbles: true, cancelable: true }))
       },
       [width * 0.3, height * 0.5],

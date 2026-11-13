@@ -107,7 +107,7 @@ export const pageAt = (page: Page) => page.evaluate(() => ({ x: scrollX, y: scro
  */
 export async function expectThePageHeld(page: Page) {
   const held = await page.evaluate(() => {
-    const canvas = document.querySelector('canvas')!
+    const canvas = document.querySelector('[data-quality] canvas')!
     const label = document.querySelector('#labels .lm')
     const box = canvas.getBoundingClientRect()
     const touch = new Touch({ identifier: 9, target: canvas, clientX: box.left + box.width / 2, clientY: box.top + box.height / 3 })

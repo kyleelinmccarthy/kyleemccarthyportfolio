@@ -7,7 +7,7 @@ test.describe('on a phone, at a place, a pinch that begins on a label', () => {
     drivesTheCanvas()
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/places/kingdoms-and-crowns')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-mode', 'focus', { timeout: 15000 })
     await expect.poll(() => rigView(page)).not.toBeNull()
     const landed = (await rigView(page))!

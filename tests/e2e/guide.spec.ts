@@ -93,7 +93,7 @@ test.describe('the guide', () => {
   test('the panel’s own copy of her line never shows while the world can be drawn, not even before its first frame', async ({ page }) => {
     await page.goto('/places/eliminated', { waitUntil: 'domcontentloaded' })
     await expect(page.locator('.guide-note')).toBeHidden()
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 60_000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 60_000 })
     await expect(page.locator('.guide-note')).toBeHidden()
   })
 

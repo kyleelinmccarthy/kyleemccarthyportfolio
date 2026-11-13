@@ -21,13 +21,13 @@ test('without WebGL the picture stands in and the site still works', async ({ pa
   await page.goto('/places/eliminated')
   await hydrated(page)
   await expect(page.getByTestId('world-poster')).toBeVisible()
-  await expect(page.locator('canvas')).toHaveCount(0)
+  await expect(page.locator('[data-quality] canvas')).toHaveCount(0)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Eliminated')
   await page.getByRole('link', { name: 'Next place' }).click()
   await expect(page).toHaveURL('/places/eliminated-site')
   // Still no canvas after the idle callback would have fired, and the 3D code was never fetched.
   await page.waitForTimeout(2500)
-  await expect(page.locator('canvas')).toHaveCount(0)
+  await expect(page.locator('[data-quality] canvas')).toHaveCount(0)
   await expect(page.getByTestId('world-poster')).toBeVisible()
 })
 
@@ -49,10 +49,10 @@ test('without WebGL the 3D code is never downloaded', async ({ page }) => {
 
 test('losing the graphics context mid-visit falls back to the picture', async ({ page }) => {
   await page.goto('/')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
-  await page.evaluate(() => document.querySelector('canvas')!.dispatchEvent(new Event('webglcontextlost')))
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
+  await page.evaluate(() => document.querySelector('[data-quality] canvas')!.dispatchEvent(new Event('webglcontextlost')))
   await expect(page.getByTestId('world-poster')).toBeVisible()
-  await expect(page.locator('canvas')).toHaveCount(0)
+  await expect(page.locator('[data-quality] canvas')).toHaveCount(0)
   await page.getByRole('button', { name: 'Index' }).click()
   await expect(page.locator('#index a')).toHaveCount(19)
   await expect(page.locator('#index')).toBeVisible()
@@ -77,9 +77,9 @@ test('the panel is readable before the 3D code arrives', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Beacon')
   expect(released).toBe(false)
   await expect(page.getByTestId('world-poster')).toBeVisible()
-  await expect(page.locator('canvas')).toHaveCount(0)
+  await expect(page.locator('[data-quality] canvas')).toHaveCount(0)
   // The held chunk was the 3D code: the canvas arrives only once it is let through.
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 20000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 20000 })
   expect(held).toBeGreaterThan(0)
   expect(released).toBe(true)
 })
@@ -94,7 +94,7 @@ test('reduced motion runs clean', async ({ browser }) => {
     if (m.type() === 'error' && !offVercel(`${m.text()} ${m.location().url}`)) errors.push(`${m.text()} (${m.location().url})`)
   })
   await page.goto('/places/beacon')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   await page.waitForTimeout(2500)
   expect(errors).toEqual([])
   await ctx.close()
@@ -139,7 +139,7 @@ test.describe('while the tab is hidden', () => {
   test('the render loop stops, and carries on again when the tab comes back', async ({ page }) => {
     test.slow()
     await page.goto('/')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect.poll(() => frames(page)).toBeGreaterThan(2)
 
     await setHidden(page, true)
@@ -156,7 +156,7 @@ test.describe('while the tab is hidden', () => {
   test('a resize while hidden draws nothing, and the picture is whole again once the tab returns', async ({ page }) => {
     test.slow()
     await page.goto('/')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect.poll(() => frames(page)).toBeGreaterThan(2)
 
     await setHidden(page, true)
@@ -168,7 +168,7 @@ test.describe('while the tab is hidden', () => {
 
     await setHidden(page, false)
     await expect.poll(() => frames(page), { timeout: 15000 }).toBeGreaterThan(stopped + 2)
-    await expect(page.locator('canvas')).toBeVisible()
+    await expect(page.locator('[data-quality] canvas')).toBeVisible()
   })
 
   test('a tab opened hidden draws nothing until it is shown', async ({ page }) => {
@@ -180,11 +180,11 @@ test.describe('while the tab is hidden', () => {
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
     // The 3D code has mounted (the counter is there, at zero) before the wait, so the wait proves something.
     await expect.poll(() => frames(page), { timeout: 20000 }).toBe(0)
-    await expect(page.locator('canvas')).toBeAttached()
+    await expect(page.locator('[data-quality] canvas')).toBeAttached()
     await page.waitForTimeout(5000)
     expect(await frames(page)).toBe(0)
     await setHidden(page, false)
     await expect.poll(() => frames(page), { timeout: 20000 }).toBeGreaterThan(2)
-    await expect(page.locator('canvas')).toBeVisible()
+    await expect(page.locator('[data-quality] canvas')).toBeVisible()
   })
 })

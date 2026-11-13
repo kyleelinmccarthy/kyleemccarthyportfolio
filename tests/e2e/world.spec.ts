@@ -23,31 +23,39 @@ function watchForErrors(page: Page) {
   return errors
 }
 
+/*
+ * The world as a visitor finds it once the guide has greeted them: her greeting's welcome pair stands over part of the
+ * map for a first-time visitor, and has its own tests (welcome.spec.ts).
+ */
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('kym-guide-greeted', '1'))
+})
+
 test('the planet renders without errors', async ({ page }) => {
   const errors = watchForErrors(page)
   await page.goto('/')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   await page.waitForTimeout(3000)
   await page.goto('/places/beacon')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   await page.waitForTimeout(3000)
   expect(errors).toEqual([])
 })
 
 test('once the canvas runs it replaces the picture and is hidden from assistive technology', async ({ page }) => {
   await page.goto('/')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   await expect(page.getByTestId('world-poster')).toHaveCount(0)
-  await expect(page.locator('canvas').locator('xpath=ancestor-or-self::*[@aria-hidden="true"]')).not.toHaveCount(0)
+  await expect(page.locator('[data-quality] canvas').locator('xpath=ancestor-or-self::*[@aria-hidden="true"]')).not.toHaveCount(0)
 })
 
 test('the canvas paints a sky, not a black screen', async ({ page }) => {
   await page.clock.setFixedTime(new Date('2026-11-10T14:00:00'))
   await page.goto('/')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   await page.waitForTimeout(1500)
   // Sample the top and bottom of the drawn sky from a screenshot of the canvas alone.
-  const shot = await page.locator('canvas').screenshot()
+  const shot = await page.locator('[data-quality] canvas').screenshot()
   const pixels = await page.evaluate(async (png) => {
     const image = new Image()
     image.src = `data:image/png;base64,${png}`
@@ -102,7 +110,7 @@ async function firstOnCanvas<T extends { x: number; y: number }>(page: Page, poi
 
 test('clicks pass through empty sky to the canvas while the controls still work', async ({ page }) => {
   await page.goto('/')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   const viewport = page.viewportSize()!
   // Under the middle of the screen, past any map label there, the page's content layer lets the pointer through.
   const hit = await page.evaluate(
@@ -119,7 +127,7 @@ test('an island link turns the planet to it and leaves it in orbit', async ({ pa
   const errors = watchForErrors(page)
   const modes = await recordRigModes(page)
   await page.goto('/?district=frenzy')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   // A flight advances at most 0.1s a frame, and software WebGL under a full suite draws only a few frames a second.
   await expect.poll(async () => (await modes()).at(-1), { timeout: 20000 }).toBe('orbit')
   // It flew there, and never came down to a place.
@@ -134,7 +142,7 @@ test('an island link turns the planet to it and leaves it in orbit', async ({ pa
 test('dragging the planet stops it turning and goes nowhere', async ({ page }) => {
   drivesTheCanvas()
   await page.goto('/')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   await expect(rig(page)).toHaveAttribute('data-rig-mode', 'orbit')
   await expect(rig(page)).toHaveAttribute('data-rig-autorotate', 'true')
   const { width, height } = page.viewportSize()!
@@ -159,11 +167,11 @@ test.describe('with reduced motion', () => {
     drivesTheCanvas()
     const modes = await recordRigModes(page)
     await page.goto('/')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-mode', 'orbit')
     await expect(rig(page)).toHaveAttribute('data-rig-autorotate', 'false')
     await page.goto('/places/beacon')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-mode', 'focus')
     await expect(rig(page)).toHaveAttribute('data-rig-target', 'beacon')
     // Straight to focus on arriving at the place: never a flight.
@@ -177,7 +185,7 @@ test.describe('with reduced motion', () => {
     // Two loads of the planet in software WebGL.
     drivesTheCanvas()
     await page.goto('/')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-autorotate', 'false')
     await page.waitForTimeout(500)
     // Held still, the camera is exactly where it opens: the overview over 8°N 6°W.
@@ -222,7 +230,7 @@ test.describe('with reduced motion', () => {
     )
     await page.mouse.move(target.x, target.y)
     await expect(page.locator(`#label-${target.id}`)).toHaveAttribute('data-hot', '')
-    await expect(page.locator('canvas')).toHaveCSS('cursor', 'pointer')
+    await expect(page.locator('[data-quality] canvas')).toHaveCSS('cursor', 'pointer')
     // From afar its label shows itself while the landmark is hovered, and leaves the pointer on the landmark.
     await expect(page.locator(`#label-${target.id} .lm-tag`)).toBeVisible()
     expect(await page.evaluate(({ x, y }) => document.elementFromPoint(x, y)?.tagName, target)).toBe('CANVAS')
@@ -234,7 +242,7 @@ test.describe('with reduced motion', () => {
     await expect(page).toHaveURL('/')
     // Back to the opening view, and a click on it.
     await page.reload()
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await page.waitForTimeout(500)
     await page.mouse.click(target.x, target.y)
     await expect(page).toHaveURL(`/places/${target.id}`)
@@ -250,7 +258,7 @@ test.describe('on a wide screen, at a place', () => {
   test('labels track the planet through a resize', async ({ page }) => {
     // Review Focus 4
     await page.goto('/places/beacon')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await page.waitForTimeout(3500)
     // Landed, so the labels have stopped moving.
     await expect(rig(page)).toHaveAttribute('data-rig-mode', 'focus', { timeout: 10000 })
@@ -276,7 +284,7 @@ test.describe('on a wide screen, at a place', () => {
 
   test('every place and district has a named label link, and the place in focus hides its own', async ({ page }) => {
     await page.goto('/places/beacon')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-mode', 'focus', { timeout: 10000 })
     const labels = page.locator('#labels')
     await expect(labels.locator('a')).toHaveCount(19 + 5)
@@ -297,7 +305,7 @@ test.describe('on a wide screen, at a place', () => {
 
   test('no label shows under the panel', async ({ page }) => {
     await page.goto('/places/beacon')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-mode', 'focus', { timeout: 10000 })
     await page.waitForTimeout(500)
     const panel = (await page.locator('article').boundingBox())!
@@ -317,7 +325,7 @@ test.describe('on a wide screen, at a place', () => {
 test('from afar the districts are labelled, places are dots, and the far side is hidden', async ({ page }) => {
   drivesTheCanvas()
   await page.goto('/')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   await page.waitForTimeout(1500)
   // The links to be seen and pressed are the districts'.
   const links = await page.locator('#labels a:visible').evaluateAll((els) => els.map((e) => e.getAttribute('data-tier')))
@@ -337,7 +345,7 @@ test('from afar the districts are labelled, places are dots, and the far side is
 test('hovering a landmark lights its label, and clicking it, even after a six-pixel slip, goes there', async ({ page }) => {
   drivesTheCanvas()
   await page.goto('/?district=works')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   await expect(rig(page)).toHaveAttribute('data-rig-mode', 'orbit', { timeout: 10000 })
   await page.waitForTimeout(500)
   // The visible label nearest the middle of the screen, and the point on its building just under its pin.
@@ -354,7 +362,7 @@ test('hovering a landmark lights its label, and clicking it, even after a six-pi
   const below = { x: target.x, y: target.y + 22 }
   await page.mouse.move(below.x, below.y)
   await expect(page.locator(`#${target.id}`)).toHaveAttribute('data-hot', '')
-  await expect(page.locator('canvas')).toHaveCSS('cursor', 'pointer')
+  await expect(page.locator('[data-quality] canvas')).toHaveCSS('cursor', 'pointer')
   await page.mouse.down()
   await page.mouse.move(below.x + 6, below.y)
   await page.mouse.up()
@@ -363,19 +371,19 @@ test('hovering a landmark lights its label, and clicking it, even after a six-pi
 
 test('the map readout names the plate and the view, and steps aside for a place', async ({ page }) => {
   await page.goto('/')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   const readout = page.locator('#view-readout')
   await expect(readout).toContainText('Plate 01 · 5 districts · 19 places')
   await expect(readout).toContainText(/View \d+°[NS] \d{3}°[EW] · \d+\.\d×/)
   await page.goto('/places/beacon')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   await expect(readout).toHaveCSS('visibility', 'hidden')
 })
 
 test('the hint shows on the planet until the visitor first touches it', async ({ page }) => {
   drivesTheCanvas()
   await page.goto('/')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   const hint = page.getByText('Drag to spin · Scroll to zoom · Click a place')
   await expect(hint).toHaveCount(1)
   const { width, height } = page.viewportSize()!
@@ -399,7 +407,7 @@ test('in close, the headline, greeting and legend give way, and come back for fo
   await page.emulateMedia({ reducedMotion: 'reduce' })
   // An island turned toward the visitor: closer than 3.25.
   await page.goto('/?district=works')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   await expect(rig(page)).toHaveAttribute('data-rig-mode', 'orbit', { timeout: 15000 })
   await expect(page.locator('html')).toHaveAttribute('data-hud-away', '')
   await expect.poll(() => opacityOf(page, 'header [data-gives-way]')).toBe(0)
@@ -442,7 +450,7 @@ test('in close, the headline, greeting and legend give way, and come back for fo
   await expect.poll(() => opacityOf(page, 'main [data-gives-way]')).toBe(0)
   // Back out at the overview, everything is there again.
   await page.goto('/')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   await expect(rig(page)).toHaveAttribute('data-rig-mode', 'orbit', { timeout: 15000 })
   await expect(page.locator('html')).not.toHaveAttribute('data-hud-away', '')
   await expect.poll(() => opacityOf(page, 'header [data-gives-way]')).toBe(1)
@@ -452,7 +460,7 @@ test('in close, the headline, greeting and legend give way, and come back for fo
 test('every label tag that shows stays wholly on the screen', async ({ page }) => {
   drivesTheCanvas()
   await page.goto('/')
-  await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+  await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   await page.waitForTimeout(1500)
   const { width, height } = page.viewportSize()!
   const tags = await page.locator('#labels a[data-on]:not([data-tagless]) .lm-tag:visible').evaluateAll((els) =>
@@ -486,7 +494,7 @@ test.describe('the labels landmark', () => {
     // By night, so the constellations' names are up whenever the planet and the clouds leave them be.
     await page.clock.setFixedTime(new Date('2026-11-10T23:00:00'))
     await page.goto('/')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-autorotate', 'false')
     const state = () =>
       page.evaluate(() => {
@@ -531,7 +539,7 @@ test.describe('with reduced motion, from afar', () => {
   /** The overview camera, held still, and where a point in the world falls on the screen from it. */
   async function overview(page: Page) {
     await page.goto('/')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-autorotate', 'false')
     await page.waitForTimeout(500)
     const { width, height } = page.viewportSize()!
@@ -570,7 +578,7 @@ test.describe('with reduced motion, from afar', () => {
     const beside = { x: box.x + box.width / 2, y: target.y }
     expect(await page.evaluate(({ x, y }) => document.elementFromPoint(x, y)?.tagName, beside)).toBe('CANVAS')
     await page.mouse.move(beside.x, beside.y)
-    await expect(page.locator('canvas')).not.toHaveCSS('cursor', 'pointer')
+    await expect(page.locator('[data-quality] canvas')).not.toHaveCSS('cursor', 'pointer')
     await expect(label).toHaveAttribute('data-hot', '')
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
     await expect(tag).toBeVisible()
@@ -637,7 +645,7 @@ test.describe('on a phone, from afar', () => {
     drivesTheCanvas()
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-autorotate', 'false')
     // Held still (reduced motion: no coasting), a short diagonal drag turns the planet the same way every time. It was
     // found as 60px when a drag turned the planet at a fixed 0.55; the speed now follows the distance
@@ -682,7 +690,7 @@ test.describe('on a phone, at a place', () => {
   test('the nearest places show as pins in the open view; a tap shows the tag and the next goes there', async ({ page }) => {
     drivesTheCanvas()
     await page.goto('/places/kingdoms-and-crowns')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-mode', 'focus', { timeout: 15000 })
     const pins = page.locator('#labels a[data-tier="nearby"][data-on]')
     await expect(pins).toHaveCount(2)
@@ -733,7 +741,7 @@ test.describe('a gesture that starts on a map label', () => {
     drivesTheCanvas()
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-autorotate', 'false')
     const tag = page.locator('#labels a.lm-district[data-on]:not([data-tagless]) .lm-tag').first()
     await expect(tag).toBeVisible()
@@ -753,7 +761,7 @@ test.describe('a gesture that starts on a map label', () => {
     await expect(page).toHaveURL('/')
     // A tap or click on a label still goes where it says: from the start, with the planet as it opened.
     await page.reload()
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     const again = page.locator(`#labels a[href="${href}"] .lm-tag`)
     await expect(again).toBeVisible()
     if (isMobile) await again.tap()
@@ -769,7 +777,7 @@ test.describe('on a phone, on the planet, by touch', () => {
     drivesTheCanvas()
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-autorotate', 'false')
     const still = await pageAt(page)
     await expectThePageHeld(page)
@@ -808,7 +816,7 @@ test.describe('in the narrowest window', () => {
 
   test('the legend’s plate stays inside the frame', async ({ page }) => {
     await page.goto('/')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     const plate = (await page.locator('.hud-plate.legend').boundingBox())!
     // The frame is the thin line inset round the view.
     const frame = (await page.locator('div[aria-hidden].pointer-events-none.fixed.border-ink').first().boundingBox())!

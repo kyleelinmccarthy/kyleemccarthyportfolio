@@ -847,6 +847,10 @@
       margin: 0 0 4px;
       transform-origin: 50% 100%;
     }
+    /* Here the pair stands over the planet's middle, where a finger turns it: the button is its label alone, and does not reach up over the figure. */
+    .you-pair {
+      top: auto;
+    }
   }
   /* The character control in the bubble: the visitor's own picture, a small round thumbnail of their head and shoulders. */
   .you-thumb {
@@ -1058,7 +1062,7 @@
       left: 14px;
       right: 14px;
       width: auto;
-      top: 120px;
+      top: 136px; /* its first link clears the name (a signature, taller than print) and the headline */
       bottom: 84px; /* clears the controls */
     }
     [data-js] .index-panel {

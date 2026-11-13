@@ -17,7 +17,7 @@ test.describe('on a phone, from afar', () => {
     drivesTheCanvas()
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-autorotate', 'false')
     await framesPass(page, 10)
     const found = await page.evaluate(() => {
@@ -53,7 +53,7 @@ test.describe('label measuring', () => {
   test('measures the page only when it changes, never frame by frame', async ({ page }) => {
     drivesTheCanvas()
     await page.goto('/')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-autorotate', 'false')
     // Let the first measures (mount, fonts, the first observations) settle.
     await framesPass(page, 10)
@@ -70,7 +70,7 @@ test.describe('label measuring', () => {
     test.skip(isMobile, 'the index drawer and the panel are laid out differently on a phone; the phone views have their own tests')
     drivesTheCanvas()
     await page.goto('/')
-    await expect(page.locator('canvas')).toBeVisible({ timeout: 15000 })
+    await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-autorotate', 'false')
     await framesPass(page, 10)
 

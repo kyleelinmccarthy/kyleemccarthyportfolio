@@ -189,7 +189,7 @@ async function shoot(browser: Browser, name: string, time: string): Promise<Shot
     await page.evaluate(HIDE_THE_HUD)
     await page.evaluate(framesPassed(5))
 
-    const size = await page.evaluate<number[]>(`(() => { const c = document.querySelector('canvas'); return [c.width, c.height] })()`)
+    const size = await page.evaluate<number[]>(`(() => { const c = document.querySelector('[data-quality] canvas'); return [c.width, c.height] })()`)
     if (size[0] !== WIDTH || size[1] !== HEIGHT) {
       throw new Error(`The canvas is ${size[0]}x${size[1]}, not ${WIDTH}x${HEIGHT}: it was not drawn at full size.`)
     }
