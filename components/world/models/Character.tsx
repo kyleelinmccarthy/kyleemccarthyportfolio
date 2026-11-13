@@ -2,7 +2,7 @@
 
 import type { Look } from '@/content/characters'
 import { landmark, people } from '@/content/sky'
-import { FACE_ROUND, HEAD_ROUND, TORSO_ROUND, armPose, figureOf, onRounded, plus, type Figure, type Limb, type Part } from '@/lib/world/figure'
+import { FACE_ROUND, HEAD_ROUND, TORSO_ROUND, armPose, figureOf, onRounded, plus, type ArmPose, type Figure, type Limb, type Part } from '@/lib/world/figure'
 import { CROWN, longWaves } from '@/lib/world/hair'
 import { Blob, Block, Extruded, Ring, Rod, Rounded, Sway, Swept, Tube, Turned, Tufted, blend, bowOutline, pointing, smileOutline, type Point2, type Vec3 } from './kit'
 
@@ -223,13 +223,17 @@ function Body({ f, look, c }: { f: Figure; look: Look; c: Colours }) {
 
 /* ───────────── the arms ───────────── */
 
+/** How a forearm moves from the elbow in the poses that move: a wave rocks wide and quick, a showing hand a little and slowly. */
+const FOREARM_SWAY = { wave: { amount: 0.35, speed: 3 }, present: { amount: 0.1, speed: 1.3 } } as const
+
 /**
  * One arm, from the shoulder to the hand, tapering, in its pose: hanging
  * down, raised and waving (its forearm rocking from the elbow in a `Sway`),
- * or with its hand in a pocket. Its sleeve runs to the wrist, is pushed up to
+ * held out to show something (the forearm moving a little, as a hand does
+ * when its owner talks), or with its hand in a pocket. Its sleeve runs to the wrist, is pushed up to
  * the elbow with a rolled cuff, or stops above the elbow.
  */
-function Arm({ f, look, c, side, pose }: { f: Figure; look: Look; c: Colours; side: -1 | 1; pose: 'down' | 'wave' | 'pocket' }) {
+function Arm({ f, look, c, side, pose }: { f: Figure; look: Look; c: Colours; side: -1 | 1; pose: ArmPose }) {
   const { shoulder, elbow, hand } = armPose(f, side, pose)
   const a = f.arm
   const sleeves = look.top.sleeves ?? 'long'
@@ -256,8 +260,8 @@ function Arm({ f, look, c, side, pose }: { f: Figure; look: Look; c: Colours; si
         <Taper from={shoulder} to={elbow} top={a.shoulder} bottom={a.elbow} color={c.top} />
       )}
       <Blob radius={a.elbow} at={elbow} color={bare ? c.skin : c.top} outline={false} />
-      {pose === 'wave' ? (
-        <Sway at={elbow} axis="z" amount={0.35} speed={3}>
+      {pose === 'wave' || pose === 'present' ? (
+        <Sway at={elbow} axis="z" {...FOREARM_SWAY[pose]}>
           {forearm([0, 0, 0], [hand[0] - elbow[0], hand[1] - elbow[1], hand[2] - elbow[2]])}
         </Sway>
       ) : (
@@ -457,18 +461,22 @@ function Extras({ f, look, c }: { f: Figure; look: Look; c: Colours }) {
 /**
  * A person, from their look: standing on their feet facing +Z, as tall as
  * `characterHeight` says. `waving` raises their right arm (at -x) and rocks
- * its forearm from the elbow; a look with a hand in a pocket keeps its left
- * hand there. Named `character` so a test can find it.
+ * its forearm from the elbow; `presenting` holds an arm out to the side (-1
+ * their right, 1 their left) to show what they stand beside, unless they are
+ * waving; a look with a hand in a pocket keeps its left hand there while that
+ * arm has nothing else to do. Named `character` so a test can find it.
  */
-export function Character({ look, waving = false }: { look: Look; waving?: boolean }) {
+export function Character({ look, waving = false, presenting }: { look: Look; waving?: boolean; presenting?: -1 | 1 }) {
   const f = figureOf(look)
   const c = coloursOf(look)
-  const left = look.pose === 'hand-in-pocket' ? 'pocket' : 'down'
+  const showing = waving ? undefined : presenting
+  const right: ArmPose = waving ? 'wave' : showing === -1 ? 'present' : 'down'
+  const left: ArmPose = showing === 1 ? 'present' : look.pose === 'hand-in-pocket' ? 'pocket' : 'down'
   return (
     <group name="character">
       <Legs f={f} look={look} c={c} />
       <Body f={f} look={look} c={c} />
-      <Arm f={f} look={look} c={c} side={-1} pose={waving ? 'wave' : 'down'} />
+      <Arm f={f} look={look} c={c} side={-1} pose={right} />
       <Arm f={f} look={look} c={c} side={1} pose={left} />
       <Extras f={f} look={look} c={c} />
       <Rod from={[0, f.neck.from, 0]} to={[0, f.neck.to, 0]} radius={f.neck.radius} sides={LIMB_SIDES} color={c.skin} outline={false} />

@@ -177,16 +177,23 @@ export const plus = (a: Vec3, by: Vec3): Vec3 => [a[0] + by[0], a[1] + by[1], a[
 
 /**
  * An arm from the shoulder, its elbow and hand: hanging relaxed a little out
- * from the side; raised to wave, the forearm up beside the head; or bent, its
- * hand in the trouser pocket at the front of the hip. `side` is -1 for the
- * figure's right (at -x), 1 for its left.
+ * from the side; raised to wave, the forearm up beside the head; held out to
+ * the side and a little behind, the open hand lifted, as a guide shows
+ * what she stands beside; or bent, its hand in the trouser pocket at the
+ * front of the hip. `side` is -1 for the figure's right (at -x), 1 for its left.
  */
-export function armPose(f: Figure, side: -1 | 1, pose: 'down' | 'wave' | 'pocket'): { shoulder: Vec3; elbow: Vec3; hand: Vec3 } {
+export type ArmPose = 'down' | 'wave' | 'present' | 'pocket'
+
+export function armPose(f: Figure, side: -1 | 1, pose: ArmPose): { shoulder: Vec3; elbow: Vec3; hand: Vec3 } {
   const shoulder: Vec3 = [side * f.shoulder.x, f.shoulder.y, 0]
   const { upper, fore } = f.arm
   if (pose === 'wave') {
     const elbow = plus(shoulder, [side * upper * 0.8, upper * 0.25, upper * 0.12])
     return { shoulder, elbow, hand: plus(elbow, [side * fore * 0.12, fore * 0.95, fore * 0.12]) }
+  }
+  if (pose === 'present') {
+    const elbow = plus(shoulder, [side * upper * 0.78, -upper * 0.52, -upper * 0.32])
+    return { shoulder, elbow, hand: plus(elbow, [side * fore * 0.82, fore * 0.38, -fore * 0.42]) }
   }
   if (pose === 'pocket') {
     const elbow = plus(shoulder, [side * upper * 0.38, -upper * 0.9, -upper * 0.12])

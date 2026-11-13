@@ -122,4 +122,23 @@ describe('a figure’s proportions', () => {
     expect(len(down.shoulder, down.elbow)).toBeCloseTo(f.arm.upper, 2)
     expect(len(wave.elbow, wave.hand)).toBeCloseTo(f.arm.fore, 2)
   })
+
+  it('holds an arm out to show something: out to its own side and a little behind, the hand lifted, below the shoulder', () => {
+    const f = figureOf(guideLook)
+    const len = (a: number[], b: number[]) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!, a[2]! - b[2]!)
+    for (const side of [-1, 1] as const) {
+      const show = armPose(f, side, 'present')
+      // Out past the elbow, to its own side.
+      expect(show.elbow[0] * side).toBeGreaterThan(f.shoulder.x)
+      expect(show.hand[0] * side).toBeGreaterThan(show.elbow[0] * side)
+      // Behind the shoulders, never across the body or in front of the face.
+      expect(show.hand[2]).toBeLessThan(0)
+      // The hand lifted from the elbow, and under the shoulder: a showing hand, not a wave.
+      expect(show.hand[1]).toBeGreaterThan(show.elbow[1])
+      expect(show.hand[1]).toBeLessThan(f.shoulder.y)
+      expect(show.hand[1]).toBeGreaterThan(f.belt)
+      expect(len(show.shoulder, show.elbow)).toBeCloseTo(f.arm.upper, 2)
+      expect(len(show.elbow, show.hand)).toBeCloseTo(f.arm.fore, 2)
+    }
+  })
 })

@@ -4,7 +4,7 @@ import type { District, Place } from '@/content/types'
 import { MODEL_SCALE } from './camera'
 import { characterHeight } from './figure'
 import { dirOf, surfaceFrame } from './geo'
-import { groundOf, heightAt } from './terrain'
+import { SHORE, groundOf, heightAt, landValue } from './terrain'
 
 /*
  * The characters as data: which looks there are, where each stands at a place
@@ -39,8 +39,11 @@ export function turnToward(x: number, z: number, toX = 0, toZ = 0): number {
   return Math.hypot(dx, dz) > 1e-9 ? Math.atan2(dx, dz) : 0
 }
 
-/** How much of the way from facing the front to facing the landmark the guide turns, when her spot does not say. */
+/** How much of the way from facing the front to facing the visitor's character the guide turns, when her spot does not say: she talks to them, and is still seen from the front. */
 const GUIDE_TURN = 0.3
+
+/** An angle brought within half a turn of zero. */
+const wrap = (a: number) => Math.atan2(Math.sin(a), Math.cos(a))
 
 /** A finite number, or `fallback`. */
 const finite = (n: unknown, fallback: number) => (typeof n === 'number' && Number.isFinite(n) ? n : fallback)
@@ -48,29 +51,52 @@ const finite = (n: unknown, fallback: number) => (typeof n === 'number' && Numbe
 /**
  * Where the guide and the visitor's character stand at the place `id`, and
  * which way each faces: its own spots where `standAt` gives them, otherwise
- * the default (`defaultStand`). The guide faces the front, turned a little
- * toward the landmark; the visitor's character faces the landmark. A spot's
- * own turn wins.
+ * the default (`defaultStand`). The guide faces the front, turned part of the
+ * way toward the visitor's character, whom she is showing round; the
+ * visitor's character faces between her and the landmark, listening to the
+ * one and looking at the other. A spot's own turn wins.
  */
 export function standingFor(id: string, overrides: Partial<Record<string, Partial<Stand>>> = standAt, fallback: Stand = defaultStand): { guide: Standing; guest: Standing } {
   const own = overrides[id] ?? {}
-  const whole = (spot: Spot | undefined, base: Spot, turn: (x: number, z: number) => number): Standing => {
+  const placed = (spot: Spot | undefined, base: Spot) => {
     const x = finite(spot?.at?.[0], base.at[0])
     const z = finite(spot?.at?.[1], base.at[1])
     // A spot of its own stands on its own floor; the default stands on the ground.
     const lift = Math.max(0, finite(spot ? spot.lift : base.lift, 0))
-    return { at: [x, lift, z], turn: finite(spot?.turn, finite(base.turn, turn(x, z))) }
+    return { at: [x, lift, z] as Standing['at'], turn: finite(spot?.turn, finite(base.turn, NaN)) }
   }
-  const towardLandmark = (x: number, z: number) => turnToward(x, z)
-  // From facing the front, the shorter way round toward the landmark, part of the way.
-  const guideTurn = (x: number, z: number) => {
-    const full = turnToward(x, z)
-    return GUIDE_TURN * Math.atan2(Math.sin(full), Math.cos(full))
+  const guide = placed(own.guide, fallback.guide)
+  const guest = placed(own.guest, fallback.guest)
+  // From facing the front, the shorter way round toward the visitor's character, part of the way.
+  if (!Number.isFinite(guide.turn)) guide.turn = GUIDE_TURN * wrap(turnToward(guide.at[0], guide.at[2], guest.at[0], guest.at[2]))
+  // Halfway between facing her and facing the landmark, the shorter way round.
+  if (!Number.isFinite(guest.turn)) {
+    const toLandmark = turnToward(guest.at[0], guest.at[2])
+    guest.turn = wrap(toLandmark + wrap(turnToward(guest.at[0], guest.at[2], guide.at[0], guide.at[2]) - toLandmark) / 2)
   }
-  return {
-    guide: whole(own.guide, fallback.guide, guideTurn),
-    guest: whole(own.guest, fallback.guest, towardLandmark),
-  }
+  return { guide, guest }
+}
+
+/**
+ * Which of the guide's arms she holds out toward the landmark as she shows it:
+ * the one away from the visitor's character (-1 her right, 1 her left), so she
+ * never points across herself or at them. Her right when they stand straight
+ * in front of her or behind.
+ */
+export function presentingArm(guide: Standing, guest: Standing): -1 | 1 {
+  const dx = guest.at[0] - guide.at[0]
+  const dz = guest.at[2] - guide.at[2]
+  // How far to her left (+) the visitor's character stands, in her own frame.
+  const left = dx * Math.cos(guide.turn) - dz * Math.sin(guide.turn)
+  return left < -1e-9 ? 1 : -1
+}
+
+/** Land this far above the shore is grass: past the wet sand and the foam (`SAND_TO_GRASS` in landMesh.ts). */
+export const FIRM_GROUND = SHORE + 0.06
+
+/** Whether the ground at (`x`, `z`) round a place is firm land: not the sea, nor the sand at its edge. */
+export function onFirmGround(place: Place, districts: District[], x: number, z: number): boolean {
+  return landValue(worldAt(place, districts, [x, 0, z]).normalize(), districts).v >= FIRM_GROUND
 }
 
 /**

@@ -6,7 +6,7 @@ import { MeshBasicMaterial, SphereGeometry } from 'three'
 import { guideLook, type GuestChoice, type Look } from '@/content/characters'
 import type { District, Place } from '@/content/types'
 import { guestLook } from '@/lib/guests'
-import { characterHeight, onTheGround, standingFor, type Standing } from '@/lib/world/characters'
+import { characterHeight, onTheGround, presentingArm, standingFor, type Standing } from '@/lib/world/characters'
 import { WAVE_SECONDS, isWaving } from '@/lib/world/guide'
 import { isClick } from '@/lib/world/rig'
 import { Character } from './models/Character'
@@ -32,13 +32,13 @@ const FEET_SHADOW = 0.09
  * its own, swaying gently from its feet as a person standing does (a `Sway`,
  * so it stands still under reduced motion), in a small soft shadow.
  */
-function Person({ name, look, standing, waving = false, phase, children }: { name: string; look: Look; standing: Standing; waving?: boolean; phase: number; children?: ReactNode }) {
+function Person({ name, look, standing, waving = false, presenting, phase, children }: { name: string; look: Look; standing: Standing; waving?: boolean; presenting?: -1 | 1; phase: number; children?: ReactNode }) {
   return (
     <group name={`companion:${name}`} position={standing.at} rotation={[0, standing.turn, 0]}>
       <ContactShadow radius={FEET_SHADOW} />
       <Sway axis="z" amount={0.025} speed={0.8} phase={phase}>
         <Batched>
-          <Character look={look} waving={waving} />
+          <Character look={look} waving={waving} presenting={presenting} />
         </Batched>
       </Sway>
       {children}
@@ -63,8 +63,9 @@ interface CompanionsProps {
  * guide's home over the planet. They are not part of any landmark: they are
  * drawn here, on the ground where `OnGround` stands the place's landmark,
  * settled onto the curve of the planet (`onTheGround`). The guide waves for a
- * few seconds whenever the visitor arrives somewhere (`isWaving`); the
- * visitor's character faces the landmark. At a place, pressing the visitor's
+ * few seconds whenever the visitor arrives somewhere (`isWaving`), then, at a
+ * place, turns to the visitor's character and holds an arm out toward the
+ * landmark (`presentingArm`); the visitor's character faces between her and it. At a place, pressing the visitor's
  * character (not dragging across it) opens the picker; nothing else about
  * them takes the pointer, so they never come between it and a landmark.
  */
@@ -107,7 +108,7 @@ export function Companions({ places, districts, placeId, guest: choice, onPickGu
   const pressable = placeId !== null
   return (
     <OnGround at={place.at} districts={districts}>
-      <Person name="guide" look={guideLook} standing={standing.guide} waving={waving} phase={0} />
+      <Person name="guide" look={guideLook} standing={standing.guide} waving={waving} presenting={pressable ? presentingArm(standing.guide, standing.guest) : undefined} phase={0} />
       <Person name="guest" look={guest} standing={standing.guest} phase={1.7}>
         {pressable && (
           <mesh

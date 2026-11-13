@@ -261,7 +261,7 @@ export const hairForSkin: Record<SkinTone, HairColour> = {
  * allowed footprint and clear of the landmark's parts; `turn` is which way it
  * faces, in radians about the upright (0 faces the front; positive turns it
  * toward +X). Left out, the guide faces the front, turned a little toward the
- * landmark, and the visitor's character faces the landmark.
+ * visitor's character, who faces between her and the landmark.
  */
 export interface Spot {
   at: [number, number]
@@ -288,8 +288,9 @@ export const defaultStand: Stand = {
 
 /**
  * Places whose landmark fills the default spots (a pond, a court, a stage, a
- * stack of coins): where the guide and the visitor's character stand there
- * instead. Either may be given alone; the other keeps the default.
+ * stack of coins), or where the default spots are in the sea: where the guide
+ * and the visitor's character stand there instead. Either may be given alone;
+ * the other keeps the default. Every spot is on firm ground (tested).
  */
 export const standAt: Partial<Record<string, Partial<Stand>>> = {
   // Their footprints are the smallest on the planet (each is half the gap to the other).
@@ -301,6 +302,8 @@ export const standAt: Partial<Record<string, Partial<Stand>>> = {
   'kingdoms-and-crowns': { guest: { at: [0.78, 0.78] } },
   'the-budget': { guest: { at: [0.78, 0.78] } },
   'three-things': { guest: { at: [0.78, 0.76] } },
-  // Clear of the shop's pavement edge.
-  'ember-tattoo': { guest: { at: [0.8, 0.86] } },
+  // The mountain stands at the island's edge, the sea in front of it to the right: they stand to its left, on the grass.
+  'off-the-clock': { guide: { at: [-0.4, 1.0] }, guest: { at: [-0.66, 0.96] } },
+  // Clear of the shop's pavement edge, and of the beach to its right.
+  'ember-tattoo': { guide: { at: [0.36, 0.94] }, guest: { at: [0.64, 0.98] } },
 }

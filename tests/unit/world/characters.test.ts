@@ -3,7 +3,7 @@ import { Matrix4, Quaternion, Vector3 } from 'three'
 import { DEFAULT_GUEST, defaultStand, guestOptions } from '@/content/characters'
 import { districts, places } from '@/content/world'
 import { MODEL_SCALE } from '@/lib/world/camera'
-import { ADULT_HEIGHT, bubbleAnchor, characterHeight, standingFor, turnToward, worldAt } from '@/lib/world/characters'
+import { ADULT_HEIGHT, bubbleAnchor, characterHeight, presentingArm, standingFor, turnToward, worldAt } from '@/lib/world/characters'
 import { dirOf, surfaceFrame } from '@/lib/world/geo'
 import { groundOf } from '@/lib/world/terrain'
 import { everyGuest, guestChoiceFrom, guestKey, guestLook, guestPicture, isGuestOption, sameGuest } from '@/lib/guests'
@@ -78,12 +78,34 @@ describe('where the characters stand', () => {
     expect(s.guest.at).toEqual([defaultStand.guest.at[0], 0, defaultStand.guest.at[1]])
   })
 
-  it('turns the visitor’s character to face the landmark, and the guide part of the way from the front', () => {
-    const s = standingFor('somewhere', {}, { guide: { at: [1, 1] }, guest: { at: [1, 1] } })
-    expect(s.guest.turn).toBeCloseTo(turnToward(1, 1))
-    // Facing the front (0) and turned toward the middle: between the two, nearer the front.
-    expect(s.guide.turn).toBeLessThan(0)
-    expect(s.guide.turn).toBeGreaterThan(turnToward(1, 1) / 2)
+  it('turns the guide part of the way from the front toward the visitor’s character, who faces between her and the landmark', () => {
+    const s = standingFor('somewhere', {}, { guide: { at: [0.5, 1] }, guest: { at: [1, 1] } })
+    // The visitor's character is a quarter turn to her left: she turns toward them, and still faces the front more than them.
+    expect(s.guide.turn).toBeGreaterThan(0)
+    expect(s.guide.turn).toBeLessThan(Math.PI / 4)
+    // They face between her (a quarter turn to their right) and the landmark's middle.
+    const [toGuide, toLandmark] = [turnToward(1, 1, 0.5, 1), turnToward(1, 1)]
+    expect(Math.abs(toGuide)).toBeLessThan(Math.abs(s.guest.turn))
+    expect(Math.abs(s.guest.turn)).toBeLessThan(Math.abs(toLandmark))
+    expect(s.guest.turn).toBeCloseTo((toGuide + toLandmark) / 2)
+  })
+
+  it('mirrors: on the landmark’s other side they turn the other way', () => {
+    const right = standingFor('somewhere', {}, { guide: { at: [0.5, 1] }, guest: { at: [1, 0.9] } })
+    const left = standingFor('somewhere', {}, { guide: { at: [-0.5, 1] }, guest: { at: [-1, 0.9] } })
+    expect(left.guide.turn).toBeCloseTo(-right.guide.turn)
+    expect(left.guest.turn).toBeCloseTo(-right.guest.turn)
+  })
+
+  it('has the guide hold out the arm away from the visitor’s character: her right when they are on her left', () => {
+    const right = standingFor('somewhere', {}, { guide: { at: [0.5, 1] }, guest: { at: [1, 0.9] } })
+    const left = standingFor('somewhere', {}, { guide: { at: [-0.5, 1] }, guest: { at: [-1, 0.9] } })
+    expect(presentingArm(right.guide, right.guest)).toBe(-1)
+    expect(presentingArm(left.guide, left.guest)).toBe(1)
+    // Straight in front of her: her right.
+    expect(presentingArm({ at: [0, 0, 0], turn: 0 }, { at: [0, 0, 1], turn: 0 })).toBe(-1)
+    // Turned right round, her left is where her right was.
+    expect(presentingArm({ at: [0, 0, 0], turn: Math.PI }, { at: [1, 0, 0], turn: 0 })).toBe(1)
   })
 
   it('takes a place’s own spots, either alone, and a spot’s own turn', () => {

@@ -6,7 +6,7 @@ import { guideLook } from '@/content/characters'
 import { everyGuest, guestLook } from '@/lib/guests'
 import { districts, places } from '@/content/world'
 import { FOCUS, MODEL_SCALE } from '@/lib/world/camera'
-import { characterHeight, groundUnder, onTheGround, standingFor, type Standing } from '@/lib/world/characters'
+import { characterHeight, groundUnder, onFirmGround, onTheGround, standingFor, type Standing } from '@/lib/world/characters'
 import { footprintRadius, withinFootprint } from '@/lib/world/kit'
 import { mount } from './r3f'
 
@@ -48,7 +48,7 @@ async function trianglesOf(place: (typeof places)[number]) {
 const boxAt = (s: Standing) => new Box3(new Vector3(s.at[0] - REACH, s.at[1] + 0.01, s.at[2] - REACH), new Vector3(s.at[0] + REACH, s.at[1] + TALLEST, s.at[2] + REACH))
 
 describe('where the guide and the visitor’s character stand, at every place', () => {
-  it.each(places.map((p) => [p.id, p] as const))('at %s: on the ground, inside the footprint, clear of the landmark, apart, seen from the camera, and the visitor’s character outside the landmark’s hit sphere', async (_, place) => {
+  it.each(places.map((p) => [p.id, p] as const))('at %s: on firm ground, inside the footprint, clear of the landmark, apart, seen from the camera, and the visitor’s character outside the landmark’s hit sphere', async (_, place) => {
     const stand = standingFor(place.id)
     const radius = footprintRadius(place.id, places)
     const { tris, meshes, unmount } = await trianglesOf(place)
@@ -59,6 +59,8 @@ describe('where the guide and the visitor’s character stand, at every place', 
         // or standing on the landmark's own floor where its spot says so.
         expect(s.at[1], who).toBeCloseTo(raw.at[1] > 0 ? raw.at[1] : groundUnder(place, districts, s.at[0], s.at[2]), 6)
         expect(Number.isFinite(s.at[1]), who).toBe(true)
+        // On firm ground, all of the figure: grass, never the sea or the wet sand at its edge.
+        for (const dx of [-REACH, 0, REACH]) for (const dz of [-REACH, 0, REACH]) expect(onFirmGround(place, districts, s.at[0] + dx, s.at[2] + dz), `${who} stands in the sea or on its edge at ${place.id}`).toBe(true)
         // Inside the footprint, all of the figure.
         for (const dx of [-REACH, REACH]) for (const dz of [-REACH, REACH]) expect(withinFootprint(new Vector3(s.at[0] + dx, 0, s.at[2] + dz), radius), `${who} at ${s.at}`).toBe(true)
         // Clear of every part of the landmark.
