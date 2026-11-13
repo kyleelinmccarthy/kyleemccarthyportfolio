@@ -138,7 +138,7 @@ export async function recordRigModes(page: Page) {
 /**
  * At place `id`, with the camera at the view it lands on (and still: reduced motion, so the view's shift for the
  * panel is in place at once), where the landmark's middle and the visitor's character (the default look, its
- * middle) fall on the screen.
+ * middle) fall on the screen, and where any point of the landmark's own does.
  */
 export async function atLandingView(page: Page, id: string) {
   const { width, height } = page.viewportSize()!
@@ -161,5 +161,7 @@ export async function atLandingView(page: Page, id: string) {
   return {
     landmark: onScreen(placeOrbit(place, districts, places).centre),
     guest: onScreen(feet.clone().addScaledVector(dirOf(place.at), tall / 2)),
+    /** Where a point of the landmark's own frame ([x, y, z] in model units) falls. */
+    at: (local: readonly [number, number, number]) => onScreen(worldAt(place, districts, local)),
   }
 }
