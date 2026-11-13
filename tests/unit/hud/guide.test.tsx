@@ -1,4 +1,4 @@
-import { afterEach, beforeAll, describe, it, expect } from 'vitest'
+import { afterEach, beforeAll, describe, it, expect, vi } from 'vitest'
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { GuideLayer } from '@/components/hud/GuideLayer'
 import { ThemeProvider } from '@/components/hud/ThemeProvider'
@@ -8,6 +8,9 @@ import { guide } from '@/content/guide'
 import { GUEST_STORAGE_KEY, HINTS_STORAGE_KEY } from '@/lib/companionPrefs'
 import { guestPicture } from '@/lib/guests'
 import type { GuideRoute } from '@/lib/world/guide'
+
+// jsdom has no WebGL: the welcome pair's live canvas is left out (tests/unit/hud/welcome.test.tsx covers the pair).
+vi.mock('@/components/world/PairCanvas', () => ({ PairCanvas: () => null }))
 
 // jsdom has no modal dialogs: enough of one for the picker (open, close, its close event).
 beforeAll(() => {
@@ -101,7 +104,8 @@ const FIELDS = ['age', 'style', 'skin'] as const
 
 function openPicker(route: GuideRoute = { kind: 'place', id: 'beacon' }) {
   show(route)
-  fireEvent.click(screen.getByRole('button', { name: guide.controls.change }))
+  // Over the planet on a first arrival the control is the welcome pair's, named "This is you" first.
+  fireEvent.click(screen.getByRole('button', { name: new RegExp(guide.controls.change) }))
   return screen.getByRole('dialog', { name: guide.controls.pickerTitle })
 }
 
