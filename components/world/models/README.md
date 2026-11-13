@@ -232,7 +232,11 @@ Wrap moving parts in `Bob` (float up and down), `Spin` (turn about the
 upright), `Sway` (rock about an axis: tails, hanging signs; a flag is a
 `Flag`) or `Drop({ fall })` (fall `fall` straight down on a slow loop,
 appearing at the top and vanishing at the foot so the loop never pops: a
-coin into a slot; `DROP`, `dropPose`). Each turns its
+coin into a slot; `DROP`, `dropPose`). For something that moves only when
+asked (a pet hopping when it is pressed), wrap it in `Gesture({ cue, move })`:
+still and batched with the rest while at rest, it plays `move` once (a hop, a
+wiggle, a nod, a look round: `gesturePose` in `lib/world/gesture.ts`)
+whenever `cue` changes, live only while it plays. Each turns its
 children about its own origin, placed by its `at`, so build the children
 around the pivot. They run from the shared clock, `lookUniforms.time`, which
 stands still under reduced motion, so they stop with it. For any other
@@ -244,7 +248,8 @@ own.
 `Places` wraps every landmark in `Batched`: its still kit parts are merged
 into one mesh per material, so a landmark of a hundred parts and their
 outlines draws in about twenty calls. Anything inside `Bob`, `Spin`, `Sway` or `Drop`
-stays live, and so do a `Flag`, a `Picture`, a `Beam`, a `Signal`, a `Flame` and `Water`, which
+stays live (and anything inside a `Gesture` while it plays: the landmark is
+merged again as it starts and as it ends, so at rest it costs nothing), and so do a `Flag`, a `Picture`, a `Beam`, a `Signal`, a `Flame` and `Water`, which
 have shaders or attributes of their own. Each kit part tells the batch when it
 mounts, changes (its geometry, colour, place or outline) or unmounts, and so
 do the composites (`Roof`, `Window`, `Door`) and the motion helpers when

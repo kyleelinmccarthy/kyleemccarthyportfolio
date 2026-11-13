@@ -95,6 +95,7 @@ import {
   type RoofStyle,
   type Vec3,
 } from '@/lib/world/kit'
+import { gesturePose, type Move } from '@/lib/world/gesture'
 import { lookUniforms } from '../lookUniforms'
 import {
   beamMaterial,
@@ -1311,6 +1312,55 @@ export function Drop({ children, at, fall }: { children: ReactNode; at?: Vec3; f
   )
 }
 
+/** A `Gesture` at rest: nothing to say, so it is batched with the landmark's still parts. Shared and frozen, as `BATCH`. */
+const AT_REST = Object.freeze({})
+
+/**
+ * Something that moves only now and then: still, and batched with the rest of
+ * the landmark (so it costs no draw calls of its own), until `cue` changes;
+ * then it plays `move` once (a hop, a wiggle, a nod: `gesturePose`) about its
+ * own origin, put at `at`, and is still again. While it plays it is a moving
+ * part, drawn live (the landmark is merged again as it starts and as it
+ * ends). From the shared clock, so a page left hidden holds it where it is;
+ * under reduced motion the clock stands still, so never change `cue` then
+ * (the pets do not).
+ */
+export function Gesture({ children, at, cue, move }: { children: ReactNode; at?: Vec3; cue: number; move: Move }) {
+  const ref = useRef<Group>(null)
+  const [playing, setPlaying] = useState(false)
+  // The cue last played, and when (on the shared clock) the gesture under way began: null until its first frame.
+  const played = useRef(cue)
+  const began = useRef<number | null>(null)
+  useEffect(() => {
+    if (cue === played.current) return
+    played.current = cue
+    began.current = null
+    setPlaying(true)
+  }, [cue])
+  // Starting and stopping changes what the batch may merge.
+  useRebatch(`gesture|${at}|${playing}`)
+  useFrame(() => {
+    const group = ref.current
+    if (!group || !playing) return
+    const now = lookUniforms.time.value
+    if (began.current === null) began.current = now
+    const t = move.seconds > 0 ? (now - began.current) / move.seconds : 1
+    const pose = gesturePose(move, t)
+    group.position.y = pose.lift
+    group.rotation.set(pose.bow, pose.turn, pose.rock)
+    if (t >= 1) setPlaying(false)
+  })
+  // It says how far its parts may move, for the check of where moving parts can reach. Frozen, as `MOVING`.
+  const marker = useMemo(() => Object.freeze({ moving: true, motion: 'gesture', reach: Math.abs(move.lift ?? 0) }), [move.lift])
+  return (
+    <group position={at}>
+      <group ref={ref} userData={playing ? marker : AT_REST}>
+        {children}
+      </group>
+    </group>
+  )
+}
+
 /* ───────────── the footprint check ───────────── */
 
 /** What was last reported for each landmark, so a check that finds nothing new says nothing. */
@@ -1480,7 +1530,8 @@ const matrixKey = (m: Matrix4) => m.elements.map((e) => Math.round(e * 1e5)).joi
  * copies), the geometry it was given and its material, and where it stands in
  * the landmark. For a part inside a moving group, where it stands is its place
  * with the motion itself taken out (the moving group's own turn or bob), so
- * moving its pivot counts as a change but the motion does not.
+ * moving its pivot counts as a change but the motion does not; and whether it
+ * is in motion at all (a `Gesture` starting or stopping).
  */
 export function batchSignature(root: Object3D): string {
   root.updateWorldMatrix(true, true)
@@ -1498,7 +1549,8 @@ export function batchSignature(root: Object3D): string {
         const pivot = inMotion.parent ? inMotion.parent.matrixWorld : new Matrix4()
         place.multiplyMatrices(toRoot, pivot).multiply(within)
       }
-      parts.push(`${mesh.id}:${ownGeometry(mesh).id}:${material}:${matrixKey(place)}`)
+      // Whether it is in motion counts too: a `Gesture` starting or stopping moves a part into or out of the batch.
+      parts.push(`${mesh.id}:${ownGeometry(mesh).id}:${material}:${matrixKey(place)}${inMotion ? ':moving' : ''}`)
     }
     for (const child of object.children) if (!child.userData.batched) visit(child, inMotion)
   }
