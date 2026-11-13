@@ -2,14 +2,16 @@
  * Takes the pictures the character picker shows, one for every character a
  * visitor can make: each age, style and skin tone together
  * (public/world/characters/guest-<age>-<style>-<skin>.webp, from the option
- * lists `guestOptions` in content/characters.ts), and the guide's face for her
- * folded bubble. The picker shows a picture rather than a 3D view, so it never
- * opens a second WebGL context.
+ * lists `guestOptions` in content/characters.ts), the guide's face for her
+ * folded bubble, and her whole figure (guide.webp) for her welcome where its
+ * live canvas cannot be had. The picker shows a picture rather than a 3D view,
+ * so it never opens a second WebGL context.
  *
  *   npx playwright install chromium
  *   npm run capture:characters                 # builds the site, takes every picture
  *   npm run capture:characters -- --no-build   # reuse the last e2e build in .next-e2e
  *   CAPTURE_PORT=3298 npm run capture:characters   # on another port (3198 unless said)
+ *   npm run capture:characters -- --only guide,guide-face   # only these pictures, by name; the rest are left as they are
  *
  * The figure is drawn by the site itself, in the landmarks' own materials and
  * light, alone on a transparent background: the `window.__characterPortrait`
@@ -23,7 +25,8 @@
  * afternoon's light, under reduced motion so nothing moves. It stops with an
  * error, writing nothing, if any picture is blank or over 40KB, or if the port
  * is already in use (it could be a stale server). Every picture is taken and
- * checked before any is written. Retake them when a look or the builder changes.
+ * checked before any is written. Retake them when a look or the builder
+ * changes: all of them, or with `--only` just those a change touched.
  */
 import { chromium, type Browser } from '@playwright/test'
 import { spawn, spawnSync, type ChildProcess } from 'node:child_process'
@@ -132,6 +135,8 @@ interface Shot {
 
 /** The guide's face: head and shoulders, small and square. */
 const GUIDE_FACE: Shot = { name: 'guide-face', look: 'guide', frame: 0.42, width: 96, height: 96 }
+/** The guide's whole figure, as a guest's picture is taken. */
+const GUIDE_FIGURE: Shot = { name: 'guide', look: 'guide', frame: 1, width: WIDTH, height: HEIGHT }
 
 async function shoot(browser: Browser, shot: Shot): Promise<Buffer> {
   const context = await browser.newContext({ viewport: { width: shot.width, height: shot.height }, deviceScaleFactor: 1, reducedMotion: 'reduce' })
@@ -156,8 +161,19 @@ async function shoot(browser: Browser, shot: Shot): Promise<Buffer> {
   }
 }
 
-/** Every shot, in the option lists' order, and the guide's face last. */
-const SHOTS: Shot[] = [...everyGuest().map((g): Shot => ({ name: guestKey(g), look: g, frame: 1, width: WIDTH, height: HEIGHT })), GUIDE_FACE]
+/** Every shot, in the option lists' order, and the guide's figure and face last. */
+const EVERY_SHOT: Shot[] = [...everyGuest().map((g): Shot => ({ name: guestKey(g), look: g, frame: 1, width: WIDTH, height: HEIGHT })), GUIDE_FIGURE, GUIDE_FACE]
+
+/** The shots named after `--only` (comma-separated), or every shot. A name that is no shot's stops the run. */
+function chosenShots(argv: string[]): Shot[] {
+  const at = argv.indexOf('--only')
+  if (at < 0) return EVERY_SHOT
+  const names = (argv[at + 1] ?? '').split(',').map((n) => n.trim()).filter(Boolean)
+  const unknown = names.filter((n) => !EVERY_SHOT.some((s) => s.name === n))
+  if (names.length === 0 || unknown.length > 0) throw new Error(`--only takes picture names, such as guide,guide-face${unknown.length ? `: no picture is called ${unknown.join(', ')}` : ''}.`)
+  return EVERY_SHOT.filter((s) => names.includes(s.name))
+}
+
 
 /** Stops the run if two pictures are the same: a character the hook did not draw (it fell back to the default), or a stale page. */
 async function assertAllDiffer(shots: Array<{ name: string; webp: Buffer }>): Promise<void> {
@@ -172,6 +188,7 @@ async function assertAllDiffer(shots: Array<{ name: string; webp: Buffer }>): Pr
 }
 
 async function main(): Promise<void> {
+  const wanted = chosenShots(process.argv)
   if (!process.argv.includes('--no-build')) build()
   if ((await fetchHome()) !== null) {
     throw new Error(`Something already answers on ${ORIGIN}: it could be a stale server. Stop it and run this again.`)
@@ -189,16 +206,16 @@ async function main(): Promise<void> {
   try {
     const html = await waitForServer(server)
     if (!isE2eBuild(html)) throw new Error('The build in .next-e2e was not made with the test hooks (NEXT_PUBLIC_E2E=1). Run this again without --no-build.')
-    const shots: Array<{ name: string; webp: Buffer }> = new Array(SHOTS.length)
+    const shots: Array<{ name: string; webp: Buffer }> = new Array(wanted.length)
     const browser = await chromium.launch()
     try {
       // A few at a time, each into its own place in the list, so the order stays the lists' order.
       let next = 0
       const worker = async () => {
-        while (next < SHOTS.length) {
+        while (next < wanted.length) {
           const i = next++
-          const shot = SHOTS[i]!
-          console.log(`Capturing ${shot.name} (${i + 1} of ${SHOTS.length})`)
+          const shot = wanted[i]!
+          console.log(`Capturing ${shot.name} (${i + 1} of ${wanted.length})`)
           shots[i] = { name: shot.name, webp: await shoot(browser, shot) }
         }
       }
