@@ -10,6 +10,9 @@ const ROUTES = [
   '/places/art',
   '/places/off-the-clock',
   '/places/post',
+  '/about',
+  '/experience',
+  '/contact',
 ]
 
 /**
@@ -37,7 +40,7 @@ async function violationsOn(page: Page): Promise<string | null> {
 test.describe('axe sweep', () => {
   for (const theme of ['day', 'night'] as const) {
     test(`no axe violations in ${theme} mode`, async ({ page }) => {
-      // Eight routes, each drawing the planet in software WebGL while other workers run: give it the slow budget.
+      // Eleven routes, each drawing the planet in software WebGL while other workers run: give it the slow budget.
       test.slow()
       await page.addInitScript((t) => sessionStorage.setItem('kym-theme', t), theme)
 

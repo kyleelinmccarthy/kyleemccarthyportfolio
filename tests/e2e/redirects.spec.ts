@@ -1,8 +1,7 @@
 import { test, expect } from './canvas'
 
 const retired: Array<[from: string, to: string]> = [
-  ['/about', '/places/home'],
-  ['/connect', '/places/post'],
+  ['/connect', '/contact'],
   ['/room', '/places/art'],
   ['/work', '/#index'],
 ]

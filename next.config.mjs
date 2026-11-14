@@ -30,10 +30,12 @@ const contentSecurityPolicyHeader = Object.entries(contentSecurityPolicy)
   .map(([directive, sources]) => `${directive} ${sources.join(' ')}`)
   .join('; ')
 
-/** The pages of the retired house, sent to where their content lives now. */
+/**
+ * The pages of the retired house, sent to where their content lives now. /about is a page again (the profile's About),
+ * and the old contact page goes to the profile's Contact, which leads on to the letter box.
+ */
 const retiredPages = [
-  { source: '/about', destination: '/places/home' },
-  { source: '/connect', destination: '/places/post' },
+  { source: '/connect', destination: '/contact' },
   { source: '/room', destination: '/places/art' },
   { source: '/work', destination: '/#index' },
 ]
