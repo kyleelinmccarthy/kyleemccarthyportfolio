@@ -59,6 +59,8 @@ declare global {
      * rests at the furthest so a new gesture out would leave (`rigArmed`). Written only in an e2e build.
      */
     __rigView?: { azimuth: number; elevation: number; distance: number; armed: boolean }
+    /** A test hook: how many meshes the world would draw now (each shown, with all above it shown). Set only in an e2e build. */
+    __worldMeshesDrawn?: () => number
     /** A test hook: how many times the map labels have measured the page's layout. Counted only in an e2e build. */
     __labelMeasures?: number
     /**

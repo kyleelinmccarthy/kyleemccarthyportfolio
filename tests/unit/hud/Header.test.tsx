@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Header } from '@/components/hud/Header'
 import { IndexDrawerProvider, useIndexDrawer } from '@/components/hud/IndexDrawer'
 import { ThemeProvider } from '@/components/hud/ThemeProvider'
-import { hero } from '@/content/about'
+import { hero, proof } from '@/content/about'
 import { site } from '@/content/site'
 
 function OpenState() {
@@ -43,6 +43,20 @@ describe('Header', () => {
     // What gives way, and what stays, each keeps map labels out from under it.
     expect(screen.getByText(hero.headline).closest('[data-covers-labels]')).not.toBeNull()
     expect(screen.getByRole('heading', { level: 1 }).closest('[data-covers-labels]')).not.toBeNull()
+  })
+
+  it('on the home page, the proof figures stand under the headline as real text, and give way with it', () => {
+    renderHeader(true)
+    const row = screen.getByText(hero.headline).nextElementSibling!
+    expect(row.tagName).toBe('UL')
+    expect(within(row as HTMLElement).getAllByRole('listitem').map((li) => li.textContent)).toEqual(proof.map((f) => `${f.value} ${f.label}`))
+    expect(row.closest('[data-gives-way]')).not.toBeNull()
+    expect(row.closest('[data-covers-labels]')).not.toBeNull()
+  })
+
+  it('on a place page, has no proof row', () => {
+    renderHeader(false)
+    expect(screen.queryByText(proof[0].label)).not.toBeInTheDocument()
   })
 
   it('on a place page, the name is a link home and there is no h1', () => {

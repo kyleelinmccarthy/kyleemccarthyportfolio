@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, type ReactNode } from 'react'
+import { useEffect, useMemo, type ReactNode, type RefObject } from 'react'
 import { useThree, type ThreeEvent } from '@react-three/fiber'
 import { BackSide, Matrix4, MeshBasicMaterial, Quaternion, SphereGeometry } from 'three'
 import type { District, LatLon, Place } from '@/content/types'
@@ -10,7 +10,9 @@ import { footprintRadius, shadowRadius } from '@/lib/world/kit'
 import { HOVER_GRACE_MS, labelId } from '@/lib/world/labels'
 import { isClick } from '@/lib/world/rig'
 import { groundOf } from '@/lib/world/terrain'
+import type { RigReport } from './CameraRig'
 import { hoverGrace } from './hoverGrace'
+import { useLandmarkMotion } from './LandmarkMotion'
 import { Batched, ContactShadow } from './models/kit'
 import { modelFor } from './models/registry'
 
@@ -48,6 +50,10 @@ interface PlacesProps {
   onVisit(id: string): void
   /** The place open, if any: its sphere is caught on its far side, so what stands inside it and takes presses (the pets) comes first. */
   open?: string | null
+  /** What the camera rig last reported: a landmark settles as the camera lands on it, and answers a hover only from afar. */
+  rig?: RefObject<RigReport | null>
+  /** No pulses (`useLandmarkMotion`). */
+  reducedMotion?: boolean
 }
 
 /**
@@ -60,9 +66,14 @@ interface PlacesProps {
  * presses of its own (the pets at Home, `PetPresses`) comes first; a press
  * anywhere else on it still goes no further, never through to a landmark
  * behind.
+ *
+ * Each landmark rises in its turn while the arrival plays, lifts and settles
+ * when hovered from afar, and settles as the camera lands on it, all in one
+ * loop for every landmark (`useLandmarkMotion`).
  */
-export function Places({ places, districts, onVisit, open = null }: PlacesProps) {
+export function Places({ places, districts, onVisit, open = null, rig, reducedMotion = false }: PlacesProps) {
   const canvas = useThree((state) => state.gl.domElement)
+  const motion = useLandmarkMotion({ places, rig, reducedMotion })
   // A hovered landmark's label stays lit a while after the pointer leaves, so the pointer can reach its tag.
   const grace = useMemo(() => hoverGrace(mark, HOVER_GRACE_MS), [])
   const hit = useMemo(
@@ -94,7 +105,7 @@ export function Places({ places, districts, onVisit, open = null }: PlacesProps)
 
   return (
     <group>
-      {places.map((place) => {
+      {places.map((place, index) => {
         const district = districts.find((d) => d.id === place.district)
         if (!district) return null
         const Model = modelFor(place.model)
@@ -104,6 +115,7 @@ export function Places({ places, districts, onVisit, open = null }: PlacesProps)
           e.stopPropagation()
           grace.heat(place.id)
           canvas.style.cursor = 'pointer'
+          if (place.id !== open) motion.hovered(index)
         }
         const out = () => {
           grace.coolLater(place.id)
@@ -115,10 +127,12 @@ export function Places({ places, districts, onVisit, open = null }: PlacesProps)
         }
         return (
           <OnGround key={place.id} at={place.at} districts={districts}>
-            {Model.shadow === false ? null : <ContactShadow radius={shadowRadius(allowed, Model.shadow)} />}
-            <Batched name={place.id} radius={allowed}>
-              <Model place={place} district={district} />
-            </Batched>
+            <group ref={motion.bind(index)}>
+              {Model.shadow === false ? null : <ContactShadow radius={shadowRadius(allowed, Model.shadow)} />}
+              <Batched name={place.id} radius={allowed}>
+                <Model place={place} district={district} />
+              </Batched>
+            </group>
             <mesh
               geometry={hit.geometry}
               material={place.id === open ? hit.far : hit.material}

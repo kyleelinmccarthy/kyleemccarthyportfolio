@@ -35,6 +35,7 @@ import { PetBubbleProjector } from './PetBubbleProjector'
 import { PetPresses } from './PetPresses'
 import { Places } from './Places'
 import { Planet } from './Planet'
+import { PlanetArrival } from './PlanetArrival'
 import { PortraitCanvas } from './Portrait'
 import { Scatter } from './Scatter'
 import { SkyDome } from './SkyDome'
@@ -236,11 +237,14 @@ export function WorldCanvas({ districts, places, quality: initialQuality, reduce
           <SkyDome night={look === 'night'} reducedMotion={reducedMotion} />
           <NightSky quality={quality} />
           <Clouds quality={quality} still={reducedMotion} view={focusedView} />
-          <Planet districts={districts} quality={quality} />
-          <Scatter districts={districts} places={places} quality={quality} />
-          <Ambient districts={districts} places={places} quality={quality} still={reducedMotion} view={focusedView} />
-          <Places places={places} districts={districts} onVisit={visit} open={placeId} />
-          <Companions places={places} districts={districts} placeId={placeId} guest={guest} onPickGuest={pickGuest} />
+          {/* The planet and all that stands on it: spinning in, and its landmarks rising, while the arrival plays. */}
+          <PlanetArrival>
+            <Planet districts={districts} quality={quality} />
+            <Scatter districts={districts} places={places} quality={quality} />
+            <Ambient districts={districts} places={places} quality={quality} still={reducedMotion} view={focusedView} />
+            <Places places={places} districts={districts} onVisit={visit} open={placeId} rig={rigNow} reducedMotion={reducedMotion} />
+            <Companions places={places} districts={districts} placeId={placeId} guest={guest} onPickGuest={pickGuest} />
+          </PlanetArrival>
           <BubbleProjector places={places} districts={districts} placeId={placeId} guest={guest} rig={rigNow} />
           <PetPresses places={places} districts={districts} placeId={placeId} reducedMotion={reducedMotion} />
           <PetBubbleProjector places={places} districts={districts} placeId={placeId} rig={rigNow} />

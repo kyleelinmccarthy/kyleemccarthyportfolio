@@ -69,7 +69,7 @@ export function TourBar({ placeId }: { placeId: string }) {
       ref={bar}
       aria-label="Tour"
       data-covers-labels
-      className="fixed bottom-8 left-1/2 z-[8] flex -translate-x-1/2 items-center gap-2 max-[820px]:bottom-auto max-[820px]:left-3.5 max-[820px]:right-3.5 max-[820px]:top-3.5 max-[820px]:translate-x-0"
+      className="hud-enter fixed bottom-8 left-1/2 z-[8] flex -translate-x-1/2 items-center gap-2 max-[820px]:bottom-auto max-[820px]:left-3.5 max-[820px]:right-3.5 max-[820px]:top-3.5 max-[820px]:translate-x-0"
     >
       <Link href={placeHref(tourStep(placeId, -1))} aria-label="Previous place" className="hud-btn glass">
         <span aria-hidden>←</span>

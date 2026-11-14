@@ -32,11 +32,31 @@ export async function scaleRender(context: BrowserContext): Promise<void> {
   await context.addInitScript(setRenderScale, RENDER_SCALE)
 }
 
-/** Playwright's `test`, with the render scale set before any page script runs. Every spec imports this, not Playwright's. */
-export const test = base.extend<{ renderScale: void }>({
+/** sessionStorage: the arrival has played this visit (`ARRIVAL_SEEN_KEY` in lib/arrival.ts). */
+const ARRIVAL_SEEN = 'kym-arrival-seen'
+
+const markArrivalSeen = (key: string) => {
+  sessionStorage.setItem(key, '1')
+}
+
+/**
+ * Playwright's `test`, with the render scale set before any page script runs. Every spec imports this, not Playwright's.
+ *
+ * Every test starts as a visitor who has seen the arrival this visit (`arrivalSeen`), so a test that loads `/` finds the
+ * page at once, never four seconds into a sequence. The arrival's own spec turns it off: `test.use({ arrivalSeen: false })`.
+ */
+export const test = base.extend<{ renderScale: void; arrivalSeen: boolean; arrival: void }>({
   renderScale: [
     async ({ page }, use) => {
       await page.addInitScript(setRenderScale, RENDER_SCALE)
+      await use()
+    },
+    { auto: true },
+  ],
+  arrivalSeen: [true, { option: true }],
+  arrival: [
+    async ({ page, arrivalSeen }, use) => {
+      if (arrivalSeen) await page.addInitScript(markArrivalSeen, ARRIVAL_SEEN)
       await use()
     },
     { auto: true },
