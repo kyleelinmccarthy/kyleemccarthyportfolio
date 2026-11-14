@@ -1,4 +1,4 @@
-import { drivesTheCanvas, expect, rig, test, type Page } from './canvas'
+import { drivesTheCanvas, expect, rig, test, touchOf, type Page } from './canvas'
 // Relative imports: Playwright does not know the `@/` alias.
 import { eggWords } from '../../content/eggs'
 import { BUGS_STORAGE_KEY } from '../../lib/eggs/bugCount'
@@ -31,6 +31,31 @@ async function planet(page: Page, theme: 'day' | 'night', { bug = false } = {}) 
   await page.goto('/')
   await expect(rig(page)).toHaveAttribute('data-rig-mode', 'orbit', { timeout: 60_000 })
   await expect(page.locator('html')).toHaveAttribute('data-theme', theme)
+  // The eggs load once the world has drawn.
+  await expect(said(page)).toBeAttached({ timeout: 30_000 })
+}
+
+/**
+ * Turns the planet with short drags to the right (the camera going west) until The Natural 20's name shows on the
+ * sky: it hangs beyond Tiny Frenzy, so from the opening view it is behind the camera.
+ */
+async function turnToTheNatural20(page: Page) {
+  const name = page.locator('#label-const-the-natural-20')
+  const { width, height } = page.viewportSize()!
+  const from = { x: width * 0.3, y: height * 0.5 }
+  const step = height * 0.09
+  for (let i = 0; i < 12 && (await name.getAttribute('data-on')) === null; i++) {
+    if (test.info().project.name === 'mobile') await (await touchOf(page)).drag(from, step, 0, 4)
+    else {
+      await page.mouse.move(from.x, from.y)
+      await page.mouse.down()
+      await page.mouse.move(from.x + step, from.y, { steps: 4 })
+      await page.mouse.up()
+    }
+    await page.waitForTimeout(400)
+  }
+  await expect(name).toHaveAttribute('data-on', '', { timeout: 10_000 })
+  return name
 }
 
 /** Where the bug is on the screen once it is out on the near side, uncovered. */
@@ -95,11 +120,11 @@ test.describe('the d20', () => {
   test('at night, pressing The Natural 20 rolls the die, and the result is told', async ({ page }) => {
     drivesTheCanvas()
     await planet(page, 'night')
-    // Its name is shown on the sky; pressing just over it, on its stars, rolls.
-    const name = page.locator('#label-const-the-natural-20')
-    await expect(name).toHaveAttribute('data-on', '', { timeout: 30_000 })
+    // Its name is shown on the sky once the planet is turned; pressing just over it, on its stars, rolls.
+    const name = await turnToTheNatural20(page)
+    await page.waitForTimeout(800)
     const box = (await name.boundingBox())!
-    const at = { x: box.x + box.width / 2, y: box.y - 30 }
+    const at = { x: box.x + box.width / 2, y: box.y - 50 }
     expect(await page.evaluate(({ x, y }) => document.elementFromPoint(x, y)?.tagName, at)).toBe('CANVAS')
     await press(page, at)
     await expect(said(page)).toHaveText(/^You rolled (\d|1\d|20)\./, { timeout: 15_000 })
@@ -137,7 +162,7 @@ test.describe('the d20', () => {
 })
 
 test.describe('with reduced motion', () => {
-  test.use({ reducedMotion: 'reduce' })
+  test.beforeEach(({ page }) => page.emulateMedia({ reducedMotion: 'reduce' }))
 
   test('a roll simply appears at rest with its result, with no fireworks; a natural 1 has its line', async ({ page }) => {
     drivesTheCanvas()
@@ -157,6 +182,8 @@ test.describe('with reduced motion', () => {
   test('the bug stands still, and caught it shows its words with no confetti', async ({ page }) => {
     drivesTheCanvas()
     await planet(page, 'day', { bug: true })
+    // Once the view has settled, it stays where it stands.
+    await page.waitForTimeout(2000)
     const first = await bugOnScreen(page)
     await page.waitForTimeout(1500)
     const later = await bugOnScreen(page)

@@ -58,18 +58,23 @@ function draw(ctx: CanvasRenderingContext2D, burst: Laid, t: number) {
     } else if (now.phase === 'burst') {
       const before = shellAt(shell, t - STREAK, FIREWORKS)
       const tails = before.phase === 'burst' ? before.sparks : null
-      ctx.lineWidth = 2
+      ctx.lineWidth = 1.5
       ctx.lineCap = 'round'
       for (let i = 0; i < now.sparks.length; i++) {
         const p = now.sparks[i]
-        ctx.globalAlpha = now.alpha * 0.85
+        // A fading streak behind it, a soft glow round it, and its bright head.
+        ctx.globalAlpha = now.alpha * 0.55
         ctx.beginPath()
         ctx.moveTo(tails ? tails[i].x : shell.at.x, tails ? tails[i].y : shell.at.y)
         ctx.lineTo(p.x, p.y)
         ctx.stroke()
-        ctx.globalAlpha = now.alpha * 0.25
+        ctx.globalAlpha = now.alpha * 0.18
         ctx.beginPath()
-        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2)
+        ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.globalAlpha = now.alpha
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, 1.4, 0, Math.PI * 2)
         ctx.fill()
       }
       // The flash at its heart, gone in a moment.

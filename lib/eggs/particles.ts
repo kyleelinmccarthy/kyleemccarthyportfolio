@@ -121,7 +121,8 @@ export function fireworks(rand: () => number, view: { width: number; height: num
       color: tuning.colors[i % tuning.colors.length],
       sparks: Array.from({ length: tuning.sparks }, (_, k) => {
         const a = turn + (k / tuning.sparks) * Math.PI * 2
-        const speed = within(tuning.speed, 0.75 + 0.25 * rand())
+        // Some fast, some slow, so a burst is a full ball of light rather than one ring.
+        const speed = within(tuning.speed, Math.sqrt(rand()))
         return { vx: Math.cos(a) * speed, vy: Math.sin(a) * speed }
       }),
     }

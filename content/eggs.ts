@@ -78,16 +78,16 @@ export const bugColors = {
 
 /** The confetti a caught bug pops into: from the palette, and short-lived. */
 export const CONFETTI = {
-  pieces: 46,
+  pieces: 60,
   seconds: 1.4,
   colors: [landmark.gold, landmark.pink, landmark.teal, landmark.sky, landmark.coral, landmark.purple],
   /** Pixels a second, outward and upward at the start; pixels a second squared, downward. */
-  speed: [180, 420],
+  speed: [220, 540],
   gravity: 900,
   /** How quickly the air slows it (a second). */
   drag: 2.6,
   /** A piece's size, in pixels. */
-  size: [5, 9],
+  size: [6, 11],
 } as const
 
 /** How long the bug's words stay up, in milliseconds. */
@@ -129,11 +129,11 @@ export const FIREWORKS = {
   rise: 0.55,
   fade: 1.5,
   /** Sparks in a burst, and their speed outward (pixels a second). */
-  sparks: 44,
-  speed: [150, 260],
+  sparks: 56,
+  speed: [90, 270],
   gravity: 140,
   drag: 1.4,
   colors: [landmark.gold, landmark.pink, landmark.sky, landmark.teal, landmark.offWhite],
   /** Where the bursts open: a band across the middle of the screen's upper part, as shares of its width and height. */
-  band: { x: [0.22, 0.78], y: [0.14, 0.4] },
+  band: { x: [0.32, 0.68], y: [0.12, 0.36] },
 } as const
