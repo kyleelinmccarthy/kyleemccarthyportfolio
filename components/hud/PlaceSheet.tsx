@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type MouseEvent, type PointerEvent, type ReactNode } from 'react'
 // From `sheet`, not `gestures`: nothing here may bring three.js onto the page (see lib/world/sheet.ts).
 import { SHEET_DRAG, SHEET_FULL, SHEET_HANDLE_NAME, sheetAfterDrag, type SheetState } from '@/lib/world/sheet'
+import { PANEL_BODY } from './panelStyles'
 import { placeSheet } from './sheetEdge'
 
 /** The id of the panel's scrolling body, which the sheet's handle controls. */
@@ -134,7 +135,7 @@ export function PlaceSheet({
         onFocus={(e) => {
           if (!open && focusVisible(e.target)) setSheet('full')
         }}
-        className="min-h-0 flex-1 overflow-auto overscroll-contain px-[22px] pb-[22px] pt-5"
+        className={PANEL_BODY}
       >
         {children}
       </div>

@@ -12,6 +12,7 @@ import { Hint } from '@/components/hud/Hint'
 import { Labels } from '@/components/hud/Labels'
 import { PetLayer } from '@/components/hud/PetLayer'
 import { useTheme } from '@/components/hud/ThemeProvider'
+import { profileSectionFromPath } from '@/lib/profile'
 import { CAMERA_FOV } from '@/lib/world/camera'
 import type { GuideRoute } from '@/lib/world/guide'
 import { DOWNGRADE_SAMPLES, hookedRenderScale, postProcessing, shouldDowngrade, testHooksOn, type Quality } from '@/lib/world/quality'
@@ -120,7 +121,10 @@ function FrameWatch({ onSlow }: { onSlow(): void }) {
 export function WorldCanvas({ districts, places, quality: initialQuality, reducedMotion, onReady, onFail }: WorldCanvasProps) {
   const { look } = useTheme()
   const router = useRouter()
-  const placeId = placeIdFromPath(usePathname())
+  const pathname = usePathname()
+  const placeId = placeIdFromPath(pathname)
+  // The profile's panel stands over the planet where the guide docks: she and the hint keep out of its way while it is open.
+  const profileOpen = profileSectionFromPath(pathname) !== null
   const search = useSearchParams()
   const district = placeId === null ? districtFromSearch(search.toString()) : null
   const route: GuideRoute = placeId !== null ? { kind: 'place', id: placeId } : district !== null ? { kind: 'district', id: district } : { kind: 'overview' }
@@ -247,8 +251,8 @@ export function WorldCanvas({ districts, places, quality: initialQuality, reduce
         ? createPortal(
             <>
               <Labels districts={districts} places={places} />
-              {placeId === null && hint !== 'gone' ? <Hint fading={hint === 'fading'} /> : null}
-              <GuideLayer route={route} reducedMotion={reducedMotion} />
+              {placeId === null && !profileOpen && hint !== 'gone' ? <Hint fading={hint === 'fading'} /> : null}
+              {profileOpen ? null : <GuideLayer route={route} reducedMotion={reducedMotion} />}
               {placeId !== null && places.find((p) => p.id === placeId)?.model === PETS_LIVE_AT ? <PetLayer /> : null}
             </>,
             document.body,

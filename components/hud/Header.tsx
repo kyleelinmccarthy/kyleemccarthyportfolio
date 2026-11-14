@@ -6,6 +6,7 @@ import { placeHref } from '@/lib/world/route'
 import { Greeting } from './Greeting'
 import { IndexButton } from './IndexDrawer'
 import { NameLogo } from './NameLogo'
+import { ProfileNav } from './ProfileNav'
 import { ThemeToggle } from './ThemeToggle'
 
 /**
@@ -82,6 +83,8 @@ export function Header({ home }: { home: boolean }) {
             Index
           </Link>
         )}
+        {/* About, Experience and Contact: the profile, one press from every page. */}
+        <ProfileNav home={home} compact={compact} />
         <ThemeToggle className={compact} />
       </nav>
     </header>

@@ -51,15 +51,20 @@ describe('Header', () => {
     expect(screen.getByRole('link', { name: site.name })).toHaveAttribute('href', '/')
   })
 
-  it('offers the tour, the index and the theme, in that order', () => {
+  it('offers the tour, the index, the profile and the theme, in that order', () => {
     // The provider takes the theme the init script put on <html>, else the
     // clock's. Set it, so this does not depend on the hour or on earlier tests.
     document.documentElement.setAttribute('data-theme', 'day')
     renderHeader(true)
-    const controls = screen.getByRole('navigation', { name: 'Main' }).querySelectorAll('a, button')
+    // The profile: its three side by side, then the menu that holds them where there is no room (CSS shows one of the two).
+    const controls = screen.getByRole('navigation', { name: 'Main' }).querySelectorAll(':scope > * > a, :scope > a, :scope > button, summary')
     expect([...controls].map((c) => c.getAttribute('aria-label') ?? c.textContent?.trim())).toEqual([
       'Take the tour →',
       'Index',
+      'About',
+      'Experience',
+      'Contact',
+      'Profile▾',
       'Switch to night',
     ])
     expect(screen.getByRole('link', { name: /Take the tour/ })).toHaveAttribute('href', '/places/home')

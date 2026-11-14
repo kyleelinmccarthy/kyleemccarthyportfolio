@@ -5,6 +5,7 @@ import { PETS_LIVE_AT } from '@/content/pets'
 import type { District, Place } from '@/content/types'
 import { formatCoord } from '@/lib/world/geo'
 import { districtHref } from '@/lib/world/route'
+import { PANEL_CLOSE, PANEL_TITLE } from './panelStyles'
 import { PlaceSheet } from './PlaceSheet'
 import { SoundToggle } from './SoundToggle'
 
@@ -41,13 +42,13 @@ export function PanelShell({
             {formatCoord(place.at)}
           </span>
           {place.model === PETS_LIVE_AT ? <SoundToggle /> : null}
-          <Link href={districtHref(district.id)} aria-label="Close" className="p-1 text-[15px] leading-none text-ink no-underline">
+          <Link href={districtHref(district.id)} aria-label="Close" className={PANEL_CLOSE}>
             <span aria-hidden>✕</span>
           </Link>
         </div>
       }
     >
-      <h1 id="place-name" className="mb-[9px] font-display text-[32px] font-extrabold leading-[1.03] tracking-[-0.015em]">
+      <h1 id="place-name" className={PANEL_TITLE}>
         {place.name}
       </h1>
       {/* The guide's line for the place, for a page without the world; while it draws she says it herself (`.guide-note`). */}

@@ -165,6 +165,244 @@
     visibility: visible;
     transition-delay: 0s;
   }
+
+  /*
+   * ───── The profile: About, Experience and Contact (ProfileNav, ProfilePanel, components/profile) ─────
+   *
+   * In the header the three stand side by side on one plate, set as the HUD's
+   * buttons are. Where the header has no room for them (under 1024px) one
+   * Profile button opens them instead: a native <details>, so it works without
+   * JavaScript. On the home page on a phone that button stands at the top
+   * right, beside the name, clear of the controls at the bottom.
+   */
+  .profile-links {
+    display: inline-flex;
+    overflow: hidden;
+  }
+  .profile-link,
+  .profile-tab,
+  .profile-menu-link {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .profile-link {
+    padding: 11px 13px;
+    transition: background 150ms;
+  }
+  .profile-link + .profile-link {
+    border-left: 1px solid var(--line);
+  }
+  .profile-link:hover,
+  .profile-menu-link:hover {
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+  .profile-link:focus-visible {
+    outline-offset: -3px;
+  }
+  /* The section open now: underlined in the accent, as the panel's own tab is. */
+  .profile-link[aria-current='page'],
+  .profile-tab[aria-current='page'] {
+    box-shadow: inset 0 -2px 0 var(--accent);
+  }
+  .profile-menu {
+    display: none;
+    position: relative;
+  }
+  .profile-menu > summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+  }
+  .profile-menu > summary::-webkit-details-marker {
+    display: none;
+  }
+  .profile-menu-chevron {
+    font-size: 9px;
+    transition: transform 150ms;
+  }
+  .profile-menu[open] .profile-menu-chevron {
+    transform: rotate(180deg);
+  }
+  /* Open, the menu's list stands over everything (the index, which stays in the page without JavaScript, the panels). */
+  nav:has(> .profile-menu[open]) {
+    z-index: 10;
+  }
+  .profile-menu-list {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    display: grid;
+    min-width: 188px;
+    padding: 4px;
+  }
+  .profile-menu-link {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 14px;
+    border-radius: 3px;
+  }
+  .profile-menu-link[aria-current='page'] {
+    box-shadow: inset 2px 0 0 var(--accent);
+  }
+  @media (max-width: 1023px) {
+    .profile-links {
+      display: none;
+    }
+    .profile-menu {
+      display: block;
+    }
+  }
+  @media (max-width: 820px) {
+    .profile-menu-home {
+      position: fixed;
+      top: 26px;
+      right: 26px;
+    }
+  }
+  @media (max-width: 380px) {
+    .profile-menu-home > summary {
+      padding-inline: 10px;
+    }
+  }
+
+  /*
+   * The profile's panel: where a place's panel stands, wider, and under the
+   * header (so the Profile menu opens over it). On a phone it fills the screen
+   * below the header's two rows of controls. Its tabs are 44px tall.
+   */
+  .profile-panel {
+    position: fixed;
+    z-index: 4;
+    top: 98px;
+    right: 40px;
+    bottom: 98px;
+    display: flex;
+    flex-direction: column;
+    width: 480px;
+  }
+  @media (max-width: 820px) {
+    .profile-panel {
+      top: 142px;
+      right: 14px;
+      bottom: 14px;
+      left: 14px;
+      width: auto;
+    }
+  }
+  .profile-tab {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 11px;
+    color: var(--muted);
+  }
+  .profile-tab:hover,
+  .profile-tab[aria-current='page'] {
+    color: var(--ink);
+  }
+  .profile-tab:focus-visible {
+    outline-offset: -3px;
+  }
+  /* A skill: a small chip, so a list of sixty reads at a glance. */
+  .profile-chip {
+    padding: 3px 8px 4px;
+    font-size: 12.5px;
+    line-height: 1.35;
+    color: var(--ink);
+    background: color-mix(in srgb, var(--on-ink) 40%, transparent);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+  }
+  /* A role on the timeline: a dot on a line that runs down to the next; the one she holds now in the accent. */
+  .profile-role {
+    position: relative;
+    padding-left: 22px;
+  }
+  .profile-role::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 1px;
+    width: 9px;
+    height: 9px;
+    border: 2px solid var(--muted);
+    border-radius: 50%;
+    background: var(--glass);
+  }
+  .profile-role::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 14px;
+    bottom: -17px;
+    width: 1px;
+    background: var(--line);
+  }
+  .profile-role:last-child::after {
+    display: none;
+  }
+  .profile-role[data-current]::before {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+  .profile-point {
+    position: relative;
+    padding-left: 13px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .profile-point::before {
+    content: '';
+    position: absolute;
+    left: 1px;
+    top: 0.62em;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+  /* A way to reach her: one row to press, at least 52px tall, its address in full. */
+  .profile-contact {
+    display: grid;
+    grid-template-columns: 78px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 8px 4px;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    transition: background 150ms;
+  }
+  .profile-contact:hover {
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+  }
+  .profile-contact:focus-visible {
+    outline-offset: -2px;
+  }
+  .profile-contact-value {
+    min-width: 0;
+    font-size: 14.5px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+  .profile-contact:hover .profile-contact-value {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .profile-contact-arrow {
+    color: var(--muted);
+  }
+  /* ───── end of the profile ───── */
   /*
    * The role line, the headline, the greeting and the legend give way while
    * the camera is in close (the canvas sets data-hud-away on <html>, see
@@ -1042,7 +1280,7 @@
     .guide-dock[data-where='place'] {
       left: 14px;
       right: 14px;
-      top: 112px;
+      top: 142px; /* under the header's two rows of controls */
       bottom: auto;
     }
   }
