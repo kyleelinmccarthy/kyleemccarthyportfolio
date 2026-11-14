@@ -1,4 +1,5 @@
 import { site } from '@/content/site'
+import { education } from '@/content/timeline'
 
 /** schema.org Person JSON-LD for rich results / entity recognition. */
 export function personJsonLd() {
@@ -11,7 +12,7 @@ export function personJsonLd() {
     description: site.description,
     url: site.url,
     email: `mailto:${site.email}`,
-    sameAs: [site.linkedin],
+    sameAs: [site.linkedin, site.github],
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Saratoga Springs',
@@ -26,9 +27,13 @@ export function personJsonLd() {
       'UX/UI Design',
       'Software Engineering',
     ],
-    alumniOf: [
-      { '@type': 'CollegeOrUniversity', name: "Master's in Technology Management" },
-      { '@type': 'CollegeOrUniversity', name: "Bachelor's in Marketing Management" },
-    ],
+    alumniOf: [...new Set(education.map((d) => d.school))].map((name) => ({ '@type': 'CollegeOrUniversity', name })),
+    hasCredential: education.map((d) => ({
+      '@type': 'EducationalOccupationalCredential',
+      credentialCategory: 'degree',
+      name: d.degree,
+      recognizedBy: { '@type': 'CollegeOrUniversity', name: d.school },
+      dateCreated: d.year,
+    })),
   }
 }
