@@ -54,6 +54,9 @@ describe('the arrival’s stages', () => {
     expect(ARRIVAL.end).toBeLessThanOrEqual(4500)
     expect(ARRIVAL.count.at + ARRIVAL.count.ms).toBeLessThanOrEqual(ARRIVAL.settle.at)
     expect(ARRIVAL.planet.at).toBeLessThan(ARRIVAL.settle.at + ARRIVAL.settle.ms)
+    // The handover to the header's own comes as the statement lands on them, and is done once it has.
+    expect(ARRIVAL.handover.at).toBeGreaterThan(ARRIVAL.settle.at + ARRIVAL.settle.ms * 0.85)
+    expect(ARRIVAL.handover.at + ARRIVAL.handover.ms).toBeLessThanOrEqual(ARRIVAL.settle.at + ARRIVAL.settle.ms + ARRIVAL.handover.ms)
     expect(ARRIVAL.greet).toBeGreaterThan(ARRIVAL.landmarks.at)
   })
 

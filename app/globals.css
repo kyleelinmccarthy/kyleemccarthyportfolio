@@ -1196,7 +1196,8 @@
    * label, in a quiet row. Every size is in em of the row's own size, which is
    * `--k` times the header's, so the arrival's statement (`--k` > 1) is the
    * header's row exactly, larger, and settles onto it by a scale alone. On a
-   * phone the row reaches past the headline's narrow column, across the screen.
+   * phone it is a compact row a little wider than the headline's column, and
+   * no wider (past it, at night, the moon would stand behind it).
    */
   .proof {
     --k: 1;
@@ -1233,7 +1234,7 @@
   @media (max-width: 820px) {
     .proof {
       gap: 0.8em;
-      width: calc(100vw - 52px);
+      width: min(calc(100vw - 52px), 270px);
       font-size: calc(var(--k) * 17px);
     }
     .proof-item {
@@ -1287,20 +1288,27 @@
       --k: 1.6;
     }
   }
+  /* A phone: the figures as large as the screen allows, still the header's row exactly; the headline larger again. */
   @media (max-width: 820px) {
     .arrival-statement {
-      --k: 1.4;
+      --k: 1.28;
       width: calc(100vw - 40px);
+    }
+    .arrival-line {
+      font-size: 28px;
+    }
+    .arrival-figures > .proof {
+      width: calc(var(--k) * 270px);
     }
   }
   /* A figure's number, counting: the counter is drawn after an empty box as wide as its final digits, so nothing moves. */
   .proof-count {
     display: inline-block;
     width: calc(var(--digits) * 1ch);
-    text-align: right;
+    /* On the element itself: --count does not inherit, so its ::after could not read it. */
+    counter-reset: arrival-count var(--count);
   }
   .proof-count::after {
-    counter-reset: arrival-count var(--count);
     content: counter(arrival-count);
   }
   .arrival-skip {
@@ -1332,13 +1340,13 @@
     animation: arrival-count var(--arrival-count-ms) cubic-bezier(0.16, 0.7, 0.3, 1) var(--arrival-count-at) both;
   }
   [data-arrival] .arrival-statement {
-    animation: arrival-out 220ms linear calc(var(--arrival-settle-at) + var(--arrival-settle-ms) - 220ms) both;
+    animation: arrival-out var(--arrival-handover-ms) linear var(--arrival-handover-at) both;
   }
   [data-arrival] .arrival-skip {
     animation: arrival-out 200ms linear calc(var(--arrival-end) - 200ms) both;
   }
   [data-arrival] header [data-gives-way] {
-    animation: arrival-reveal 260ms ease-out calc(var(--arrival-settle-at) + var(--arrival-settle-ms) - 220ms) both;
+    animation: arrival-reveal var(--arrival-handover-ms) linear var(--arrival-handover-at) both;
   }
   [data-arrival] [data-testid='world-poster'] img {
     animation: arrival-reveal var(--arrival-planet-ms) ease-out var(--arrival-planet-at) both;

@@ -39,6 +39,8 @@ export const ARRIVAL = {
   count: { at: 550, ms: 1150 },
   /** The headline and figures settle into the header, where they stay. */
   settle: { at: 1900, ms: 650 },
+  /** As they land, they hand over to the header's own, which come back as they go. */
+  handover: { at: 2490, ms: 160 },
   /** The planet spins in, from small, turning, with a little overshoot. */
   planet: { at: 1800, ms: 1100 },
   /** The landmarks rise, district by district in tour order, a district's places one after another. */
@@ -150,6 +152,8 @@ export function arrivalCssVars(): Record<string, string> {
     '--arrival-count-ms': ms(ARRIVAL.count.ms),
     '--arrival-settle-at': ms(ARRIVAL.settle.at),
     '--arrival-settle-ms': ms(ARRIVAL.settle.ms),
+    '--arrival-handover-at': ms(ARRIVAL.handover.at),
+    '--arrival-handover-ms': ms(ARRIVAL.handover.ms),
     '--arrival-planet-at': ms(ARRIVAL.planet.at),
     '--arrival-planet-ms': ms(ARRIVAL.planet.ms),
     '--arrival-hud-at': ms(ARRIVAL.hud.at),
