@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { guideSays, isGreeting, type GuideInput } from '@/lib/world/guide'
-import { GUEST_WAVE_PHASE, WELCOME_TIMING, welcomeShows, welcomeStage } from '@/lib/world/welcome'
+import { GUEST_WAVE_PHASE, WELCOME_NO_ROOM, WELCOME_TIMING, greetingOpen, welcomeShows, welcomeStage } from '@/lib/world/welcome'
 
 const base: GuideInput = { route: { kind: 'overview' }, firstArrival: true, theme: 'day', hintsOn: true, previous: null }
 const greeting = guideSays(base)
@@ -21,6 +21,19 @@ describe('when the welcome pair shows', () => {
     expect(welcomeShows({ says: guideSays({ ...base, route: { kind: 'place', id: 'beacon' } }), open: true })).toBe(false)
     expect(welcomeShows({ says: guideSays({ ...base, hintsOn: false }), open: true })).toBe(false)
     expect(welcomeShows({ says: null, open: true })).toBe(false)
+  })
+
+  it('does not show on a screen with no room for it, though her greeting is still open there', () => {
+    expect(welcomeShows({ says: greeting, open: true, room: false })).toBe(false)
+    expect(greetingOpen({ says: greeting, open: true })).toBe(true)
+    expect(welcomeShows({ says: greeting, open: true, room: true })).toBe(true)
+    expect(greetingOpen({ says: greeting, open: false })).toBe(false)
+    expect(greetingOpen({ says: guideSays({ ...base, firstArrival: false }), open: true })).toBe(false)
+  })
+
+  it('names the screens with no room as a media query: short phones, and the narrowest', () => {
+    expect(WELCOME_NO_ROOM).toContain('max-height')
+    expect(WELCOME_NO_ROOM).toContain('max-width')
   })
 
   it('knows the greeting by its key, whatever the theme', () => {

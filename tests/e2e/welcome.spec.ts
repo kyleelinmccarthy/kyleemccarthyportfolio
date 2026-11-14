@@ -100,3 +100,67 @@ test.describe('the welcome pair', () => {
     await expect(pair(page).locator('.welcome-stills img')).toHaveCount(2, { timeout: 30_000 })
   })
 })
+
+/*
+ * A phone's browser shows far less than its screen: its own bars take a fifth of the height. These are the page
+ * sizes real phones give (a small Android, a large one, an iPhone), where everything has to share the screen.
+ */
+for (const viewport of [
+  { width: 360, height: 636 },
+  { width: 412, height: 732 },
+  { width: 390, height: 664 },
+]) {
+  test.describe(`on a phone showing ${viewport.width} by ${viewport.height}`, () => {
+    test.use({ viewport, hasTouch: true })
+
+    test('the pair stands clear of the header, the bubble, the legend and the controls, and no map label shows over her greeting', async ({ page }) => {
+      drivesTheCanvas()
+      await page.goto('/')
+      await expect(you(page)).toBeVisible({ timeout: 60_000 })
+      await expect.poll(() => pair(page).evaluate((el) => el.getAnimations().every((a) => a.playState === 'finished'))).toBe(true)
+      type Box = { x: number; y: number; width: number; height: number }
+      const overlap = (a: Box, b: Box) => a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height
+      const welcome = (await pair(page).boundingBox())!
+      const bubble = (await page.locator('#guide-bubble').boundingBox())!
+      for (const selector of ['header > div', 'header > nav', '.legend']) {
+        for (const el of await page.locator(selector).all()) {
+          const b = await el.boundingBox()
+          if (!b) continue
+          expect(overlap(welcome, b), `the pair over ${selector}`).toBe(false)
+          expect(overlap(bubble, b), `the bubble over ${selector}`).toBe(false)
+        }
+      }
+      expect(overlap(welcome, bubble), 'the pair over the bubble').toBe(false)
+      // Both of the bubble's choices can be seen and pressed.
+      await expect(page.locator('#guide-bubble').getByRole('button', { name: guide.tour.alone })).toBeInViewport({ ratio: 1 })
+      // Every label that shows has its pin outside the bubble.
+      await expect
+        .poll(() =>
+          page.evaluate(() => {
+            const b = document.getElementById('guide-bubble')!.getBoundingClientRect()
+            return Array.from(document.querySelectorAll<HTMLElement>('#labels .lm[data-on]')).filter((el) => {
+              const at = new DOMMatrixReadOnly(getComputedStyle(el).transform)
+              return at.m41 > b.left && at.m41 < b.right && at.m42 > b.top && at.m42 < b.bottom
+            }).length
+          }),
+        )
+        .toBe(0)
+    })
+  })
+}
+
+test.describe('on a phone too short for the pair', () => {
+  test.use({ viewport: { width: 375, height: 553 }, hasTouch: true })
+
+  test('her greeting comes without it, clear of the header, with the bubble’s own character control', async ({ page }) => {
+    drivesTheCanvas()
+    await page.goto('/')
+    await expect(said(page)).toContainText('Hi, I’m Kylee.', { timeout: 60_000 })
+    const bubble = page.locator('#guide-bubble')
+    await expect(bubble.getByRole('button', { name: guide.controls.change })).toBeVisible()
+    await expect(pair(page)).toHaveCount(0)
+    const b = (await bubble.boundingBox())!
+    const header = (await page.locator('header > div').boundingBox())!
+    expect(b.y).toBeGreaterThanOrEqual(header.y + header.height)
+  })
+})

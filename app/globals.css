@@ -751,7 +751,7 @@
    * over anything (the same plate as the legend's). Pinned, it sits under the
    * map labels and gives way to them; it hides while the camera flies.
    */
-  /* Under the map labels (#labels, z-index 3), docked or pinned: a label's pin or tag is never covered by the guide. */
+  /* Under the map labels (#labels, z-index 3): pinned, a label's pin or tag is never covered by the guide; docked and open, no label shows under it (`data-covers-labels`). */
   .guide-dock {
     position: fixed;
     z-index: 2;
@@ -1076,20 +1076,48 @@
       width: 100%;
     }
   }
-  /* A phone: above the bubble, at its right (clear of the legend and the header), smaller. */
+  /*
+   * A phone: above the bubble and as wide, the figures at its right and the visitor's label beside them, at their
+   * feet. The pair stands in the height left between the headline's numbers and the bubble, which differs a great
+   * deal from phone to phone (a browser's own bars take a fifth of the screen), so it is sized by that height.
+   */
   @media (max-width: 820px) {
     .welcome {
-      --welcome-width: 210px;
-      --welcome-height: 210px;
+      --welcome-width: min(310px, 100vw - 48px);
+      --welcome-height: 176px;
+      --welcome-figures: calc(var(--welcome-height) * 210 / 176);
       right: auto;
       bottom: 100%;
-      left: calc(min(310px, 100vw - 48px) - var(--welcome-width));
+      left: 0;
       margin: 0 0 4px;
-      transform-origin: 50% 100%;
+    }
+    .welcome-figures {
+      inset: 0 0 0 auto;
+      width: var(--welcome-figures);
     }
     /* Here the pair stands over the planet's middle, where a finger turns it: the button is its label alone, and does not reach up over the figure. */
     .you-pair {
       top: auto;
+      right: calc(var(--welcome-figures) + 2px);
+      left: auto;
+      width: auto;
+    }
+  }
+  /*
+   * A phone without the height for everything at once (under 790px): while her greeting is open the header's own
+   * greeting line and the legend step aside, her bubble stands where the legend was, and the pair takes the height
+   * that is left: the screen less the header down to its numbers, the bubble, the controls under it and the gaps
+   * (534px in all). Under 622px none is left, and the pair is not shown (WELCOME_NO_ROOM, lib/world/welcome.ts).
+   */
+  @media (max-width: 820px) and (max-height: 789px) {
+    .welcome {
+      --welcome-height: clamp(88px, 100dvh - 534px, 176px);
+    }
+    body:has(.guide-bubble[data-greeting]) :is(.hud-hello, .legend-dock) {
+      display: none;
+    }
+    .guide-dock[data-where='overview']:has(> .guide-bubble[data-greeting]) {
+      bottom: 84px;
     }
   }
   /* The character control in the bubble: the visitor's own picture, a small round thumbnail of their head and shoulders. */
@@ -1278,6 +1306,12 @@
       right: 26px;
       bottom: 132px;
       align-items: flex-start;
+    }
+    /* The narrowest phones: the controls wrap onto two rows and the legend stands higher (see the home page). */
+    @media (max-width: 347px) {
+      .guide-dock[data-where='overview'] {
+        bottom: 172px;
+      }
     }
     .guide-dock[data-where='place'] {
       left: 14px;

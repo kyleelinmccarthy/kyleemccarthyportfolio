@@ -60,7 +60,7 @@ export function Header({ home }: { home: boolean }) {
                 {hero.headline}
               </p>
               <Proof />
-              <Greeting />
+              <Greeting className="hud-hello" />
             </>
           ) : null}
         </div>

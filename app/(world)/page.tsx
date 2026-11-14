@@ -14,14 +14,15 @@ export default function HomePage() {
         <Arrival />
         {/*
           Districts link to their island once the canvas exists; without JavaScript there is no island to turn to.
-          It gives way to the planet when the camera comes in close (see globals.css). On the narrowest phones the
-          controls under it wrap onto two rows, so it stands higher. On a phone it is held 26px in from both sides, so
+          It gives way to the planet when the camera comes in close (see globals.css). On the narrowest phones (under 348px)
+          the controls under it wrap onto two rows, so it stands higher. On a phone it steps aside while the guide's
+          greeting is open (`.legend-dock`, globals.css). On a phone it is held 26px in from both sides, so
           its plate (which reaches 14px past it) stays inside the frame.
         */}
         <div
           data-covers-labels
           data-gives-way
-          className="fixed bottom-9 left-10 z-[5] max-[820px]:bottom-[84px] max-[820px]:left-[26px] max-[820px]:right-[26px] max-[380px]:bottom-[124px] [html:not([data-js])_&]:hidden"
+          className="legend-dock fixed bottom-9 left-10 z-[5] max-[820px]:bottom-[84px] max-[820px]:left-[26px] max-[820px]:right-[26px] max-[347px]:bottom-[124px] [html:not([data-js])_&]:hidden"
         >
           <Legend districts={tourDistricts} />
         </div>

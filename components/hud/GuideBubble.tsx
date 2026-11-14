@@ -5,9 +5,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { guide } from '@/content/guide'
 import { BUBBLE_ID } from '@/lib/world/bubble'
+import { COVERS_LABELS } from '@/lib/world/labels'
 import { guideSays, type GuideAction, type GuideRoute, type GuideSays } from '@/lib/world/guide'
 import { GUIDE_FACE } from '@/lib/guests'
-import { welcomeShows } from '@/lib/world/welcome'
+import { WELCOME_NO_ROOM, greetingOpen, welcomeShows } from '@/lib/world/welcome'
 import { ChangeCharacter } from './ChangeCharacter'
 import { companions, useCompanions } from './companionStore'
 import { useTheme } from './ThemeProvider'
@@ -84,18 +85,18 @@ function Action({ action, onAlone }: { action: GuideAction; onAlone(): void }) {
 /** At or below this width a docked bubble starts folded at a place, so it does not cover the view. */
 const FOLDS_BELOW = 820
 
-/** Whether the screen is a phone's. */
-function useNarrow(): boolean {
-  const [narrow, setNarrow] = useState(false)
+/** Whether the screen matches a media query, followed as it changes. False until it is read. */
+function useMedia(media: string): boolean {
+  const [matches, setMatches] = useState(false)
   useEffect(() => {
     if (typeof window.matchMedia !== 'function') return
-    const query = window.matchMedia(`(max-width: ${FOLDS_BELOW}px)`)
-    const read = () => setNarrow(query.matches)
+    const query = window.matchMedia(media)
+    const read = () => setMatches(query.matches)
     read()
     query.addEventListener('change', read)
     return () => query.removeEventListener('change', read)
-  }, [])
-  return narrow
+  }, [media])
+  return matches
 }
 
 /** A small round picture of the guide's face. */
@@ -114,10 +115,14 @@ function Face() {
  * (`data-docked`, and `data-pin="off"` tells the canvas not to pin it). On a
  * phone at a place it starts folded to a chip with her face, and opens on a
  * tap. With hints hidden it is that chip alone, which brings them back.
+ * Docked and open, no map label shows under it (`data-covers-labels`).
  *
  * While her greeting is open the welcome pair stands beside it (`Welcome`,
  * `welcomeShows`), and the character control is the one under the visitor's
- * figure there, in place of the bubble's own.
+ * figure there, in place of the bubble's own. On a phone the header's
+ * greeting line and the legend step aside for as long as her greeting is open
+ * (`data-greeting`, globals.css), and a screen with no room for the pair
+ * (`WELCOME_NO_ROOM`) gets her greeting without it.
  */
 export function GuideBubble({
   route,
@@ -133,7 +138,8 @@ export function GuideBubble({
   reducedMotion?: boolean
 }) {
   const { hintsOff } = useCompanions()
-  const narrow = useNarrow()
+  const narrow = useMedia(`(max-width: ${FOLDS_BELOW}px)`)
+  const noRoom = useMedia(WELCOME_NO_ROOM)
   const key = routeKey(route)
   // Folded or open, by the visitor's choice; until they choose, folded on a phone at a place. A new route asks again.
   const [chosen, setChosen] = useState<{ route: string; folded: boolean } | null>(null)
@@ -142,7 +148,8 @@ export function GuideBubble({
   const chip = quiet || folded
   // On a phone there is seldom room beside her for the bubble: it stays in the dock, folded or open.
   const docked = chip || narrow || says?.anchor === 'hud'
-  const welcome = welcomeShows({ says, open: !chip })
+  const greeting = greetingOpen({ says, open: !chip })
+  const welcome = welcomeShows({ says, open: !chip, room: !noRoom })
   return (
     <>
       <Welcome shows={welcome} reducedMotion={reducedMotion} />
@@ -153,6 +160,8 @@ export function GuideBubble({
         data-docked={docked ? '' : undefined}
         data-pin={docked ? 'off' : undefined}
         data-chip={chip ? '' : undefined}
+        data-greeting={greeting ? '' : undefined}
+        {...(docked && !chip ? { [COVERS_LABELS]: '' } : null)}
       >
         {chip ? (
           hintsOff ? (

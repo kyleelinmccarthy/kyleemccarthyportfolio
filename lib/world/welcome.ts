@@ -13,12 +13,28 @@ export interface WelcomeInput {
   says: GuideSays | null
   /** Her bubble is open, showing the line (not closed, not folded to its chip). */
   open: boolean
+  /** The screen has room for the pair beside the greeting (it is not one of `WELCOME_NO_ROOM`). Taken as true when not given. */
+  room?: boolean
 }
 
-/** Whether the pair shows: only while her greeting is open. Starting the tour, looking round alone, folding or hiding her hints sends it away. */
-export function welcomeShows({ says, open }: WelcomeInput): boolean {
+/** Whether her greeting is open: the line she says is her greeting, and her bubble shows it. */
+export function greetingOpen({ says, open }: WelcomeInput): boolean {
   return open && isGreeting(says)
 }
+
+/** Whether the pair shows: only while her greeting is open, on a screen with room for it. Starting the tour, looking round alone, folding or hiding her hints sends it away. */
+export function welcomeShows(input: WelcomeInput): boolean {
+  return greetingOpen(input) && input.room !== false
+}
+
+/**
+ * The screens with no room for the pair, as a media query: a phone too short
+ * to stand it between the headline's numbers and her greeting, or too narrow
+ * for her greeting to keep to four lines. On every other phone the CSS
+ * (`.welcome`, globals.css) sizes the pair to the height left, from these
+ * same numbers.
+ */
+export const WELCOME_NO_ROOM = '(max-width: 820px) and (max-height: 621px), (max-width: 357px)'
 
 /** Where the pair is: popping in (and then standing), shrinking away, or gone. */
 export type WelcomeStage = 'in' | 'out' | 'gone'
