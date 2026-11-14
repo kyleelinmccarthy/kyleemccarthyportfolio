@@ -1,3 +1,4 @@
+import { Arrival } from '@/components/hud/Arrival'
 import { Header } from '@/components/hud/Header'
 import { IndexDrawerProvider } from '@/components/hud/IndexDrawer'
 import { IndexList } from '@/components/hud/IndexList'
@@ -9,6 +10,8 @@ export default function HomePage() {
     <IndexDrawerProvider>
       <Header home />
       <main id="main">
+        {/* The arrival's statement and its Skip control, on the first load of a visit (hidden otherwise). */}
+        <Arrival />
         {/*
           Districts link to their island once the canvas exists; without JavaScript there is no island to turn to.
           It gives way to the planet when the camera comes in close (see globals.css). On the narrowest phones the

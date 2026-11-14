@@ -63,5 +63,23 @@ export const build = {
   ],
 } as const
 
+/**
+ * The proof under the headline on the home page: three of the figures above,
+ * the ones that say "a leader who delivers" at a glance (what the team
+ * delivers, how many people she leads, how much of it she built herself).
+ * The values are the figures' own; the labels are shortened from theirs to
+ * read in a moment. The arrival counts the numbers up (`lib/arrival.ts`).
+ */
+export const proof = [
+  { value: lead.figures[0].value, label: 'backlog items a year, up from ~40' },
+  { value: lead.figures[1].value, label: 'people I lead' },
+  { value: build.figures[0].value, label: 'enterprise platforms I built' },
+] as const
+
+/** The words of the arrival's own control. */
+export const arrivalCopy = {
+  skip: 'Skip intro',
+} as const
+
 /** The visible label on the résumé download (from the old nav button). */
 export const resumeLabel = 'Kylee’s Résumé'

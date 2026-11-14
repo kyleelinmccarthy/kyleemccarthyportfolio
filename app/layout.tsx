@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/components/hud/ThemeProvider'
 import { site } from '@/content/site'
 import { looks } from '@/content/sky'
 import { personJsonLd } from '@/lib/structuredData'
+import { arrivalInitScript } from '@/lib/arrival'
 import { themeInitScript } from '@/lib/theme'
 import { testHooksOn } from '@/lib/world/quality'
 import './globals.css'
@@ -87,6 +88,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         {/* Set theme before first paint to prevent FOUC. */}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript() }} />
+        {/* Start the arrival before first paint, if it plays on this load (see lib/arrival.ts). */}
+        <script dangerouslySetInnerHTML={{ __html: arrivalInitScript() }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd()) }}

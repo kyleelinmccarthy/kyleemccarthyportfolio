@@ -30,7 +30,7 @@ export function PanelShell({
     <PlaceSheet
       placeId={place.id}
       color={district.color}
-      className="place-sheet glass fixed bottom-[98px] right-10 top-[98px] z-[8] flex w-[400px] flex-col max-[820px]:bottom-3.5 max-[820px]:left-3.5 max-[820px]:right-3.5 max-[820px]:top-auto max-[820px]:max-h-[58dvh] max-[820px]:w-auto"
+      className="place-sheet glass hud-enter fixed bottom-[98px] right-10 top-[98px] z-[8] flex w-[400px] flex-col max-[820px]:bottom-3.5 max-[820px]:left-3.5 max-[820px]:right-3.5 max-[820px]:top-auto max-[820px]:max-h-[58dvh] max-[820px]:w-auto"
       header={
         <div className="flex items-center gap-2.5 border-b border-line px-4 py-[13px]">
           <span className="inline-flex items-center gap-2 border border-[var(--c)] px-[9px] py-1 font-mono text-[10.5px] uppercase tracking-[0.13em] text-ink">

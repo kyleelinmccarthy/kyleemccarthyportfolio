@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { guideWaits } from '@/lib/arrival'
 import { announcedAs, shouldAnnounce, spoken, type GuideRoute } from '@/lib/world/guide'
+import { useArrivalStage } from './arrivalStore'
 import { GuestPicker } from './GuestPicker'
 import { GuideBubble, useGuideLine } from './GuideBubble'
 
@@ -19,9 +21,14 @@ export const GUIDE_SAID_ID = 'guide-said'
  * camera flies (a change inside a hidden live region is never announced). It
  * is written once for each new line (`shouldAnnounce`): not again for a change
  * of theme, never while hints are hidden.
+ *
+ * While the arrival builds the world, she waits (`guideWaits`): her bubble,
+ * and with her greeting the welcome pair, come once it is built, so the pair's
+ * pop is the arrival's last beat.
  */
 export function GuideLayer({ route, reducedMotion = false }: { route: GuideRoute; reducedMotion?: boolean }) {
   const { says, closed, close } = useGuideLine(route)
+  const waits = guideWaits(useArrivalStage())
   const [announced, setAnnounced] = useState('')
   const heard = useRef<string | null>(null)
   useEffect(() => {
@@ -40,9 +47,11 @@ export function GuideLayer({ route, reducedMotion = false }: { route: GuideRoute
       <div id={GUIDE_SAID_ID} role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {announced}
       </div>
-      <div className="guide-dock" data-where={route.kind === 'place' ? 'place' : 'overview'}>
-        <GuideBubble route={route} says={says} closed={closed} onAlone={close} reducedMotion={reducedMotion} />
-      </div>
+      {waits ? null : (
+        <div className="guide-dock" data-where={route.kind === 'place' ? 'place' : 'overview'}>
+          <GuideBubble route={route} says={says} closed={closed} onAlone={close} reducedMotion={reducedMotion} />
+        </div>
+      )}
       <GuestPicker />
     </>
   )

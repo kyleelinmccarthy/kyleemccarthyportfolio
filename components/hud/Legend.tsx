@@ -34,7 +34,7 @@ export function Legend({ districts }: { districts: District[] }) {
   const open = chosen ?? !narrow
 
   return (
-    <div className="hud-plate legend m-0" data-open={chosen === null ? undefined : String(chosen)}>
+    <div className="hud-plate legend hud-enter m-0" data-open={chosen === null ? undefined : String(chosen)}>
       <button
         type="button"
         aria-expanded={open}

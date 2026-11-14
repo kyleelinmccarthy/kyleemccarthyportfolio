@@ -6,6 +6,7 @@ import { placeHref } from '@/lib/world/route'
 import { Greeting } from './Greeting'
 import { IndexButton } from './IndexDrawer'
 import { NameLogo } from './NameLogo'
+import { Proof } from './Proof'
 import { ThemeToggle } from './ThemeToggle'
 
 /**
@@ -57,6 +58,7 @@ export function Header({ home }: { home: boolean }) {
               <p className="mb-2.5 mt-6 font-display text-[21px] font-medium leading-[1.24] text-ink max-[820px]:mt-3 max-[820px]:text-base">
                 {hero.headline}
               </p>
+              <Proof />
               <Greeting />
             </>
           ) : null}

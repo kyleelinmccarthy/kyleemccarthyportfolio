@@ -8,6 +8,7 @@ import {
   arrivalCssVars,
   arrivalInitScript,
   countParts,
+  guideWaits,
   landmarkDelays,
   nextStageAt,
   planetScale,
@@ -31,6 +32,13 @@ describe('the arrival’s stages', () => {
   it('counts anything that is not a time as done, so a broken clock never holds the page', () => {
     expect(stageAt(Number.NaN)).toBe('done')
     expect(stageAt(Number.POSITIVE_INFINITY)).toBe('done')
+  })
+
+  it('keeps the guide waiting until the world is built', () => {
+    expect(guideWaits(stageAt(0))).toBe(true)
+    expect(guideWaits(stageAt(ARRIVAL.settle.at))).toBe(true)
+    expect(guideWaits(stageAt(ARRIVAL.greet))).toBe(false)
+    expect(guideWaits('done')).toBe(false)
   })
 
   it('says when the next stage begins, and nothing once done', () => {

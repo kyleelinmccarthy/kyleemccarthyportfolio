@@ -69,6 +69,9 @@ export function stageAt(ms: number): ArrivalStage {
   return 'statement'
 }
 
+/** Whether the guide waits at this stage: she greets the visitor (and the welcome pair pops up) once the world is built. */
+export const guideWaits = (stage: ArrivalStage) => stage === 'statement' || stage === 'build'
+
 /** When (ms) the stage after the one at `ms` begins, or null once done. */
 export function nextStageAt(ms: number): number | null {
   if (!(ms < ARRIVAL.end)) return null
@@ -151,6 +154,7 @@ export function arrivalCssVars(): Record<string, string> {
     '--arrival-planet-ms': ms(ARRIVAL.planet.ms),
     '--arrival-hud-at': ms(ARRIVAL.hud.at),
     '--arrival-hud-ms': ms(ARRIVAL.hud.ms),
+    '--arrival-end': ms(ARRIVAL.end),
   }
 }
 
