@@ -1649,3 +1649,173 @@
   inherits: false;
   initial-value: 0;
 }
+
+/* ───────────── The easter eggs (components/eggs) ───────────── */
+@layer components {
+  /*
+   * The constellation that rolls the die, hovered: its name brightens a
+   * little and opens out, the only invitation it gets (RollStars).
+   */
+  .lm-const .lm-const-name {
+    transition:
+      text-shadow 200ms,
+      letter-spacing 200ms;
+  }
+  .lm-const[data-hot] .lm-const-name {
+    letter-spacing: 0.32em;
+    text-shadow: 0 0 10px var(--c);
+  }
+
+  /*
+   * The caught bug's words, over where it was caught, on the HUD's plate as a
+   * pet's word is: the line itself, and under it the count kept on the device.
+   * It pops in, unless motion is reduced. Never pressed.
+   */
+  .egg-bubble {
+    position: fixed;
+    /* Over the map labels (z-index 3) while it is up, as it is only for a moment and never pressed; under the header. */
+    z-index: 4;
+    display: grid;
+    gap: 2px;
+    justify-items: center;
+    padding: 7px 13px 8px;
+    color: var(--ink);
+    white-space: nowrap;
+    background: var(--plate);
+    border: 1px solid var(--edge);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    pointer-events: none;
+  }
+  /* The tail, toward where the bug was caught. */
+  .egg-bubble::after {
+    content: '';
+    position: absolute;
+    left: calc(var(--tail, 50%) - 5px);
+    width: 10px;
+    height: 10px;
+    background: var(--plate);
+    border: 1px solid var(--edge);
+    transform: rotate(45deg);
+  }
+  .egg-bubble[data-side='above']::after {
+    bottom: -6px;
+    border-top: 0;
+    border-left: 0;
+  }
+  .egg-bubble[data-side='below']::after {
+    top: -6px;
+    border-bottom: 0;
+    border-right: 0;
+  }
+  .egg-bubble-words {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .egg-bubble-count {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /*
+   * The die: a point the die's solid is built round in the page's 3D, moved
+   * across the screen by its transform (Die). Its faces are drawn only when
+   * turned toward the visitor.
+   */
+  .egg-die {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 4;
+    perspective: 1100px;
+    /* On the die as a whole: a filter on the solid itself would flatten its faces into one plane. */
+    filter: drop-shadow(0 10px 18px rgba(20, 20, 60, 0.35));
+    pointer-events: none;
+  }
+  .egg-die-body {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform-style: preserve-3d;
+  }
+  .egg-die-face {
+    position: absolute;
+    overflow: visible;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .egg-die-number {
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-size: 31px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  /* What it came up, under it once it rests. */
+  .egg-roll {
+    position: fixed;
+    z-index: 4;
+    display: grid;
+    gap: 3px;
+    justify-items: center;
+    padding: 8px 15px 9px;
+    color: var(--ink);
+    white-space: nowrap;
+    background: var(--plate);
+    border: 1px solid var(--edge);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .egg-roll-result {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .egg-roll-more {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .egg-roll[data-natural='20'] {
+    border-color: var(--accent);
+  }
+
+  /* The confetti and the fireworks: one plain canvas over the world and the eggs' words (they fly through them), under the header, never pressed. */
+  .egg-bursts {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .egg-bubble,
+    .egg-roll {
+      animation: egg-pop 260ms cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
+    }
+  }
+}
+
+@keyframes egg-pop {
+  from {
+    opacity: 0;
+    scale: 0.85;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}

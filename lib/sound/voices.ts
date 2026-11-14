@@ -411,8 +411,81 @@ const woof = bark({ pitch: 230, length: 0.22, vowel: 1, volume: 0.6 })
 /** The medium dog's higher, snappier "arf": from about 420 Hz, a seventh of a second, its mouth ringing higher. */
 const arf = bark({ pitch: 420, length: 0.15, vowel: 1.4, volume: 0.5 })
 
-/** Every voice, by name: what the pets' content (`content/pets.ts`) names. */
+/* ───────────── the easter eggs ───────────── */
+
+/**
+ * A caught bug's soft "pop": a sine dropping quickly from about 900 Hz to 260,
+ * as a bubble bursting, with a breath of noise at its start. Under a tenth of
+ * a second, and quiet.
+ */
+const pop: Voice = {
+  volume: 0.4,
+  layers: [
+    {
+      kind: 'tone',
+      wave: 'sine',
+      pitch: [
+        [0, 900],
+        [0.11, 260],
+      ],
+      level: [
+        [0, 0],
+        [0.008, 1],
+        [0.05, 0.4],
+        [0.12, 0],
+      ],
+      lowpass: 3000,
+    },
+    {
+      kind: 'noise',
+      filter: { type: 'bandpass', freq: 2200, q: 1.2 },
+      level: [
+        [0, 0],
+        [0.005, 0.25],
+        [0.04, 0],
+      ],
+    },
+  ],
+}
+
+/**
+ * The die coming to rest: a soft wooden "tok", a short knock of filtered
+ * noise round 1,400 Hz over a low triangle thud.
+ */
+const clack: Voice = {
+  volume: 0.35,
+  layers: [
+    {
+      kind: 'noise',
+      filter: { type: 'bandpass', freq: 1400, q: 4 },
+      level: [
+        [0, 0],
+        [0.004, 1],
+        [0.03, 0.25],
+        [0.11, 0],
+      ],
+    },
+    {
+      kind: 'tone',
+      wave: 'triangle',
+      pitch: [
+        [0, 340],
+        [0.1, 220],
+      ],
+      level: [
+        [0, 0],
+        [0.006, 0.6],
+        [0.12, 0],
+      ],
+      lowpass: 1800,
+    },
+  ],
+}
+
+/** Every voice, by name: what the pets' content (`content/pets.ts`) names, and the easter eggs' two (`components/eggs`). */
 export const VOICES = {
+  pop,
+  clack,
   meow,
   softMeow,
   purr,
