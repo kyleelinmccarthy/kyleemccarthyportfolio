@@ -26,7 +26,7 @@ describe('about panel', () => {
     }
 
     expect(education).toHaveLength(2)
-    for (const degree of education) expect(screen.getByText(degree)).toBeInTheDocument()
+    for (const d of education) expect(screen.getByText(d.degree)).toBeInTheDocument()
 
     const resume = screen.getByRole('link', { name: /Résumé/ })
     expect(resume).toHaveAttribute('href', '/Kylee-McCarthy-Resume.pdf')

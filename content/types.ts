@@ -51,11 +51,24 @@ export interface Project {
   isPersonal: boolean
 }
 
+/** One role in her career, from the résumé. */
 export interface Milestone {
-  /** Real month/year from the résumé, e.g. "Mar 2015". */
-  marker: string
+  /** The month and year it began, from the résumé, e.g. "Mar 2015". */
+  from: string
+  /** The month and year it ended; absent for the role she holds now. */
+  to?: string
   title: string
+  /** One line, as the Home panel's career arc tells it. */
   detail: string
+  /** What she did in it, as the résumé has it, for the Experience panel. */
+  points: readonly string[]
+}
+
+/** A degree, from the résumé. */
+export interface Degree {
+  degree: string
+  school: string
+  year: string
 }
 
 export interface Principle {

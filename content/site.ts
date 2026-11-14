@@ -16,6 +16,8 @@ export const site = {
   roleLine: 'Director of Technology Operations · Builder · Artist',
   email: 'kyleelinmccarthy@gmail.com',
   linkedin: 'https://www.linkedin.com/in/kylee-mccarthy-ms-706499123/',
+  // The account that hosts this site's repository.
+  github: 'https://github.com/kyleelinmccarthy',
   resumePath: '/Kylee-McCarthy-Resume.pdf',
   portraitAlt: 'Portrait of Kylee McCarthy',
 } as const

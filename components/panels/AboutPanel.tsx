@@ -1,23 +1,11 @@
 import { Portrait } from '@/components/media/Portrait'
 import { GrowthBars } from '@/components/sections/GrowthBars'
 import { about, build, hero, lead, resumeLabel } from '@/content/about'
+import { profileCopy } from '@/content/profile'
 import { site } from '@/content/site'
 import { education, milestones } from '@/content/timeline'
 import type { Place } from '@/content/types'
-import { Kind, Lead, Prose, SectionHeading, kickerClass } from './parts'
-
-function Figures({ figures }: { figures: ReadonlyArray<{ value: string; label: string }> }) {
-  return (
-    <ul className="m-0 mb-[15px] grid list-none gap-3 p-0">
-      {figures.map((figure) => (
-        <li key={figure.label} className="grid grid-cols-[88px_1fr] items-baseline gap-2.5 border-t border-line pt-2.5">
-          <span className="font-display text-xl font-extrabold leading-none text-ink">{figure.value}</span>
-          <span className="text-[13.5px] leading-snug text-muted">{figure.label}</span>
-        </li>
-      ))}
-    </ul>
-  )
-}
+import { Education, Figures, Kind, Lead, Prose, SectionHeading, kickerClass } from './parts'
 
 /**
  * Home: who she is, how she got here, what she does now, and the résumé.
@@ -37,19 +25,15 @@ export function AboutPanel({ place }: { place: Place }) {
         <Prose>{about.arc.lede}</Prose>
         <ol className="m-0 mb-[15px] grid list-none gap-4 p-0">
           {milestones.map((m) => (
-            <li key={m.marker} className="border-l-2 border-accent pl-3.5">
-              <p className={`m-0 ${kickerClass}`}>{m.marker}</p>
+            <li key={m.from} className="border-l-2 border-accent pl-3.5">
+              <p className={`m-0 ${kickerClass}`}>{m.from}</p>
               <h3 className="m-0 mt-0.5 font-display text-base font-bold leading-tight text-ink">{m.title}</h3>
               <p className="m-0 mt-1 text-[13.5px] leading-[1.55] text-muted">{m.detail}</p>
             </li>
           ))}
         </ol>
-        <p className={`m-0 mb-1 ${kickerClass}`}>Education</p>
-        <ul className="m-0 mb-[17px] list-none p-0 text-[13.5px] leading-[1.55] text-ink">
-          {education.map((degree) => (
-            <li key={degree}>{degree}</li>
-          ))}
-        </ul>
+        <p className={`m-0 mb-1 ${kickerClass}`}>{profileCopy.education}</p>
+        <Education degrees={education} />
       </section>
 
       <section className="border-t border-line pt-4">
