@@ -20,7 +20,7 @@ test('the home page names her and lists every place', async ({ page }) => {
   await page.goto('/')
   await hydrated(page)
   await expect(page.getByRole('heading', { level: 1, name: 'Kylee McCarthy', exact: true })).toBeVisible()
-  await expect(page.getByText(hero.headline)).toBeVisible()
+  await expect(page.locator('header').getByText(hero.headline)).toBeVisible()
   await page.getByRole('button', { name: 'Index' }).click()
   await expect(page.locator('#index')).toBeVisible()
   await expect(page.locator('#index a')).toHaveCount(19)
@@ -144,7 +144,7 @@ test('without JavaScript on a phone, the first index link clears the name and th
   await expect(link).toBeVisible()
   const linkBox = await link.boundingBox()
   const nameBox = await page.locator('h1').boundingBox()
-  const headlineBox = await page.getByText(hero.headline).boundingBox()
+  const headlineBox = await page.locator('header').getByText(hero.headline).boundingBox()
   expect(linkBox && nameBox && headlineBox).toBeTruthy()
   const overlaps = (a: Box, b: Box) =>
     a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height
