@@ -12,6 +12,7 @@ import { Hint } from '@/components/hud/Hint'
 import { Labels } from '@/components/hud/Labels'
 import { PetLayer } from '@/components/hud/PetLayer'
 import { useTheme } from '@/components/hud/ThemeProvider'
+import { EggsPageLayer, EggsWorldLayer } from '@/components/eggs/Eggs'
 import { CAMERA_FOV } from '@/lib/world/camera'
 import type { GuideRoute } from '@/lib/world/guide'
 import { DOWNGRADE_SAMPLES, hookedRenderScale, postProcessing, shouldDowngrade, testHooksOn, type Quality } from '@/lib/world/quality'
@@ -240,6 +241,8 @@ export function WorldCanvas({ districts, places, quality: initialQuality, reduce
           <BubbleProjector places={places} districts={districts} placeId={placeId} guest={guest} rig={rigNow} />
           <PetPresses places={places} districts={districts} placeId={placeId} reducedMotion={reducedMotion} />
           <PetBubbleProjector places={places} districts={districts} placeId={placeId} rig={rigNow} />
+          {/* The easter eggs, loaded once the world has drawn: the bug by day, the d20's stars by night. */}
+          {drawn ? <EggsWorldLayer districts={districts} places={places} night={look === 'night'} reducedMotion={reducedMotion} /> : null}
           {effects === 'none' ? null : <Effects bloom={effects === 'bloom'} />}
         </Canvas>
       </div>
@@ -250,6 +253,7 @@ export function WorldCanvas({ districts, places, quality: initialQuality, reduce
               {placeId === null && hint !== 'gone' ? <Hint fading={hint === 'fading'} /> : null}
               <GuideLayer route={route} reducedMotion={reducedMotion} />
               {placeId !== null && places.find((p) => p.id === placeId)?.model === PETS_LIVE_AT ? <PetLayer /> : null}
+              <EggsPageLayer reducedMotion={reducedMotion} />
             </>,
             document.body,
           )

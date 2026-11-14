@@ -20,13 +20,14 @@ export const BUG_SEED = WORLD_SEED + 23
 
 /**
  * What the bug may draw, outlines included: a small ladybug from the kit's
- * parts, its shell and head the round parts that cost most. It is not a
+ * parts (about 3,300 with its soft shadow), its shell, its seven spots and its
+ * head the round parts that cost most; its legs and feelers are thin boxes. It is not a
  * landmark, so apart from their budgets (`TRIANGLE_BUDGET`, `PLANET_TRIANGLE_BUDGET`
  * in kit.ts), though the planet's totals are checked with it in.
  */
-export const BUG_TRIANGLE_BUDGET = 3_200
+export const BUG_TRIANGLE_BUDGET = 3_500
 /** Draw calls for the bug once batched: one per material its still body uses, plus its two sets of legs, which move. */
-export const BUG_DRAW_BUDGET = 10
+export const BUG_DRAW_BUDGET = 8
 
 /** The seed of the `n`th bug (from 0): each appears somewhere new, and the same somewhere for the same `n`. */
 export function bugSeed(n: number): number {

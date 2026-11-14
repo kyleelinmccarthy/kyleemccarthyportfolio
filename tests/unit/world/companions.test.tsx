@@ -7,6 +7,7 @@ import { districts, places } from '@/content/world'
 import { COMPANION_DRAW_BUDGET, COMPANION_TRIANGLE_BUDGET } from '@/lib/world/characters'
 import { PLANET_DRAW_BUDGET, PLANET_TRIANGLE_BUDGET, triangleCount } from '@/lib/world/kit'
 import { drawCalls, survey } from './landmarkChecks'
+import { ladybug } from '../eggs/ladybugMount'
 import { mount } from './r3f'
 
 /** The two characters as the world mounts them at `placeId` (shadows, sway, batching and all), and what they draw. */
@@ -86,7 +87,7 @@ describe('the characters as the world draws them', () => {
 })
 
 describe('the planet with the characters on it', () => {
-  it('keeps within the planet’s totals: every landmark, and the pair at their heaviest', async () => {
+  it('keeps within the planet’s totals: every landmark, the pair at their heaviest, and the easter egg’s bug', async () => {
     let triangles = 0
     let draws = 0
     for (const place of places) {
@@ -101,7 +102,9 @@ describe('the planet with the characters on it', () => {
       heaviest.draws = Math.max(heaviest.draws, s.draws)
       await s.unmount()
     }
-    expect(triangles + heaviest.triangles).toBeLessThanOrEqual(PLANET_TRIANGLE_BUDGET)
-    expect(draws + heaviest.draws).toBeLessThanOrEqual(PLANET_DRAW_BUDGET)
+    const bug = await ladybug()
+    await bug.unmount()
+    expect(triangles + heaviest.triangles + bug.triangles).toBeLessThanOrEqual(PLANET_TRIANGLE_BUDGET)
+    expect(draws + heaviest.draws + bug.draws).toBeLessThanOrEqual(PLANET_DRAW_BUDGET)
   }, 120_000)
 })
