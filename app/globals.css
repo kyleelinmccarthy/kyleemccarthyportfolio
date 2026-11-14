@@ -1302,7 +1302,7 @@
       left: 14px;
       right: 14px;
       width: auto;
-      top: 136px; /* its first link clears the name (a signature, taller than print) and the headline */
+      top: 152px; /* its first link clears the name (a signature, taller than print, and taller still before its fonts arrive) and the headline */
       bottom: 84px; /* clears the controls */
     }
     [data-js] .index-panel {

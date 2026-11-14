@@ -82,6 +82,8 @@ test('the panel is readable before the 3D code arrives', async ({ page }) => {
   await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 20000 })
   expect(held).toBeGreaterThan(0)
   expect(released).toBe(true)
+  // Chunks fetched lazily once the world has drawn (the easter eggs, the welcome pair) may still be on their way through the route.
+  await page.unrouteAll({ behavior: 'ignoreErrors' })
 })
 
 test('reduced motion runs clean', async ({ browser }) => {
