@@ -224,7 +224,7 @@
     display: none;
   }
   .profile-menu-chevron {
-    font-size: 9px;
+    font-size: 11px;
     transition: transform 150ms;
   }
   .profile-menu[open] .profile-menu-chevron {
@@ -241,6 +241,8 @@
     display: grid;
     min-width: 188px;
     padding: 4px;
+    /* The HUD's plate, more opaque than glass: the list can open over a panel's text. */
+    background: var(--plate);
   }
   .profile-menu-link {
     display: flex;
