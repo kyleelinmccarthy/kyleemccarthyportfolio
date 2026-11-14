@@ -1212,7 +1212,8 @@
    */
   .egg-bubble {
     position: fixed;
-    z-index: 2;
+    /* Over the map labels (z-index 3) while it is up, as it is only for a moment and never pressed; under the header. */
+    z-index: 4;
     display: grid;
     gap: 2px;
     justify-items: center;
@@ -1226,6 +1227,27 @@
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     pointer-events: none;
+  }
+  /* The tail, toward where the bug was caught. */
+  .egg-bubble::after {
+    content: '';
+    position: absolute;
+    left: calc(var(--tail, 50%) - 5px);
+    width: 10px;
+    height: 10px;
+    background: var(--plate);
+    border: 1px solid var(--edge);
+    transform: rotate(45deg);
+  }
+  .egg-bubble[data-side='above']::after {
+    bottom: -6px;
+    border-top: 0;
+    border-left: 0;
+  }
+  .egg-bubble[data-side='below']::after {
+    top: -6px;
+    border-bottom: 0;
+    border-right: 0;
   }
   .egg-bubble-words {
     font-size: 15px;
@@ -1249,7 +1271,7 @@
     position: fixed;
     left: 0;
     top: 0;
-    z-index: 2;
+    z-index: 4;
     perspective: 1100px;
     pointer-events: none;
   }
@@ -1275,7 +1297,7 @@
   /* What it came up, under it once it rests. */
   .egg-roll {
     position: fixed;
-    z-index: 2;
+    z-index: 4;
     display: grid;
     gap: 3px;
     justify-items: center;

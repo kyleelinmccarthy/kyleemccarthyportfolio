@@ -49,7 +49,7 @@ export const BUG = {
   wiggle: 0.22,
   turnStep: 0.35,
   /** How far it keeps from every landmark's footprint and every tree or building, in model units. */
-  clearance: 0.9,
+  clearance: 0.5,
   /** Never this close to where the last one was caught, in degrees, so a new one is somewhere else. */
   hop: 25,
   /** It stands this many times its size when the camera is far out over the planet (so it can be seen), and its own size close to. */
@@ -113,9 +113,9 @@ export const DIE = {
   showMs20: 4600,
   /** Its faces' colours, lit, in the half-light and in shade (a cel shader's three bands), its numbers and its edges. */
   colors: {
-    lit: { from: landmark.purple, toward: landmark.offWhite, k: 0.18 },
-    mid: { from: landmark.purple, toward: landmark.indigo, k: 0.12 },
-    shade: { from: landmark.purple, toward: landmark.indigo, k: 0.5 },
+    lit: { from: landmark.purple, toward: landmark.offWhite, k: 0.32 },
+    mid: { from: landmark.purple, toward: landmark.indigo, k: 0.08 },
+    shade: { from: landmark.purple, toward: landmark.indigo, k: 0.55 },
     number: landmark.offWhite,
     edge: landmark.indigo,
   },

@@ -46,7 +46,8 @@ const SPOTS: Array<[number, number, number]> = [
 function seam(): Vec3[] {
   const [, cy, cz] = SHELL.at
   const [, ry, rz] = SHELL.radii
-  return [-0.55, -0.1, 0.45, 0.95, 1.35].map((a) => [0, cy + ry * 1.02 * Math.cos(a), cz - rz * 1.02 * Math.sin(a)] as Vec3)
+  // Close enough together that the seam's straight runs between them never dip into the shell.
+  return Array.from({ length: 10 }, (_, i) => -0.55 + (i / 9) * 1.9).map((a) => [0, cy + ry * 1.05 * Math.cos(a), cz - rz * 1.05 * Math.sin(a)] as Vec3)
 }
 
 /** Where each leg leaves the body and where its foot stands: front, middle and back, on the right (+x); the left mirror them. */
@@ -106,7 +107,7 @@ export function Ladybug({ legs }: { legs: [React.Ref<Group>, React.Ref<Group>] }
       <Batched>
         {/* The shell, the seam down its back, and the spots, set into its surface. */}
         <Blob radius={1} squash={SHELL.radii} at={SHELL.at} color={shell} />
-        <Swept path={path} widths={path.map(() => [0.01, 0.006] as [number, number])} sides={4} color={bugColors.spots} outline={false} />
+        <Swept path={path} widths={path.map(() => [0.009, 0.008] as [number, number])} sides={4} color={bugColors.spots} outline={false} />
         {spots.map((s, i) => (
           <Blob key={i} radius={s.r} squash={[1, 0.4, 1]} at={s.at} rot={s.rot} color={bugColors.spots} outline={false} />
         ))}

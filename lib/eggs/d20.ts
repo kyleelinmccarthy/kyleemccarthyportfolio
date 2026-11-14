@@ -166,5 +166,5 @@ export type Tone = 'lit' | 'mid' | 'shade'
 /** How a face whose way out is `normal` (turned as the die is now) is lit: in full, in the half-light, or in shade. */
 export function faceTone(normal: Vector3): Tone {
   const k = normal.dot(LIGHT)
-  return k > 0.55 ? 'lit' : k > 0.05 ? 'mid' : 'shade'
+  return k > 0.72 ? 'lit' : k > 0.3 ? 'mid' : 'shade'
 }

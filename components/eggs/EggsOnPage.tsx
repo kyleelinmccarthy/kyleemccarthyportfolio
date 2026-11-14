@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { DIE, SQUASH_SAY_MS, eggWords } from '@/content/eggs'
 import { keyIsThePages } from '@/lib/keys'
 import { NOTHING_TYPED, typeKey } from '@/lib/eggs/typed'
@@ -13,7 +13,7 @@ import { eggs, rollForVisitor, useEggs, type ScreenPoint } from './eggStore'
 export const EGG_SAID_ID = 'egg-said'
 /** The space kept between the bug's words and the screen's edge, and over the point it was caught at, in pixels. */
 const EDGE = 16
-const OVER = 18
+const OVER = 14
 
 /** What a roll says: its result, and a line more for a natural 20 or a natural 1. */
 export function rollWords(value: number): { result: string; more: string | null } {
@@ -23,17 +23,25 @@ export function rollWords(value: number): { result: string; more: string | null 
 /** The bug's words, where it was caught: over the point, kept inside the screen; under it when there is no room above. */
 function CatchBubble({ at, count }: { at: ScreenPoint; count: number }) {
   const el = useRef<HTMLDivElement>(null)
-  const [place, setPlace] = useState<{ left: number; top: number } | null>(null)
+  const [place, setPlace] = useState<{ left: number; top: number; side: 'above' | 'below'; tail: number } | null>(null)
   useLayoutEffect(() => {
     const box = el.current
     if (!box) return
     const { offsetWidth: w, offsetHeight: h } = box
     const left = Math.min(Math.max(at.x - w / 2, EDGE), Math.max(EDGE, window.innerWidth - w - EDGE))
     const above = at.y - OVER - h
-    setPlace({ left, top: above >= EDGE ? above : at.y + OVER })
+    // The tail points at the bug, but never past the bubble's rounded corners.
+    const tail = Math.min(Math.max(at.x - left, 14), w - 14)
+    setPlace(above >= EDGE ? { left, top: above, side: 'above', tail } : { left, top: at.y + OVER, side: 'below', tail })
   }, [at])
   return (
-    <div ref={el} className="egg-bubble" aria-hidden style={place ? { left: place.left, top: place.top } : { visibility: 'hidden' }}>
+    <div
+      ref={el}
+      className="egg-bubble"
+      aria-hidden
+      data-side={place?.side}
+      style={place ? ({ left: place.left, top: place.top, '--tail': `${place.tail}px` } as CSSProperties) : { visibility: 'hidden' }}
+    >
       <span className="egg-bubble-words">{eggWords.feature}</span>
       <span className="egg-bubble-count">{eggWords.squashed(count)}</span>
     </div>
