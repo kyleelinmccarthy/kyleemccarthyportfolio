@@ -40,8 +40,9 @@ async function violationsOn(page: Page): Promise<string | null> {
 test.describe('axe sweep', () => {
   for (const theme of ['day', 'night'] as const) {
     test(`no axe violations in ${theme} mode`, async ({ page }) => {
-      // Eleven routes, each drawing the planet in software WebGL while other workers run: give it the slow budget.
+      // Eleven routes, each drawing the planet in software WebGL while other workers run: the slow budget, and a little more.
       test.slow()
+      test.setTimeout(test.info().timeout + ROUTES.length * 10_000)
       await page.addInitScript((t) => sessionStorage.setItem('kym-theme', t), theme)
 
       const failures: string[] = []
