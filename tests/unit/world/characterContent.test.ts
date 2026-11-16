@@ -39,7 +39,7 @@ describe('the guide’s lines', () => {
   })
 
   it('has a greeting for day and night, and at least one idle line', () => {
-    expect(Object.keys(guide.greeting).sort()).toEqual(['day', 'night'])
+    expect(Object.keys(guide.greeting).sort()).toEqual(['late', 'usual'])
     expect(guide.idle.length).toBeGreaterThan(0)
   })
 })

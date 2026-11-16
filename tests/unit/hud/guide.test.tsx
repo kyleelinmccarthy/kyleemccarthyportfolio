@@ -48,14 +48,14 @@ describe('the guide’s bubble', () => {
     show({ kind: 'overview' })
     const live = screen.getByRole('status')
     expect(live).toHaveAttribute('aria-live', 'polite')
-    expect(live).toHaveTextContent(`Kylee says: ${guide.greeting.day}`)
+    expect(live).toHaveTextContent(`Kylee says: ${guide.greeting.usual}`)
     const bubble = document.getElementById('guide-bubble')!
-    expect(bubble).toHaveTextContent(guide.greeting.day)
+    expect(bubble).toHaveTextContent(guide.greeting.usual)
     expect(screen.getByRole('link', { name: new RegExp(`^${guide.tour.start} ?: Home$`) })).toHaveAttribute('href', '/places/home')
     fireEvent.click(screen.getByRole('button', { name: guide.tour.alone }))
     // The bubble folds to her face; closing it is not a new line, so nothing new is said.
-    expect(bubble).not.toHaveTextContent(guide.greeting.day)
-    expect(live).toHaveTextContent(`Kylee says: ${guide.greeting.day}`)
+    expect(bubble).not.toHaveTextContent(guide.greeting.usual)
+    expect(live).toHaveTextContent(`Kylee says: ${guide.greeting.usual}`)
     expect(window.sessionStorage.getItem('kym-guide-greeted')).toBe('1')
   })
 

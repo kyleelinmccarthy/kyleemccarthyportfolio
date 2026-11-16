@@ -118,7 +118,7 @@ test.describe('each section at its own address', () => {
     await expect(page).toHaveURL('/places/post')
   })
 
-  test('the Index stays places only', async ({ page }) => {
+  test('the Navigation list stays places only', async ({ page }) => {
     await page.goto('/')
     for (const section of profileSections) await expect(page.locator(`#index a[href="${section.href}"]`)).toHaveCount(0)
   })

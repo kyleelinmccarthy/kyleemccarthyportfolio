@@ -4,14 +4,14 @@ import { places, tourFinale, tourOrder } from '@/content/world'
 import { WAVE_SECONDS, announcedAs, guideSays, isWaving, shouldAnnounce, spoken, type GuideInput } from '@/lib/world/guide'
 import { tourStep } from '@/lib/world/tour'
 
-const base: GuideInput = { route: { kind: 'overview' }, firstArrival: false, theme: 'day', hintsOn: true, previous: null }
+const base: GuideInput = { route: { kind: 'overview' }, firstArrival: false, late: false, hintsOn: true, previous: null }
 const at = (id: string, more: Partial<GuideInput> = {}) => guideSays({ ...base, route: { kind: 'place', id }, ...more })
 
 describe('what the guide says over the planet', () => {
-  it('greets a visitor on their first arrival, by day or by night, offering the tour or a look round alone, in the HUD', () => {
-    for (const theme of ['day', 'night'] as const) {
-      const says = guideSays({ ...base, firstArrival: true, theme })!
-      expect(says.line.text).toBe(guide.greeting[theme])
+  it('greets a visitor on their first arrival, with her late greeting only when their clock says it is late, offering the tour or a look round alone, in the HUD', () => {
+    for (const late of [false, true]) {
+      const says = guideSays({ ...base, firstArrival: true, late })!
+      expect(says.line.text).toBe(late ? guide.greeting.late : guide.greeting.usual)
       expect(says.anchor).toBe('hud')
       expect(says.actions.map((a) => a.kind)).toEqual(['start', 'alone'])
       expect(says.actions[0]).toMatchObject({ label: guide.tour.start, href: `/places/${tourOrder[0]}`, detail: 'Home' })
@@ -21,7 +21,7 @@ describe('what the guide says over the planet', () => {
 
   it('greets the same way over a district', () => {
     const says = guideSays({ ...base, route: { kind: 'district', id: 'works' }, firstArrival: true })!
-    expect(says.line.text).toBe(guide.greeting.day)
+    expect(says.line.text).toBe(guide.greeting.usual)
     expect(says.anchor).toBe('hud')
   })
 
@@ -125,9 +125,9 @@ describe('what a screen reader hears, and when', () => {
     expect(shouldAnnounce(announcedAs(first), first)).toBe(false)
   })
 
-  it('does not hear the greeting again when only the theme changes', () => {
-    const day = guideSays({ ...base, firstArrival: true, theme: 'day' })!
-    const night = guideSays({ ...base, firstArrival: true, theme: 'night' })!
+  it('does not hear the greeting again when only the hour’s reading changes', () => {
+    const day = guideSays({ ...base, firstArrival: true, late: false })!
+    const night = guideSays({ ...base, firstArrival: true, late: true })!
     expect(day.line.text).not.toBe(night.line.text)
     expect(shouldAnnounce(announcedAs(day), night)).toBe(false)
   })
@@ -148,9 +148,9 @@ describe('what a screen reader hears, and when', () => {
     expect(shouldAnnounce(announcedAs(b), idle)).toBe(true)
   })
 
-  it('keeps the same idle line when asked again with the same line before it (a theme change does not move it on)', () => {
+  it('keeps the same idle line when asked again with the same line before it (the hour’s reading does not move it on)', () => {
     const before = 'place:aura'
-    expect(guideSays({ ...base, previous: before, theme: 'day' })!.line.text).toBe(guideSays({ ...base, previous: before, theme: 'night' })!.line.text)
+    expect(guideSays({ ...base, previous: before, late: false })!.line.text).toBe(guideSays({ ...base, previous: before, late: true })!.line.text)
   })
 })
 

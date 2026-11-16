@@ -18,6 +18,8 @@ export const site = {
   linkedin: 'https://www.linkedin.com/in/kylee-mccarthy-ms-706499123/',
   // The account that hosts this site's repository.
   github: 'https://github.com/kyleelinmccarthy',
+  // The control that opens the list of every place, in the header.
+  indexLabel: 'Navigation',
   resumePath: '/Kylee-McCarthy-Resume.pdf',
   portraitAlt: 'Portrait of Kylee McCarthy',
 } as const

@@ -2,13 +2,13 @@ import { describe, it, expect } from 'vitest'
 import { guideSays, isGreeting, type GuideInput } from '@/lib/world/guide'
 import { GUEST_WAVE_PHASE, WELCOME_NO_ROOM, WELCOME_TIMING, greetingOpen, welcomeShows, welcomeStage } from '@/lib/world/welcome'
 
-const base: GuideInput = { route: { kind: 'overview' }, firstArrival: true, theme: 'day', hintsOn: true, previous: null }
+const base: GuideInput = { route: { kind: 'overview' }, firstArrival: true, late: false, hintsOn: true, previous: null }
 const greeting = guideSays(base)
 
 describe('when the welcome pair shows', () => {
   it('shows while the greeting is open, by day or by night, over the planet or a district', () => {
     expect(welcomeShows({ says: greeting, open: true })).toBe(true)
-    expect(welcomeShows({ says: guideSays({ ...base, theme: 'night' }), open: true })).toBe(true)
+    expect(welcomeShows({ says: guideSays({ ...base, late: true }), open: true })).toBe(true)
     expect(welcomeShows({ says: guideSays({ ...base, route: { kind: 'district', id: 'works' } }), open: true })).toBe(true)
   })
 
@@ -38,7 +38,7 @@ describe('when the welcome pair shows', () => {
 
   it('knows the greeting by its key, whatever the theme', () => {
     expect(isGreeting(greeting)).toBe(true)
-    expect(isGreeting(guideSays({ ...base, theme: 'night' }))).toBe(true)
+    expect(isGreeting(guideSays({ ...base, late: true }))).toBe(true)
     expect(isGreeting(guideSays({ ...base, firstArrival: false }))).toBe(false)
     expect(isGreeting(null)).toBe(false)
   })

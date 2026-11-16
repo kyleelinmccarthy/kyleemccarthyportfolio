@@ -15,13 +15,13 @@ describe('Legend', () => {
     screenIs(false)
     render(<Legend districts={districts} />)
     expect(screen.getAllByRole('link').map((a) => a.textContent)).toEqual([
-      expect.stringMatching(/^01Home/),
-      expect.stringMatching(/^02The Works/),
-      expect.stringMatching(/^03After Hours/),
-      expect.stringMatching(/^04Tiny Frenzy/),
-      expect.stringMatching(/^05The Studio/),
+      expect.stringMatching(/^01About Me/),
+      expect.stringMatching(/^02Professional Projects/),
+      expect.stringMatching(/^03Personal Projects/),
+      expect.stringMatching(/^04Indie Game Dev/),
+      expect.stringMatching(/^05Art & Design/),
     ])
-    expect(screen.getByRole('link', { name: /The Works/ })).toHaveAttribute('href', '/?district=works')
+    expect(screen.getByRole('link', { name: /Professional Projects/ })).toHaveAttribute('href', '/?district=works')
   })
 
   it('does not show a count of places, which read as a second, conflicting number', () => {

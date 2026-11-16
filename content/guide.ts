@@ -1,5 +1,3 @@
-import type { Theme } from './types'
-
 /**
  * What the guide says: Kylee, standing beside each landmark in a speech
  * bubble. Plain text only, each line at most 140 characters (tested), in her
@@ -9,11 +7,15 @@ import type { Theme } from './types'
  * DRAFT for Kylee's review: written for her from the existing copy.
  */
 export const guide = {
-  /** Said first, the first time a visitor reaches the planet in a visit, with a choice of the tour or a look round alone. By day or by night (the site's theme). */
+  /**
+   * Said first, the first time a visitor reaches the planet in a visit, with a choice of the tour or a look round
+   * alone. `late` only when the visitor's own clock says it is late (the last band of `greetings`, content/sky.ts),
+   * whichever of day and night the site is showing.
+   */
   greeting: {
-    day: 'Hi, I’m Kylee. This is everything I make, laid out as a tiny planet. Want the tour, or would you rather wander?',
-    night: 'Hi, I’m Kylee. Up late? So am I. This is everything I make, laid out as a tiny planet. Want the tour, or a wander?',
-  } satisfies Record<Theme, string>,
+    usual: 'Hi, I’m Kylee. This is everything I make, laid out as a tiny planet. Want the tour, or would you rather wander?',
+    late: 'Hi, I’m Kylee. Up late? So am I. This is everything I make, laid out as a tiny planet. Want the tour, or a wander?',
+  },
 
   /** Before the place's own line, the first time a visitor lands straight on a place rather than the planet. */
   hello: 'Hi, I’m Kylee.',

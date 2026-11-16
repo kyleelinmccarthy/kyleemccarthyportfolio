@@ -21,7 +21,7 @@ test('the home page names her and lists every place', async ({ page }) => {
   await hydrated(page)
   await expect(page.getByRole('heading', { level: 1, name: 'Kylee McCarthy', exact: true })).toBeVisible()
   await expect(page.locator('header').getByText(hero.headline)).toBeVisible()
-  await page.getByRole('button', { name: 'Index' }).click()
+  await page.getByRole('button', { name: 'Navigation' }).click()
   await expect(page.locator('#index')).toBeVisible()
   await expect(page.locator('#index a')).toHaveCount(19)
 })
@@ -29,7 +29,7 @@ test('the home page names her and lists every place', async ({ page }) => {
 test('a place opens from the index, has its own heading, and the back button returns', async ({ page }) => {
   await page.goto('/')
   await hydrated(page)
-  await page.getByRole('button', { name: 'Index' }).click()
+  await page.getByRole('button', { name: 'Navigation' }).click()
   await page.getByRole('link', { name: /Beacon/ }).click()
   await expect(page).toHaveURL('/places/beacon')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Beacon')
@@ -38,10 +38,10 @@ test('a place opens from the index, has its own heading, and the back button ret
   await expect(page).toHaveURL('/')
 })
 
-test('the Index link on a place page opens the index on the home page', async ({ page }) => {
+test('the Navigation link on a place page opens the index on the home page', async ({ page }) => {
   await page.goto('/places/beacon')
   await hydrated(page)
-  await page.getByRole('link', { name: 'Index' }).click()
+  await page.getByRole('link', { name: 'Navigation' }).click()
   await expect(page).toHaveURL('/#index')
   await expect(page.locator('#index')).toBeVisible()
 })

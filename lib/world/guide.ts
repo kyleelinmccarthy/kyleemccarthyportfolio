@@ -1,5 +1,4 @@
 import { guide } from '@/content/guide'
-import type { Theme } from '@/content/types'
 import { placeById, tourOrder } from '@/content/world'
 import { placeHref } from './route'
 import { tourIndex, tourStep } from './tour'
@@ -51,8 +50,8 @@ export interface GuideInput {
   route: GuideRoute
   /** The visitor's first arrival on the planet this visit: she greets them. */
   firstArrival: boolean
-  /** The site's theme: her greeting is by day or by night. */
-  theme: Theme
+  /** The visitor's own clock says it is late (the `late` band, lib/world/time.ts): her greeting says so. Never the site's theme, which a visitor can switch at noon. */
+  late: boolean
   /** Hints are on (the visitor has not hidden them this visit). */
   hintsOn: boolean
   /** The key of the line shown last, if any. */
@@ -90,7 +89,7 @@ function idleAfter(previous: string | null, copy: GuideCopy): { key: string; tex
  * place has no line.
  *
  * - Over the planet or a district, on the visitor's first arrival: her
- *   greeting for the theme, offering the tour (a link to its first stop) or a
+ *   greeting (her late one when the hour is late), offering the tour (a link to its first stop) or a
  *   look round alone. Anchored in the HUD.
  * - Over the planet or a district afterwards: an idle line, taking turns, so
  *   coming back does not say the same thing twice running. In the HUD.
@@ -123,8 +122,8 @@ export function guideSays(input: GuideInput, copy: GuideCopy = guide): GuideSays
   if (input.firstArrival) {
     const first = tourOrder[0]!
     return says(
-      `greeting:${input.theme}`,
-      { text: copy.greeting[input.theme] },
+      `greeting:${input.late ? 'late' : 'usual'}`,
+      { text: input.late ? copy.greeting.late : copy.greeting.usual },
       [
         { kind: 'start', label: copy.tour.start, href: placeHref(first), detail: placeName(first) },
         { kind: 'alone', label: copy.tour.alone },
@@ -145,16 +144,16 @@ export function spoken(says: GuideSays | null): string {
   return [says.line.title, says.line.text, says.line.aside].filter(Boolean).join(' ')
 }
 
-/** Whether `says` is her greeting (by day or by night): the line a first-time visitor hears over the planet. */
+/** Whether `says` is her greeting (her usual one or her late one): the line a first-time visitor hears over the planet. */
 export function isGreeting(says: GuideSays | null): boolean {
   return says !== null && says.key.startsWith('greeting:')
 }
 
 /**
  * Which line a screen reader has heard, as far as announcing goes: the line's
- * key, except that the greeting is one line whether it is said by day or by
- * night (the theme settles a moment after the page opens, or the visitor
- * switches it), so a change of theme alone is never announced again.
+ * key, except that the greeting is one line whether it is her usual one or
+ * her late one (the hour is read a moment after the page opens), so that
+ * settling alone is never announced again.
  */
 export function announcedAs(says: GuideSays | null): string | null {
   if (!says) return null

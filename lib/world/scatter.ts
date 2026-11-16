@@ -80,7 +80,7 @@ const TREE_ATTEMPTS = 20000
 /** Trees grow only where the land value is well above the shore. */
 const TREE_MIN_LAND = 0.33
 /**
- * Trees keep at least this far (degrees) from a landmark, and from The Works'
+ * Trees keep at least this far (degrees) from a landmark, and from the works district's
  * centre, which is the city; and always far enough that the whole canopy
  * clears the landmark's allowed footprint.
  */
@@ -270,7 +270,7 @@ export function reachOf(x: Tree | Building): number {
 const CITY = { towers: 0.25, beside: 10, besideStoreys: 2 }
 
 /**
- * The grid in The Works: this many steps either side of the centre, this many
+ * The grid in the works district: this many steps either side of the centre, this many
  * degrees apart, about `fill` of the cells built on, each building nudged up
  * to `jitter` of a step off its cell's middle either way, so the city does
  * not stand in file.
@@ -321,7 +321,7 @@ function placeFootprints(places: Place[]): Array<{ dir: Vector3; reachDeg: numbe
 
 /**
  * True where something reaching `reachDeg` degrees from `dir` stands clear of
- * The Works' grid: outside the square of every cell, with half a step round
+ * the works district's grid: outside the square of every cell, with half a step round
  * the outer ones, so the far corner cells are kept clear as well as the rest.
  */
 export function offCityGrid(dir: Vector3, reachDeg: number, districts: District[]): boolean {
@@ -478,7 +478,7 @@ function pickForm(t: number): TreeForm {
  * most grow beside one already planted, taking its form and, for blossom or
  * autumn, its colour, and the rest start a grove of their own somewhere new.
  * Each is kept only if it is well inland, clear of every landmark's footprint,
- * off The Works' grid, clear of every building in `buildings`, not inside
+ * off the works district's grid, clear of every building in `buildings`, not inside
  * another tree, and low enough to pass under any route above it. Broad-leaved
  * trees take one of the palette's greens, conifers one of theirs; the accent
  * districts' groves sometimes blossom or turn.
@@ -528,7 +528,7 @@ export function scatterTrees(seed: number, districts: District[], places: Place[
 }
 
 /**
- * Background buildings: in The Works, round a grid of 3.3 degree cells (about
+ * Background buildings: in the works district, round a grid of 3.3 degree cells (about
  * a quarter left empty, none on water), each building nudged off its cell's
  * middle (`GRID.jitter`) and square to the grid: city blocks of one to three
  * storeys and slim towers of three or four, the tallest kept back from the

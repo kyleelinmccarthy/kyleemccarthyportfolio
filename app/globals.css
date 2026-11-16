@@ -137,7 +137,7 @@
   /*
    * The index of every place. It is always in the HTML. Without JavaScript it
    * stays in place at the right; with it (<html data-js>) it is a drawer from
-   * the left, opened by the Index button or by #index in the URL.
+   * the left, opened by the Navigation button or by #index in the URL.
    */
   .index-panel {
     position: fixed;

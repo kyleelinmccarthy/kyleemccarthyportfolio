@@ -121,7 +121,7 @@ test.describe('label measuring', () => {
     }
 
     await after('a resize', () => page.setViewportSize({ width: 1100, height: 760 }))
-    await after('opening the index', () => page.getByRole('button', { name: 'Index' }).click())
+    await after('opening the index', () => page.getByRole('button', { name: 'Navigation' }).click())
     await after('closing the index', () => page.keyboard.press('Escape'))
     await after('the theme flipping', () => page.getByRole('button', { name: /night|day/i }).click())
     await after('the HUD giving way', async () => {

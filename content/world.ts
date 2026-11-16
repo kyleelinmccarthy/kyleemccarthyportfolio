@@ -2,11 +2,11 @@ import type { District, Place } from './types'
 import { onTheGo } from './onTheGo'
 
 export const districts: District[] = [
-  { id: 'works', name: 'The Works', blurb: 'What I build for a living', color: '#4C7DFF', center: { lat: 20, lon: -18 }, radius: 34 },
-  { id: 'frenzy', name: 'Tiny Frenzy', blurb: 'My one-person game studio', color: '#FF6FA3', center: { lat: -8, lon: 64 }, radius: 27 },
-  { id: 'hours', name: 'After Hours', blurb: 'Apps for people I love', color: '#FF9B54', center: { lat: -28, lon: -92 }, radius: 26 },
-  { id: 'studio', name: 'The Studio', blurb: 'Ink, paint and pixels', color: '#8B6CFF', center: { lat: 44, lon: 122 }, radius: 21 },
-  { id: 'home', name: 'Home', blurb: 'Everything else', color: '#2EC4B6', center: { lat: -36, lon: 166 }, radius: 27 },
+  { id: 'works', name: 'Professional Projects', blurb: 'What I build for a living', color: '#4C7DFF', center: { lat: 20, lon: -18 }, radius: 34 },
+  { id: 'frenzy', name: 'Indie Game Dev', blurb: 'Tiny Frenzy Games, a one-person studio', color: '#FF6FA3', center: { lat: -8, lon: 64 }, radius: 27 },
+  { id: 'hours', name: 'Personal Projects', blurb: 'Apps I built for family and friends', color: '#FF9B54', center: { lat: -28, lon: -92 }, radius: 26 },
+  { id: 'studio', name: 'Art & Design', blurb: 'Drawings, paintings and tattoo designs', color: '#8B6CFF', center: { lat: 44, lon: 122 }, radius: 21 },
+  { id: 'home', name: 'About Me', blurb: 'Who I am, how I work and how to reach me', color: '#2EC4B6', center: { lat: -36, lon: 166 }, radius: 27 },
 ]
 
 /** Every place. The tour's order is `tourOrder`, below. */

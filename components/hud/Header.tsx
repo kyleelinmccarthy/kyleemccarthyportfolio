@@ -13,7 +13,7 @@ import { ThemeToggle } from './ThemeToggle'
 /**
  * The name, the role line and the three controls. On the home page the name is
  * the page's <h1> and the headline and greeting sit under it; on a place page
- * the place is the <h1> and the name is a link home. The Index control is a
+ * the place is the <h1> and the name is a link home. The Navigation control (`site.indexLabel`) is a
  * button on the home page (it opens the drawer) and a link to /#index elsewhere.
  */
 export function Header({ home }: { home: boolean }) {
@@ -82,7 +82,7 @@ export function Header({ home }: { home: boolean }) {
           <IndexButton className={`hud-btn glass ${compact}`} />
         ) : (
           <Link href="/#index" className={`hud-btn glass ${compact}`}>
-            Index
+            {site.indexLabel}
           </Link>
         )}
         {/* About, Experience and Contact: the profile, one press from every page. */}

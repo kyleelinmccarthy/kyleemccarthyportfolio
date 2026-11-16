@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { Vector3 } from 'three'
 import { SIGNAL, signalAge, signalBand, signalFade, signalMesh, signalRings, signalStrength, stripeCount, stripedMeshes, turnedMesh, type Point2 } from '@/lib/world/kit'
 
-/** The kit parts added for The Works: rings of light sent out from a mast, and a turned shape in stripes. */
+/** The kit parts added for the works district: rings of light sent out from a mast, and a turned shape in stripes. */
 
 describe('a turned shape in stripes', () => {
   const TENT: Point2[] = [[0, 0], [0.5, 0], [0.5, 0.4], [0.2, 0.7], [0, 0.8]]

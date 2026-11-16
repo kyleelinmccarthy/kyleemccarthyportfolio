@@ -2,11 +2,12 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode, RefObject } from 'react'
+import { site } from '@/content/site'
 
 interface IndexDrawerValue {
   open: boolean
   setOpen(open: boolean): void
-  /** Close the drawer and hand focus back to the Index button. */
+  /** Close the drawer and hand focus back to its button. */
   dismiss(): void
   triggerRef: RefObject<HTMLButtonElement | null>
 }
@@ -59,7 +60,7 @@ export function useIndexDrawer(): IndexDrawerValue {
   return useContext(IndexDrawerContext)
 }
 
-/** The header's Index control on the home page. */
+/** The header's control for the list of every place (`site.indexLabel`), on the home page. */
 export function IndexButton({ className = '' }: { className?: string }) {
   const { open, setOpen, triggerRef } = useIndexDrawer()
   return (
@@ -71,7 +72,7 @@ export function IndexButton({ className = '' }: { className?: string }) {
       onClick={() => setOpen(!open)}
       className={className}
     >
-      Index
+      {site.indexLabel}
     </button>
   )
 }

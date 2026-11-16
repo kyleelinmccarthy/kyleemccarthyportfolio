@@ -58,7 +58,7 @@ test('its Skip control skips it', async ({ page }) => {
 test('the header’s links and buttons work while it plays', async ({ page }) => {
   await page.goto('/')
   expect(await playing(page)).toBe(true)
-  const index = page.getByRole('button', { name: 'Index' })
+  const index = page.getByRole('button', { name: 'Navigation' })
   await index.click()
   await expect(index).toHaveAttribute('aria-expanded', 'true')
   await page.keyboard.press('Escape')

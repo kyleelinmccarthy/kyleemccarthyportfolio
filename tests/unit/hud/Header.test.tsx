@@ -74,7 +74,7 @@ describe('Header', () => {
     const controls = screen.getByRole('navigation', { name: 'Main' }).querySelectorAll(':scope > * > a, :scope > a, :scope > button, summary')
     expect([...controls].map((c) => c.getAttribute('aria-label') ?? c.textContent?.trim())).toEqual([
       'Take the tour →',
-      'Index',
+      'Navigation',
       'About',
       'Experience',
       'Contact',
@@ -84,18 +84,18 @@ describe('Header', () => {
     expect(screen.getByRole('link', { name: /Take the tour/ })).toHaveAttribute('href', '/places/home')
   })
 
-  it('on the home page, Index is a button that opens the drawer', async () => {
+  it('on the home page, Navigation is a button that opens the drawer', async () => {
     renderHeader(true)
-    const button = screen.getByRole('button', { name: 'Index' })
+    const button = screen.getByRole('button', { name: 'Navigation' })
     expect(button).toHaveAttribute('aria-expanded', 'false')
     await userEvent.click(button)
     expect(button).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getByRole('status')).toHaveTextContent('true')
   })
 
-  it('on a place page, Index is a link to the index on the home page', () => {
+  it('on a place page, Navigation is a link to the index on the home page', () => {
     renderHeader(false)
-    expect(screen.queryByRole('button', { name: 'Index' })).not.toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Index' })).toHaveAttribute('href', '/#index')
+    expect(screen.queryByRole('button', { name: 'Navigation' })).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Navigation' })).toHaveAttribute('href', '/#index')
   })
 })

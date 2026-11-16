@@ -9,11 +9,11 @@ describe('IndexList', () => {
     expect(screen.getAllByRole('link')).toHaveLength(19)
     expect(screen.getByRole('link', { name: /04\s*Beacon/ })).toHaveAttribute('href', '/places/beacon')
     expect(screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)).toEqual([
-      'Home',
-      'The Works',
-      'After Hours',
-      'Tiny Frenzy',
-      'The Studio',
+      'About Me',
+      'Professional Projects',
+      'Personal Projects',
+      'Indie Game Dev',
+      'Art & Design',
     ])
     // Read top to bottom, the numbers count up, but for the letterbox: it stays with Home, and is the tour's last stop.
     const numbers = screen.getAllByRole('link').map((a) => Number(a.textContent!.slice(0, 2)))
@@ -30,7 +30,7 @@ describe('IndexList', () => {
 
   it('lists each district’s places under its own heading', () => {
     render(<IndexList districts={districts} places={places} tourOrder={tourOrder} />)
-    const works = screen.getByRole('heading', { level: 2, name: 'The Works' }).closest('section')!
+    const works = screen.getByRole('heading', { level: 2, name: 'Professional Projects' }).closest('section')!
     expect(within(works).getAllByRole('link').map((a) => a.getAttribute('href'))).toEqual([
       '/places/beacon',
       '/places/403hq',

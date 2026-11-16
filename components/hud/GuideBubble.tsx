@@ -20,12 +20,12 @@ const routeKey = (route: GuideRoute) => (route.kind === 'overview' ? 'overview' 
 /**
  * What the guide says where the visitor is (`guideSays`), and whether its
  * greeting was closed. The line before is taken once per route, so the line
- * for a route stays the same when only the theme or the stored choices change
- * (an idle line does not move on; the greeting only turns from day to night).
+ * for a route stays the same when only the hour's reading or the stored choices
+ * change (an idle line does not move on; the greeting only turns to her late one).
  */
 export function useGuideLine(route: GuideRoute): { says: GuideSays | null; closed: boolean; close(): void } {
   const { hintsOff, greeted, ready } = useCompanions()
-  const { theme } = useTheme()
+  const late = useTheme().band === 'late'
   const key = routeKey(route)
   // The first route this page showed, and whether the visitor has moved on from it.
   const first = useRef(key)
@@ -45,12 +45,12 @@ export function useGuideLine(route: GuideRoute): { says: GuideSays | null; close
   useEffect(() => {
     if (!ready) return
     if (before.current?.route !== key) before.current = { route: key, previous: last.current, first: !greeted && key === first.current }
-    const next = guideSays({ route, firstArrival: before.current.first, theme, hintsOn: !hintsOff, previous: before.current.previous })
+    const next = guideSays({ route, firstArrival: before.current.first, late, hintsOn: !hintsOff, previous: before.current.previous })
     if (next) last.current = next.key
     setSays(next)
     // `route` is read through `key`.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key, ready, greeted, hintsOff, theme])
+  }, [key, ready, greeted, hintsOff, late])
 
   return {
     says,

@@ -118,7 +118,7 @@ test('clicks pass through empty sky to the canvas while the controls still work'
     [Math.round(viewport.width / 2), Math.round(viewport.height / 2)],
   )
   expect(hit).toBe('CANVAS')
-  await page.getByRole('button', { name: 'Index' }).click()
+  await page.getByRole('button', { name: 'Navigation' }).click()
   await expect(page.locator('#index')).toBeVisible()
 })
 
@@ -299,7 +299,7 @@ test.describe('on a wide screen, at a place', () => {
     // A neighbour is named the same way, and can be seen.
     await expect(labels.getByRole('link', { name: 'NBS Website Company site, 66 pages rebuilt', exact: true })).toBeVisible()
     await expect(
-      labels.getByRole('link', { name: 'The Works 06 places · What I build for a living', exact: true, includeHidden: true }),
+      labels.getByRole('link', { name: 'Professional Projects 06 places · What I build for a living', exact: true, includeHidden: true }),
     ).toHaveAttribute('href', '/?district=works')
   })
 

@@ -172,7 +172,7 @@ describe('buildings', () => {
     }
   })
 
-  it('fill The Works loosely round a 3.3 degree grid of blocks and towers, square to it but not in file', () => {
+  it('fill the works district loosely round a 3.3 degree grid of blocks and towers, square to it but not in file', () => {
     expect(inWorks.length).toBeGreaterThan(20)
     const offsets: number[] = []
     for (const b of inWorks) {
@@ -262,7 +262,7 @@ describe('buildings', () => {
     expect(luminance(scatter.windowLit)).toBeLessThan(luminance(landmark.lit) * 0.8)
   })
 
-  it('are small houses with pitched roofs outside The Works, no two of them overlapping', () => {
+  it('are small houses with pitched roofs outside the works district, no two of them overlapping', () => {
     expect(houses.length).toBeGreaterThan(4)
     for (const h of houses) {
       expect(angleDeg(h.dir, dirOf(works.center))).toBeGreaterThan(works.radius)

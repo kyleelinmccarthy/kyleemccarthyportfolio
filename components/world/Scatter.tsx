@@ -26,7 +26,7 @@ function solid(mesh: PlacedMesh): BufferGeometry {
 /**
  * The planet's trees and background buildings: groves of painted trees (broad
  * round canopies, tall narrow ones and conifers) on every island but the city,
- * and in The Works a loose grid of small city blocks and towers, with a few
+ * and in the works district (Professional Projects) a loose grid of small city blocks and towers, with a few
  * houses in the other districts. Each layer is merged into one mesh in the
  * kit's look: cel shading with the edge light and painted gradient (`kit`), a
  * thin outline (the same mesh pushed out along its normals; finer on trees,
