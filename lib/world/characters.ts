@@ -23,8 +23,8 @@ export { ADULT_HEIGHT, characterHeight } from './figure'
  * (`PLANET_TRIANGLE_BUDGET` in kit.ts), which they are not part of.
  */
 export const COMPANION_TRIANGLE_BUDGET = 27_000
-/** Draw calls for the pair once batched, as the landmarks' `DRAW_BUDGET`: one per material each figure uses, plus each live (moving) part. */
-export const COMPANION_DRAW_BUDGET = 34
+/** Draw calls for the pair once batched, as the landmarks' `DRAW_BUDGET`: one per material each figure uses (the light in its eyes among them), plus each live (moving) part. */
+export const COMPANION_DRAW_BUDGET = 36
 
 /** A spot made whole: where on the ground ([x, 0, z], model units) and which way it faces (radians about the upright). */
 export interface Standing {

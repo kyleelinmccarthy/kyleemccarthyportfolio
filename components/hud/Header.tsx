@@ -71,8 +71,8 @@ export function Header({ home }: { home: boolean }) {
         data-covers-labels
         className={`fixed right-10 top-9 z-[5] flex gap-2 max-[820px]:flex-wrap max-[820px]:justify-end ${
           home
-            ? 'max-[820px]:bottom-[26px] max-[820px]:right-[26px] max-[820px]:top-auto'
-            : 'max-[820px]:right-3.5 max-[820px]:top-[68px] max-[820px]:max-w-[calc(100vw-170px)] max-[820px]:gap-1.5'
+            ? 'hud-nav-home max-[820px]:bottom-[26px] max-[820px]:right-[26px] max-[820px]:top-auto'
+            : 'hud-nav-place max-[820px]:right-3.5 max-[820px]:top-[68px] max-[820px]:max-w-[calc(100vw-170px)] max-[820px]:gap-1.5'
         }`}
       >
         <Link href={placeHref(tourOrder[0]!)} className={`hud-btn hud-btn-primary glass ${compact}`}>

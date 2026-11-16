@@ -58,10 +58,11 @@ const everyLook: Array<[string, Look]> = [['the guide', guideLook], ...outfits]
 /**
  * What the most expensive of the six looks a visitor could pick before cost,
  * alone and batched (measured at the commit before the composer): no
- * character they make now may cost more.
+ * character they make now may cost more triangles, and none more draw calls
+ * than that and one, for the light in its eyes.
  */
 const GUEST_TRIANGLES = 9088
-const GUEST_DRAWS = 12
+const GUEST_DRAWS = 13
 
 describe('a character', () => {
   it.each(everyLook)('%s stands on the ground, as tall as its look says, narrow as a person, and every part of it can be seen', async (_, look) => {
