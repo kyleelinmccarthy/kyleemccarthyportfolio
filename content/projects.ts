@@ -352,4 +352,20 @@ export const projects: Project[] = [
     stack: ['Next.js', 'TypeScript'],
     isPersonal: true,
   },
+  {
+    slug: 'dnd4noobs',
+    name: 'dnd4noobs',
+    // DRAFT: Kylee's review
+    descriptor: 'Learn-to-Play App · Kids and New Players',
+    status: 'beta',
+    headline: 'Pip, a little goblin bard, teaches kids and new players to play D&D.',
+    problem:
+      'My kids and some friends wanted to learn to play D&D, and the rulebook is a lot to hand someone on day one.',
+    built:
+      'A browser app where Pip helps on every page, the way each player learns best: show me, tell me, let me read, let me try. Players build a legal level-1 hero from the free 5e rules, then play practice adventures that teach checks, talking and turn-by-turn combat. Dungeon Masters can load a campaign pack so players only see the options that fit their game.',
+    outcome: 'In beta, invite-only.',
+    liveUrl: 'https://dnd4noobs.com',
+    stack: ['Next.js', 'Cloudflare Workers', 'D1', 'Drizzle', 'Better Auth', 'Stripe'],
+    isPersonal: true,
+  },
 ]

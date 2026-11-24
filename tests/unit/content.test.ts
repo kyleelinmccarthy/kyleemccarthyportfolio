@@ -8,9 +8,9 @@ import { build, lead } from '@/content/about'
 import { artAlt, tattooAlt } from '@/content/art'
 
 describe('projects content', () => {
-  it('has 7 professional and 7 personal projects', () => {
+  it('has 7 professional and 8 personal projects', () => {
     expect(projects.filter((p) => !p.isPersonal)).toHaveLength(7)
-    expect(projects.filter((p) => p.isPersonal)).toHaveLength(7)
+    expect(projects.filter((p) => p.isPersonal)).toHaveLength(8)
   })
 
   it('has dropped the retired projects', () => {
@@ -32,6 +32,8 @@ describe('projects content', () => {
     expect(url('eliminated-site')).toBe('https://eliminatedgame.com/')
     expect(url('tiny-frenzy-games')).toBe('https://tinyfrenzygames.com/')
     expect(url('the-budget')).toBe('https://the-budget-demo.kyleelinmccarthy.workers.dev/login')
+    expect(url('dnd4noobs')).toBe('https://dnd4noobs.com')
+    expect(projects.find((p) => p.slug === 'dnd4noobs')?.status).toBe('beta')
     expect(projects.find((p) => p.slug === 'jimothy-and-pidge')?.name).toBe(
       'Jimothy & Pidge: Shenanigans in Seattle'
     )
