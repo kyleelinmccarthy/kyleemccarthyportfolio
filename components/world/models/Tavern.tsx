@@ -35,14 +35,23 @@ const LAMP = { x: 0.33, size: [0.04, 0.06, 0.04] as Vec3 }
 const SIGN = { reach: 0.24, board: [0.17, 0.15] as [number, number], drop: 0.035 }
 /** The tankard on the sign, in the district's colour, with its foam and handle. */
 const TANKARD = { size: [0.062, 0.07] as [number, number], foam: [0.04, 0.016] as [number, number], handle: 0.019 }
-/** The barrel Pip sits on, left of the door: turned with a belly, two iron hoops; Pip sits toward its front edge. */
-const BARREL = { x: -0.13, out: 0.1, profile: [[0, 0], [0.05, 0], [0.058, 0.065], [0.05, 0.13], [0, 0.13]] as Point2[], hoops: [0.024, 0.106], hoop: 0.054, seat: 0.022 }
-/** From her seat to her hat's tip, Pip is a third of the door's height. */
-const PIP_SHARE = 1 / 3
+/**
+ * The barrel Pip sits on, out in front of the wide window and clear of the
+ * door's step: turned with a belly, two iron hoops; Pip sits toward its front
+ * edge, so she is the first thing the camera finds as it arrives.
+ */
+const BARREL = { x: -0.3, out: 0.2, profile: [[0, 0], [0.07, 0], [0.08, 0.07], [0.07, 0.14], [0, 0.14]] as Point2[], hoops: [0.026, 0.114], hoop: 0.074, seat: 0.03 }
+/** How far over the top of the door the tip of Pip's hat stands, sitting on her barrel. */
+const PIP_OVER_DOOR = 0.06
 
 type Colours = Record<'plaster' | 'timber' | 'stone' | 'chimney' | 'roof' | 'door' | 'iron' | 'wood' | 'accent' | 'foam', string>
 
-/** A dark timber laid flat on a wall's face from `a` to `b` ([x, y] across the face), standing proud of it; `z` is the face. */
+/**
+ * A dark timber laid flat on a wall's face from `a` to `b` ([x, y] across the
+ * face), standing a little proud of it; `z` is the face. Nearly flush, and dark
+ * against the plaster, so it draws no line of its own: thirty lined timbers
+ * were noise (and a sixth of the landmark's triangles).
+ */
 function Beam({ a, b, z, colour }: { a: [number, number]; b: [number, number]; z: number; colour: string }) {
   const [dx, dy] = [b[0] - a[0], b[1] - a[1]]
   return (
@@ -52,6 +61,7 @@ function Beam({ a, b, z, colour }: { a: [number, number]; b: [number, number]; z
       rot={[0, 0, -Math.atan2(dx, dy)]}
       color={colour}
       bevel={0.006}
+      outline={false}
     />
   )
 }
@@ -81,7 +91,8 @@ function Sign({ colour }: { colour: Colours }) {
  * on a stone footing, plastered walls between dark timbers, its half storey
  * jutting out over the ground floor, a steep shingled roof with its gable to
  * the front, a brick chimney, and a sign with a tankard on it hung from an
- * iron bracket. Pip sits on a barrel beside the door with her lute.
+ * iron bracket. Pip sits on a barrel left of the door with her lute, as tall
+ * as the door to the tip of her hat: she is the landmark's face.
  *
  * Three levels of detail. The main mass: the footing, the walls and the
  * roof. The secondary forms: the timber framing, the jetty beam and its
@@ -229,10 +240,11 @@ export function Tavern({ place, district }: ModelProps) {
       <group position={[BARREL.x, 0, front + BARREL.out]}>
         <Turned profile={BARREL.profile} color={colour.wood} />
         {BARREL.hoops.map((y) => (
-          <Ring key={y} radius={BARREL.hoop} thickness={0.008} sides={4} around={16} at={[0, y, 0]} color={colour.iron} />
+          <Ring key={y} radius={BARREL.hoop} thickness={0.009} sides={4} around={18} at={[0, y, 0]} color={colour.iron} />
         ))}
+        {/* Sitting, the tip of her hat stands a little over the top of the door: she is the landmark's face. */}
         <group position={[0, seat, BARREL.seat]}>
-          <Pip scale={(door * PIP_SHARE) / SITTING} />
+          <Pip scale={(FOOTING.height + door + PIP_OVER_DOOR - seat) / SITTING} />
         </group>
       </group>
     </group>

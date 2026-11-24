@@ -40,10 +40,10 @@ const HOOP = { x: 0.035, y: 0.082, radius: 0.0055, thick: 0.0018 }
 const HAT = { y: 0.112, tilt: [-0.28, 0, 0.14] as Vec3, brim: 0.052, brimThick: 0.005, crown: [[0, 0], [0.025, 0], [0.024, 0.01], [0.019, 0.022], [0.01, 0.031], [0, 0.034]] as Point2[] }
 /** The feather: its purple root from the hat's side, then its blue tip, sweeping out, up and back. */
 const FEATHER = {
-  root: [[-0.02, 0.008, 0.002], [-0.034, 0.03, -0.006], [-0.046, 0.054, -0.018]] as Vec3[],
-  tip: [[-0.046, 0.054, -0.018], [-0.053, 0.074, -0.032], [-0.05, 0.094, -0.048]] as Vec3[],
-  rootWidths: [[0.005, 0.0018], [0.014, 0.0022], [0.016, 0.0022]] as Point2[],
-  tipWidths: [[0.016, 0.0022], [0.013, 0.0022], [0.004, 0.0018]] as Point2[],
+  root: [[-0.02, 0.008, 0.002], [-0.038, 0.026, -0.006], [-0.054, 0.046, -0.016]] as Vec3[],
+  tip: [[-0.054, 0.046, -0.016], [-0.067, 0.064, -0.028], [-0.072, 0.084, -0.042]] as Vec3[],
+  rootWidths: [[0.005, 0.0018], [0.016, 0.0022], [0.019, 0.0022]] as Point2[],
+  tipWidths: [[0.019, 0.0022], [0.016, 0.0022], [0.005, 0.0018]] as Point2[],
   facing: [0.4, 0, 1] as Vec3,
 }
 /** Her arms, [shoulder, elbow, hand], one hand on the lute's neck and the other strumming over its body. */
@@ -62,11 +62,11 @@ const sized = (v: Vec3, s: number) => v.map((n) => n * s) as Vec3
 /** A side's mirror of a point: `side` -1 mirrors it across her middle. */
 const mirrored = ([x, y, z]: Vec3, side: number): Vec3 => [side * x, y, z]
 
-/** A soft round limb `radius` thick from `from` to `to`: a rounded shape laid along it, its ends overlapping the next. */
+/** A soft round limb `radius` thick from `from` to `to`: a ball stretched along it, its rounded ends overlapping the next. */
 function Limb({ from, to, radius, color }: { from: Vec3; to: Vec3; radius: number; color: string }) {
   const { rot, length } = pointing(from, to)
   const middle = from.map((v, i) => (v + to[i]) / 2) as Vec3
-  return <Rounded size={[2 * radius, length + radius, 2 * radius]} round={0.9} at={middle} rot={rot} color={color} />
+  return <Blob radius={radius} squash={[1, (length / 2 + radius * 0.5) / radius, 1]} at={middle} rot={rot} color={color} />
 }
 
 /** Pip, sitting: built round her seat, facing +Z, every part `scale` times her own size. */
@@ -83,7 +83,7 @@ export function Pip({ scale = 1 }: { scale?: number }) {
     gold: landmark.gold,
     lute: landmark.wood,
     featherRoot: blend(landmark.purple, landmark.pink, 0.25),
-    featherTip: blend(landmark.blue, landmark.sky, 0.3),
+    featherTip: blend(landmark.blue, landmark.sky, 0.15),
   }
   const at = (v: Vec3) => sized(v, s)
 
@@ -131,7 +131,7 @@ export function Pip({ scale = 1 }: { scale?: number }) {
       {/* Her hat, tipped back and to one side: brim, crown, buckle, feather. */}
       <group position={at([0, HAT.y, HEAD.z])} rotation={HAT.tilt}>
         <Tube top={HAT.brim * s} bottom={HAT.brim * s} height={HAT.brimThick * s} bevel={0.002 * s} color={colour.purple} />
-        <Turned profile={HAT.crown.map(([r, y]) => [r * s, y * s] as Point2)} at={at([0, HAT.brimThick * 0.6, 0])} bevel={0.003 * s} color={colour.purple} />
+        <Turned profile={HAT.crown.map(([r, y]) => [r * s, y * s] as Point2)} at={at([0, HAT.brimThick * 0.6, 0])} bevel={0.003 * s} sides={12} color={colour.purple} />
         <Block size={at([0.012, 0.01, 0.003])} bevel={0.001 * s} at={at([0, 0.012, 0.0245])} rot={[-0.06, 0, 0]} color={colour.gold} />
         <Swept path={FEATHER.root.map(at)} widths={FEATHER.rootWidths.map(([w, t]) => [w * s, t * s] as Point2)} facing={FEATHER.facing} sides={5} steps={6} color={colour.featherRoot} />
         <Swept path={FEATHER.tip.map(at)} widths={FEATHER.tipWidths.map(([w, t]) => [w * s, t * s] as Point2)} facing={FEATHER.facing} sides={5} steps={6} color={colour.featherTip} />
