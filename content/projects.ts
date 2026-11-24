@@ -366,6 +366,27 @@ export const projects: Project[] = [
     outcome: 'In beta, invite-only.',
     liveUrl: 'https://dnd4noobs.com',
     stack: ['Next.js', 'Cloudflare Workers', 'D1', 'Drizzle', 'Better Auth', 'Stripe'],
+    // DRAFT: Kylee's review
+    media: {
+      hero: {
+        src: '/media/dnd4noobs/hero.jpg',
+        alt: 'The dnd4noobs home page: Pip, a green goblin bard in a purple hat with a lute, beside “Learn to play tabletop role-playing games.” and a Get started button, with a speech box where Pip offers a quick look around',
+      },
+      gallery: [
+        {
+          src: '/media/dnd4noobs/learn.jpg',
+          alt: 'The “Meet the d20” lesson: a short passage about a hero reaching for a ledge, a Roll 1d20 button to try it, and Pip in the corner',
+        },
+        {
+          src: '/media/dnd4noobs/create.jpg',
+          alt: 'The hero builder on its Name step, with the first seven of nine steps ticked off and “Demo Player” typed as the hero name',
+        },
+        {
+          src: '/media/dnd4noobs/adventure.jpg',
+          alt: 'The practice adventure The Lost Lute: Pip, mid-stride with a lute, says this is a choice and neither path is wrong; the dwarf fighter Bruna’s card sits beside two paths, into the woods or down the old well',
+        },
+      ],
+    },
     isPersonal: true,
   },
 ]

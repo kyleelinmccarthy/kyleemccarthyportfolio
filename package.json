@@ -16,6 +16,7 @@
     "capture:characters": "tsx scripts/capture-characters.ts",
     "capture:screenshots": "tsx scripts/capture-screenshots.ts",
     "capture:realm": "tsx scripts/capture-realm.ts",
+    "capture:dnd4noobs": "tsx scripts/capture-dnd4noobs.ts",
     "import:art": "tsx scripts/import-art.ts",
     "import:assets": "tsx scripts/import-assets.ts",
     "process:nav-avatar": "tsx scripts/process-nav-avatar.ts",
