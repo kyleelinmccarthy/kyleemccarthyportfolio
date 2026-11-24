@@ -375,11 +375,11 @@ export const projects: Project[] = [
       gallery: [
         {
           src: '/media/dnd4noobs/learn.jpg',
-          alt: 'The “Meet the d20” lesson: a short passage about a hero reaching for a ledge, a Roll 1d20 button to try it, and Pip in the corner',
+          alt: 'The “Meet the d20” lesson: a short passage about a hero reaching for a ledge, a Roll 1d20 button with a 4 already rolled beneath it, and Pip in the corner',
         },
         {
           src: '/media/dnd4noobs/create.jpg',
-          alt: 'The hero builder on its Name step, with the first seven of nine steps ticked off and “Demo Player” typed as the hero name',
+          alt: 'The hero builder on its Name step, with its rules and detail settings above, the first seven of nine steps ticked off and “Demo Player” typed as the hero name',
         },
         {
           src: '/media/dnd4noobs/adventure.jpg',

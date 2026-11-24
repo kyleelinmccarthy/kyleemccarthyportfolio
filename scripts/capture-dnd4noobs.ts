@@ -7,12 +7,13 @@
  * own repository, without switching branches: `npx wrangler d1 migrations
  * apply dnd4noobs --local`, then `npm run dev`, which listens on :3210), then:
  *
- *   npm run capture:dnd4noobs [-- http://localhost:3210]
+ *   npm run capture:dnd4noobs [-- http://localhost:3210 [learn,create]]
  *
+ * The optional second argument is a comma-separated list of shots to redo.
  * All four pages work signed out, so no account is needed and nothing from a
- * real profile can show. If a page ever needs sign-in, pass DND_EMAIL and
- * DND_PASSWORD in the environment (never in a committed file) and extend
- * `signIn` below. Every hero name typed here is made up. Look at every
+ * real profile can show. If that ever changes, a sign-in step would need
+ * adding here (credentials from the environment, never a committed file).
+ * Every hero name typed here is made up. Look at every
  * picture before adding it to the gallery: no real names, no email addresses.
  *
  * Encoding goes through scripts/lib/imageLadder.ts, as the other capture and
@@ -24,6 +25,7 @@ import { resolve } from 'node:path'
 import { generateWithFallback, LadderReport } from './lib/imageLadder'
 
 const BASE = process.argv[2] ?? 'http://localhost:3210'
+const ONLY = process.argv[3]?.split(',')
 const VIEWPORT = { width: 1600, height: 1000 }
 /** A made-up hero name; nothing that could be a real child's. */
 const HERO_NAME = 'Demo Player'
@@ -73,6 +75,13 @@ async function buildHeroToName(page: Page) {
   }
   await page.locator('main input[type=text], main input:not([type])').first().fill(HERO_NAME)
   await page.waitForTimeout(600)
+  // Reframe: drop the footer, then scroll so the Detail bar, step bar and Name card sit
+  // in view with a little room above (the site header is off-screen).
+  await page.addStyleTag({ content: 'footer { display: none !important; } main { padding-bottom: 700px !important; }' })
+  const detail = page.getByText('Rules', { exact: true }).first()
+  const box = await detail.boundingBox()
+  if (box) await page.evaluate((dy) => window.scrollBy(0, dy), box.y - 50)
+  await page.waitForTimeout(500)
 }
 
 /** Picks the pregenerated Bruna (a made-up hero) and plays on to a scene mid-adventure. */
@@ -80,15 +89,19 @@ async function playIntoAdventure(page: Page) {
   await page.getByText(/Bruna/).click()
   await page.waitForTimeout(1500)
   const go = page.getByRole('button', { name: /^Continue →/ })
-  for (let i = 0; i < 1; i++) {
-    await go.click()
-    await page.waitForTimeout(800)
-  }
+  await go.click()
+  await page.waitForTimeout(800)
+}
+
+/** Rolls the d20 so the lesson shows a result rather than the empty pre-roll card. */
+async function rollTheDie(page: Page) {
+  await page.getByRole('button', { name: /Roll 1d20/ }).click()
+  await page.waitForTimeout(2500)
 }
 
 const SHOTS: Shot[] = [
   { name: 'hero', path: '/' },
-  { name: 'learn', path: '/learn/meet-the-d20' },
+  { name: 'learn', path: '/learn/meet-the-d20', prepare: rollTheDie },
   { name: 'create', path: '/create', prepare: buildHeroToName },
   { name: 'adventure', path: '/tutorials/lost-lute/play', prepare: playIntoAdventure },
 ]
@@ -100,6 +113,7 @@ async function main() {
   const browser = await chromium.launch()
   try {
     for (const shot of SHOTS) {
+      if (ONLY && !ONLY.includes(shot.name)) continue
       // A fresh context each time: no cookies, so no signed-in profile can show.
       const context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: 1 })
       const page = await context.newPage()
