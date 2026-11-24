@@ -25,14 +25,27 @@ const TIMBER = { width: 0.036, proud: 0.014 }
 /** The beam under the jutting half storey, and the joists' ends showing under it along the front. */
 const JETTY_BEAM = 0.05
 const JOISTS = 7
-/** The door, right of the middle, never taller than `most` and always a little under the jetty. */
-const DOOR = { x: 0.12, width: 0.18, most: 0.36 }
+/**
+ * The door, right of the middle, never taller than `most` and always a little
+ * under the jetty, in a slim frame; the stone step under it is `step.widen`
+ * wider than the door and reaches `step.depth` out from the wall.
+ */
+const DOOR = { x: 0.12, width: 0.18, most: 0.36, border: 0.03, step: { widen: 0.2, depth: 0.15 } }
 /** Windows: a wide one left of the door, one in the half storey over the door, one in the gable; one down each side and at the back. */
 const WINDOW = { ground: { x: -0.28, size: [0.17, 0.2] as [number, number] }, upper: [0.17, 0.17] as [number, number], gable: [0.1, 0.1] as [number, number], side: [0.15, 0.18] as [number, number], border: 0.026 }
-/** The lamp on the wall right of the door. */
-const LAMP = { x: 0.33, size: [0.04, 0.06, 0.04] as Vec3 }
-/** The sign's iron bracket, out from the front right corner, and the board hanging from it, showing a tankard. */
-const SIGN = { reach: 0.24, board: [0.17, 0.15] as [number, number], drop: 0.035 }
+/**
+ * The lamp on the wall right of the door: an iron box `box` standing `out`
+ * from the wall at `height` of the way up the door, and the lantern on it,
+ * `above` the box's middle and `glassOut` from the wall.
+ */
+const LAMP = { x: 0.33, height: 0.72, box: [0.05, 0.03, 0.05] as Vec3, out: 0.02, size: [0.04, 0.06, 0.04] as Vec3, above: 0.045, glassOut: 0.035 }
+/**
+ * The sign: an iron bracket `reach` out from the front right corner, and the
+ * board hanging `drop` under it on two hangers, its middle `hang` out, showing
+ * a tankard. A strut braces the bracket from `strut.drop` down the wall to
+ * `strut.reach` along it, short of the board.
+ */
+const SIGN = { reach: 0.28, hang: 0.18, board: [0.17, 0.15] as [number, number], drop: 0.035, strut: { drop: 0.12, reach: 0.08 } }
 /** The tankard on the sign, in the district's colour, with its foam and handle. */
 const TANKARD = { size: [0.062, 0.07] as [number, number], foam: [0.04, 0.016] as [number, number], handle: 0.019 }
 /**
@@ -40,7 +53,7 @@ const TANKARD = { size: [0.062, 0.07] as [number, number], foam: [0.04, 0.016] a
  * door's step: turned with a belly, two iron hoops; Pip sits toward its front
  * edge, so she is the first thing the camera finds as it arrives.
  */
-const BARREL = { x: -0.3, out: 0.2, profile: [[0, 0], [0.07, 0], [0.08, 0.07], [0.07, 0.14], [0, 0.14]] as Point2[], hoops: [0.026, 0.114], hoop: 0.074, seat: 0.03 }
+const BARREL = { x: -0.3, out: 0.2, profile: [[0, 0], [0.07, 0], [0.08, 0.07], [0.07, 0.14], [0, 0.14]] as Point2[], hoops: [0.026, 0.114], hoop: 0.074, hoopThick: 0.009, seat: 0.03 }
 /** How far over the top of the door the tip of Pip's hat stands, sitting on her barrel. */
 const PIP_OVER_DOOR = 0.06
 
@@ -211,8 +224,8 @@ export function Tavern({ place, district }: ModelProps) {
       ))}
 
       {/* The front: the door on its stone step, the wide window, the half storey's window and the gable's. */}
-      <Block size={[DOOR.width + 0.2, FOOTING.height, 0.15]} at={[DOOR.x, FOOTING.height / 2, front + 0.075]} color={colour.stone} bevel={0.014} />
-      <Door size={[DOOR.width, door]} at={[DOOR.x, FOOTING.height, front]} color={colour.door} frame={colour.timber} step={colour.stone} border={0.03} />
+      <Block size={[DOOR.width + DOOR.step.widen, FOOTING.height, DOOR.step.depth]} at={[DOOR.x, FOOTING.height / 2, front + DOOR.step.depth / 2]} color={colour.stone} bevel={0.014} />
+      <Door size={[DOOR.width, door]} at={[DOOR.x, FOOTING.height, front]} color={colour.door} frame={colour.timber} step={colour.stone} border={DOOR.border} />
       <Window size={WINDOW.ground.size} at={[WINDOW.ground.x, groundWindowY, front]} frame={colour.timber} border={WINDOW.border} />
       <Window size={upperWindow} at={[0, upperWindowY, upperFront]} frame={colour.timber} border={WINDOW.border} />
       <Window size={WINDOW.gable} at={[0, gableWindowY, upperFront]} frame={colour.timber} border={WINDOW.border} sill={false} />
@@ -226,13 +239,13 @@ export function Tavern({ place, district }: ModelProps) {
       <Block size={[CHIMNEY.size + 0.04, CHIMNEY.cap, CHIMNEY.size + 0.04]} at={[CHIMNEY.x, chimneyTop, CHIMNEY.z]} color={colour.timber} bevel={0.012} />
 
       {/* The lamp right of the door. */}
-      <Block size={[0.05, 0.03, 0.05]} at={[LAMP.x, FOOTING.height + door * 0.72, front + 0.02]} color={colour.iron} bevel={0.01} />
-      <Lit size={LAMP.size} at={[LAMP.x, FOOTING.height + door * 0.72 + 0.045, front + 0.035]} color={landmark.lit} />
+      <Block size={LAMP.box} at={[LAMP.x, FOOTING.height + door * LAMP.height, front + LAMP.out]} color={colour.iron} bevel={0.01} />
+      <Lit size={LAMP.size} at={[LAMP.x, FOOTING.height + door * LAMP.height + LAMP.above, front + LAMP.glassOut]} color={landmark.lit} />
 
-      {/* The sign: an iron bracket out from the front right corner with a strut under it, the board rocking a little below. */}
+      {/* The sign: an iron bracket out from the front right corner with a strut under it short of the board, the board rocking a little below. */}
       <Block size={[SIGN.reach, 0.022, 0.022]} at={[width / 2 + SIGN.reach / 2, groundTop - JETTY_BEAM, front - 0.03]} color={colour.iron} bevel={0.007} />
-      <Rod from={[width / 2, groundTop - JETTY_BEAM - 0.14, front - 0.03]} to={[width / 2 + SIGN.reach * 0.6, groundTop - JETTY_BEAM, front - 0.03]} radius={0.007} sides={6} color={colour.iron} />
-      <Sway at={[width / 2 + SIGN.reach * 0.6, groundTop - JETTY_BEAM - 0.011, front - 0.03]} axis="x" amount={0.06} speed={1.0}>
+      <Rod from={[width / 2, groundTop - JETTY_BEAM - SIGN.strut.drop, front - 0.03]} to={[width / 2 + SIGN.strut.reach, groundTop - JETTY_BEAM, front - 0.03]} radius={0.007} sides={6} color={colour.iron} />
+      <Sway at={[width / 2 + SIGN.hang, groundTop - JETTY_BEAM - 0.011, front - 0.03]} axis="x" amount={0.06} speed={1.0}>
         <Sign colour={colour} />
       </Sway>
 
@@ -240,7 +253,7 @@ export function Tavern({ place, district }: ModelProps) {
       <group position={[BARREL.x, 0, front + BARREL.out]}>
         <Turned profile={BARREL.profile} color={colour.wood} />
         {BARREL.hoops.map((y) => (
-          <Ring key={y} radius={BARREL.hoop} thickness={0.009} sides={4} around={18} at={[0, y, 0]} color={colour.iron} />
+          <Ring key={y} radius={BARREL.hoop} thickness={BARREL.hoopThick} sides={4} around={18} at={[0, y, 0]} color={colour.iron} />
         ))}
         {/* Sitting, the tip of her hat stands a little over the top of the door: she is the landmark's face. */}
         <group position={[0, seat, BARREL.seat]}>

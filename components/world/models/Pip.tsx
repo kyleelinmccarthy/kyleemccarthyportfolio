@@ -1,7 +1,8 @@
 'use client'
 
+import { Euler, Vector3 } from 'three'
 import { landmark } from '@/content/sky'
-import { Blob, Block, Extruded, Ring, Rounded, Swept, Tube, Turned, blend, ellipseOutline, pointing, smileOutline, type Point2, type Vec3 } from './kit'
+import { Blob, Block, Extruded, Ring, Rounded, Swept, Tube, Turned, blend, ellipseOutline, pointing, smileOutline, turnedTop, type Point2, type Vec3 } from './kit'
 
 /*
  * Pip, the goblin bard of dnd4noobs, sitting at the tavern's door. Built round
@@ -15,8 +16,6 @@ import { Blob, Block, Extruded, Ring, Rounded, Swept, Tube, Turned, blend, ellip
  * lute held across her body, one hand on its neck and the other strumming.
  */
 
-/** From her seat to the tip of her hat, at scale 1. */
-export const SITTING = 0.16
 
 /** Her breeches, sitting: the seat, and each leg's thigh forward and shin hanging down, [x, y, z] from the seat. */
 const LEGS = { seat: [0.046, 0.022, 0.042] as Vec3, x: 0.012, knee: [0.01, 0.042] as [number, number], foot: [-0.036, 0.048] as [number, number], thick: 0.0085 }
@@ -25,8 +24,8 @@ const BOOT: Vec3 = [0.018, 0.014, 0.026]
 /** Her shirt and its belt, and her cloak: a cape over her shoulders and its fall down her back. */
 const SHIRT = { size: [0.036, 0.046, 0.028] as Vec3, y: 0.042 }
 const BELT = { size: [0.038, 0.007, 0.03] as Vec3, y: 0.024 }
-const CAPE = { size: [0.056, 0.02, 0.033] as Vec3, y: 0.051, z: -0.004 }
-const CLOAK = { size: [0.052, 0.06, 0.014] as Vec3, y: 0.036, z: -0.014 }
+const CAPE = { size: [0.066, 0.026, 0.042] as Vec3, y: 0.05, z: 0.001 }
+const CLOAK = { size: [0.058, 0.06, 0.016] as Vec3, y: 0.036, z: -0.015 }
 /** Her head: rounded, a little wider than tall, her nose, her big dark eyes with a catch of light in each, her grin, and the fringe of hair under her hat's brim. */
 const HEAD = { size: [0.054, 0.046, 0.046] as Vec3, y: 0.092, z: 0.003 }
 const EYE = { x: 0.011, y: 0.094, z: 0.0215, radius: 0.0066 }
@@ -37,7 +36,13 @@ const EAR = { path: [[0.024, 0.093, 0], [0.046, 0.099, -0.004], [0.069, 0.108, -
 /** The gold hoop hanging from the lower edge of each ear. */
 const HOOP = { x: 0.035, y: 0.082, radius: 0.0055, thick: 0.0018 }
 /** Her hat: a wide brim, a soft rounded crown, the whole tipped back and to one side, a gold buckle, a feather sweeping out from its side. */
-const HAT = { y: 0.112, tilt: [-0.28, 0, 0.14] as Vec3, brim: 0.052, brimThick: 0.005, crown: [[0, 0], [0.025, 0], [0.024, 0.01], [0.019, 0.022], [0.01, 0.031], [0, 0.034]] as Point2[] }
+const HAT = { y: 0.112, tilt: [-0.28, 0, 0.14] as Vec3, brim: 0.052, brimThick: 0.005, crown: [[0, 0], [0.025, 0], [0.024, 0.01], [0.019, 0.022], [0.01, 0.031], [0, 0.034]] as Point2[], crownOn: 0.6, crownBevel: 0.003, crownSides: 12 }
+/**
+ * From her seat to the tip of her hat (its crown's true top, the hat tipped
+ * as she wears it; the feather aside), at scale 1. Every part scales with
+ * her, so at `scale` it is `SITTING * scale`.
+ */
+export const SITTING = HAT.y + new Vector3(0, HAT.brimThick * HAT.crownOn + turnedTop(HAT.crown, HAT.crownBevel, HAT.crownSides), 0).applyEuler(new Euler(...HAT.tilt)).y
 /** The feather: its purple root from the hat's side, then its blue tip, sweeping out, up and back. */
 const FEATHER = {
   root: [[-0.02, 0.008, 0.002], [-0.038, 0.026, -0.006], [-0.054, 0.046, -0.016]] as Vec3[],
@@ -79,7 +84,8 @@ export function Pip({ scale = 1 }: { scale?: number }) {
     purple: blend(blend(landmark.purple, landmark.pink, 0.3), landmark.indigo, 0.3),
     shirt: blend(landmark.cream, landmark.orange, 0.12),
     dark: landmark.indigo,
-    boots: blend(landmark.wood, landmark.indigo, 0.6),
+    // Dark leather: her boots, her belt, and the lute's neck and pegbox.
+    leather: blend(landmark.wood, landmark.indigo, 0.6),
     gold: landmark.gold,
     lute: landmark.wood,
     featherRoot: blend(landmark.purple, landmark.pink, 0.25),
@@ -99,14 +105,14 @@ export function Pip({ scale = 1 }: { scale?: number }) {
           <group key={side}>
             <Limb from={at(hip)} to={at(knee)} radius={LEGS.thick * s} color={colour.dark} />
             <Limb from={at(knee)} to={at(foot)} radius={LEGS.thick * s * 0.9} color={colour.dark} />
-            <Rounded size={at(BOOT)} round={0.7} at={at([foot[0], foot[1] - 0.004, foot[2] + 0.006])} color={colour.boots} />
+            <Rounded size={at(BOOT)} round={0.7} at={at([foot[0], foot[1] - 0.004, foot[2] + 0.006])} color={colour.leather} />
           </group>
         )
       })}
 
       {/* Her shirt and belt, and the cloak over her shoulders and down her back. */}
       <Rounded size={at(SHIRT.size)} round={0.65} at={at([0, SHIRT.y, 0])} color={colour.shirt} />
-      <Rounded size={at(BELT.size)} round={0.6} at={at([0, BELT.y, 0])} color={colour.boots} />
+      <Rounded size={at(BELT.size)} round={0.6} at={at([0, BELT.y, 0])} color={colour.leather} />
       <Rounded size={at(CAPE.size)} round={0.7} at={at([0, CAPE.y, CAPE.z])} color={colour.purple} />
       <Rounded size={at(CLOAK.size)} round={0.6} at={at([0, CLOAK.y, CLOAK.z])} color={colour.purple} />
 
@@ -131,7 +137,7 @@ export function Pip({ scale = 1 }: { scale?: number }) {
       {/* Her hat, tipped back and to one side: brim, crown, buckle, feather. */}
       <group position={at([0, HAT.y, HEAD.z])} rotation={HAT.tilt}>
         <Tube top={HAT.brim * s} bottom={HAT.brim * s} height={HAT.brimThick * s} bevel={0.002 * s} color={colour.purple} />
-        <Turned profile={HAT.crown.map(([r, y]) => [r * s, y * s] as Point2)} at={at([0, HAT.brimThick * 0.6, 0])} bevel={0.003 * s} sides={12} color={colour.purple} />
+        <Turned profile={HAT.crown.map(([r, y]) => [r * s, y * s] as Point2)} at={at([0, HAT.brimThick * HAT.crownOn, 0])} bevel={HAT.crownBevel * s} sides={HAT.crownSides} color={colour.purple} />
         <Block size={at([0.012, 0.01, 0.003])} bevel={0.001 * s} at={at([0, 0.012, 0.0245])} rot={[-0.06, 0, 0]} color={colour.gold} />
         <Swept path={FEATHER.root.map(at)} widths={FEATHER.rootWidths.map(([w, t]) => [w * s, t * s] as Point2)} facing={FEATHER.facing} sides={5} steps={6} color={colour.featherRoot} />
         <Swept path={FEATHER.tip.map(at)} widths={FEATHER.tipWidths.map(([w, t]) => [w * s, t * s] as Point2)} facing={FEATHER.facing} sides={5} steps={6} color={colour.featherTip} />
@@ -150,8 +156,8 @@ export function Pip({ scale = 1 }: { scale?: number }) {
       <group position={at(LUTE.at)} rotation={[0, 0, LUTE.turn]}>
         <Blob radius={LUTE.body * s} squash={LUTE.squash} color={colour.lute} />
         <Extruded shape={ellipseOutline(0.0045 * s, 0.0045 * s, 12)} depth={0.001 * s} at={at([0, 0.004, LUTE.body * LUTE.squash[2] - 0.0002])} color={colour.dark} outline={false} />
-        <Block size={at(LUTE.neck)} bevel={0.0015 * s} at={at([0, LUTE.body * 0.8 + LUTE.neck[1] / 2, 0.002])} color={colour.boots} />
-        <Block size={at(LUTE.head)} bevel={0.0015 * s} at={at([0, LUTE.body * 0.8 + LUTE.neck[1] + LUTE.head[1] / 2 - 0.002, -0.001])} rot={[-0.5, 0, 0]} color={colour.boots} />
+        <Block size={at(LUTE.neck)} bevel={0.0015 * s} at={at([0, LUTE.body * 0.8 + LUTE.neck[1] / 2, 0.002])} color={colour.leather} />
+        <Block size={at(LUTE.head)} bevel={0.0015 * s} at={at([0, LUTE.body * 0.8 + LUTE.neck[1] + LUTE.head[1] / 2 - 0.002, -0.001])} rot={[-0.5, 0, 0]} color={colour.leather} />
       </group>
     </group>
   )
