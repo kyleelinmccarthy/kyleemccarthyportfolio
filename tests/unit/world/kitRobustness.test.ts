@@ -206,11 +206,11 @@ describe('the triangle budget', () => {
     expect(triangleCount(root)).toBe(12 + 12 + new SphereGeometry(1, 8, 6).index!.count / 3)
   })
 
-  it('is a planet total for all nineteen landmarks, with a cap on any one', () => {
-    expect(PLANET_TRIANGLE_BUDGET).toBe(380_000)
+  it('is a planet total for all twenty landmarks, with a cap on any one', () => {
+    expect(PLANET_TRIANGLE_BUDGET).toBe(400_000)
     expect(TRIANGLE_BUDGET).toBe(24_000)
     // The cap leaves room for one rich landmark without letting it take the planet's share of several.
-    expect(TRIANGLE_BUDGET * 19).toBeGreaterThan(PLANET_TRIANGLE_BUDGET)
+    expect(TRIANGLE_BUDGET * 20).toBeGreaterThan(PLANET_TRIANGLE_BUDGET)
   })
 })
 

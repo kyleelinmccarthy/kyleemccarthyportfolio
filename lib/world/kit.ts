@@ -1149,8 +1149,8 @@ export function footprintTable(places: Place[]): string {
  */
 export const TRIANGLE_BUDGET = 24_000
 
-/** The most all nineteen landmarks may draw together, counted over what each place shows. */
-export const PLANET_TRIANGLE_BUDGET = 380_000
+/** The most all twenty landmarks may draw together, counted over what each place shows. */
+export const PLANET_TRIANGLE_BUDGET = 400_000
 
 /**
  * The most draw calls any one landmark may make once batched (R40): one per
@@ -1159,8 +1159,8 @@ export const PLANET_TRIANGLE_BUDGET = 380_000
  */
 export const DRAW_BUDGET = 45
 
-/** The most draw calls all nineteen landmarks may make together, counted over what each place shows. */
-export const PLANET_DRAW_BUDGET = 760
+/** The most draw calls all twenty landmarks may make together, counted over what each place shows. */
+export const PLANET_DRAW_BUDGET = 800
 
 /** Something with meshes in it, as three's scene graph has. */
 interface MeshTree {

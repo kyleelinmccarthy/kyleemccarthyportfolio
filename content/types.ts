@@ -99,7 +99,7 @@ export interface District {
 export type ModelKey =
   | 'generic' | 'lighthouse' | 'towers' | 'signal-mast' | 'big-top' | 'civic' | 'construction'
   | 'studio' | 'playground' | 'billboard' | 'alley' | 'castle' | 'piggy-bank' | 'tattoo-shop'
-  | 'easel' | 'drafting-table' | 'house' | 'flags' | 'mountain' | 'postbox'
+  | 'easel' | 'drafting-table' | 'house' | 'flags' | 'mountain' | 'postbox' | 'tavern'
 
 export type CollectionItem = { project: string } | { name: string; summary: string }
 

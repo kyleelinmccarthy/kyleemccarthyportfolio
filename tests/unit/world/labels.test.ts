@@ -568,10 +568,12 @@ describe('the open view on a phone at a place', () => {
 
   it('takes the nearest places, not the place itself', () => {
     const near = nearestPlaces('kingdoms-and-crowns', places, 2)
-    expect(near.map((p) => p.id)).toEqual(['the-budget', 'ember-tattoo'])
+    expect(near.map((p) => p.id)).toEqual(['the-budget', 'dnd4noobs'])
     expect(nearestPlaces('nowhere', places, 3)).toEqual([])
-    // Only neighbours: After Hours stands alone, so its castle has two, not three.
-    expect(nearestPlaces('kingdoms-and-crowns', places, NEARBY.count, NEARBY.within).map((p) => p.id)).toEqual(['the-budget', 'ember-tattoo'])
+    // Only neighbours: Personal Projects stands alone, so its castle has its district's three, and the tattoo shop,
+    // the tavern too far from it, has two, not three.
+    expect(nearestPlaces('kingdoms-and-crowns', places, NEARBY.count, NEARBY.within).map((p) => p.id)).toEqual(['the-budget', 'dnd4noobs', 'ember-tattoo'])
+    expect(nearestPlaces('ember-tattoo', places, NEARBY.count, NEARBY.within).map((p) => p.id)).toEqual(['kingdoms-and-crowns', 'the-budget'])
     for (const p of places) expect(nearestPlaces(p.id, places, NEARBY.count, NEARBY.within).length, p.id).toBeGreaterThan(0)
   })
 })

@@ -53,6 +53,7 @@ The kit makes the better result the easy one; these rules keep it that way.
 | Tattoo designs (`tattoo-designs`) | 1.22 | half the gap to Art |
 | Off the clock (`off-the-clock`) | 1.30 | the full footprint |
 | Send me a letter (`post`) | 1.14 | half the gap to Home |
+| dnd4noobs (`dnd4noobs`) | 1.30 | the full footprint |
 <!-- footprints:end -->
 - **Height:** build to `place.height` (in `content/world.ts`). The camera's
   framing (`focusPose`) and the label above the landmark are placed from it,
@@ -262,13 +263,13 @@ Never write to a kit mesh's `userData`. react-three-fiber hands every kit
 mesh the same marker object, so a write to one is a write to all; the markers
 are frozen so that a write throws.
 
-The world is drawn on phones and in software in the tests, and nineteen
-landmarks add up. The budget is **380,000 triangles for all nineteen
+The world is drawn on phones and in software in the tests, and twenty
+landmarks add up. The budget is **400,000 triangles for all twenty
 landmarks together** (`PLANET_TRIANGLE_BUDGET`, counted over what each
 place shows; every place has its own landmark now) and **at most 24,000 for any one**,
 outlines included (`TRIANGLE_BUDGET`); both are tested over the registry.
 Draw calls have a budget too (R40): **at most `DRAW_BUDGET` for one landmark
-once batched, `PLANET_DRAW_BUDGET` for all nineteen**, tested beside the
+once batched, `PLANET_DRAW_BUDGET` for all twenty**, tested beside the
 triangles. A batched landmark makes one call per material its still parts use
 (each colour, and each line width) plus one per live part (a moving part, a
 picture, water, rain), so share colours: one dark for every near-black detail,

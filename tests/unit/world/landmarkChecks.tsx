@@ -219,7 +219,7 @@ export function sweptOut(root: Object3D, radius: number): string[] {
 /**
  * How many draw calls a landmark makes once batched: every mesh that is shown
  * and has something in it. The contact shadow `Places` draws under every
- * landmark (one call each, nineteen in all) is not the model's and is left out
+ * landmark (one call each, twenty in all) is not the model's and is left out
  * of this and of the budget (R40), as the README says.
  */
 export function drawCalls(root: Object3D): number {

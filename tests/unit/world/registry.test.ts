@@ -7,11 +7,11 @@ import { MODELS, modelFor } from '@/components/world/models/registry'
 const KEYS: ModelKey[] = [
   'generic', 'lighthouse', 'towers', 'signal-mast', 'big-top', 'civic', 'construction',
   'studio', 'playground', 'billboard', 'alley', 'castle', 'piggy-bank', 'tattoo-shop',
-  'easel', 'drafting-table', 'house', 'flags', 'mountain', 'postbox',
+  'easel', 'drafting-table', 'house', 'flags', 'mountain', 'postbox', 'tavern',
 ]
 
 /** The landmarks built so far. Each landmark task adds its keys here. */
-const DONE: ModelKey[] = ['lighthouse', 'playground', 'alley', 'castle', 'house', 'towers', 'civic', 'construction', 'signal-mast', 'big-top', 'studio', 'billboard', 'piggy-bank', 'tattoo-shop', 'easel', 'drafting-table', 'postbox', 'flags', 'mountain']
+const DONE: ModelKey[] = ['lighthouse', 'playground', 'alley', 'castle', 'house', 'towers', 'civic', 'construction', 'signal-mast', 'big-top', 'studio', 'billboard', 'piggy-bank', 'tattoo-shop', 'easel', 'drafting-table', 'postbox', 'flags', 'mountain', 'tavern']
 
 describe('model registry', () => {
   it('has a model for every key and every place', () => {

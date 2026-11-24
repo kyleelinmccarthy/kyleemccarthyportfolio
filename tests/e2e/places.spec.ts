@@ -23,7 +23,7 @@ test('the home page names her and lists every place', async ({ page }) => {
   await expect(page.locator('header').getByText(hero.headline)).toBeVisible()
   await page.getByRole('button', { name: 'Navigation' }).click()
   await expect(page.locator('#index')).toBeVisible()
-  await expect(page.locator('#index a')).toHaveCount(19)
+  await expect(page.locator('#index a')).toHaveCount(20)
 })
 
 test('a place opens from the index, has its own heading, and the back button returns', async ({ page }) => {
@@ -104,7 +104,7 @@ test('the index is readable without JavaScript', async ({ browser }) => {
   const page = await ctx.newPage()
   await page.goto('/')
   await expect(page.locator('#index a').first()).toBeVisible()
-  await expect(page.locator('#index a')).toHaveCount(19)
+  await expect(page.locator('#index a')).toHaveCount(20)
   await ctx.close()
 })
 

@@ -106,7 +106,7 @@ describe('the check that no part is buried', () => {
 })
 
 describe('every place on the planet (R36, R40)', () => {
-  it('keeps each landmark under the triangle and draw-call caps, all nineteen under the planet totals, and draws the weather each place asks for', async () => {
+  it('keeps each landmark under the triangle and draw-call caps, all twenty under the planet totals, and draws the weather each place asks for', async () => {
     let triangles = 0
     let draws = 0
     const over: string[] = []

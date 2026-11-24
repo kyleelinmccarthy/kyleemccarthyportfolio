@@ -10,14 +10,14 @@ afterEach(() => push.mockClear())
 describe('TourBar', () => {
   it('shows where you are and links both ways, wrapping at the ends', () => {
     render(<TourBar placeId="home" />)
-    expect(screen.getByText('01 / 19 · Home')).toBeInTheDocument()
+    expect(screen.getByText('01 / 20 · Home')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Next place' })).toHaveAttribute('href', '/places/three-things')
     expect(screen.getByRole('link', { name: 'Previous place' })).toHaveAttribute('href', '/places/post')
   })
 
   it('numbers a later stop and names it', () => {
     render(<TourBar placeId="beacon" />)
-    expect(screen.getByText('04 / 19 · Beacon')).toBeInTheDocument()
+    expect(screen.getByText('04 / 20 · Beacon')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Next place' })).toHaveAttribute('href', '/places/403hq')
     expect(screen.getByRole('link', { name: 'Previous place' })).toHaveAttribute('href', '/places/off-the-clock')
   })

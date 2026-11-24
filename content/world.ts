@@ -30,6 +30,7 @@ export const places: Place[] = [
   { id: 'tattoo-designs', district: 'studio', name: 'Tattoo designs', descriptor: 'Drawn for people who got them', at: { lat: 40, lon: 130 }, model: 'drafting-table', height: 1.4, content: { kind: 'gallery', set: 'tattoo' }, poster: '/media/tattoo/wrench-and-daisies.jpg', posterSize: [1600, 2009] },
   { id: 'off-the-clock', district: 'home', name: 'Off the clock', descriptor: 'Everything that is not a screen', at: { lat: -44, lon: -177 }, model: 'mountain', height: 1.9, content: { kind: 'interests' } },
   { id: 'post', district: 'home', name: 'Send me a letter', descriptor: 'Contact', at: { lat: -41, lon: 153 }, model: 'postbox', height: 1.0, content: { kind: 'contact' } },
+  { id: 'dnd4noobs', district: 'hours', name: 'dnd4noobs', descriptor: 'Learn to play D&D, with Pip', at: { lat: -14, lon: -84 }, model: 'tavern', height: 1.7, content: { kind: 'project', slug: 'dnd4noobs' } },
 ]
 
 /**

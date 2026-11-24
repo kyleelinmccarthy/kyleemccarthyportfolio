@@ -54,7 +54,7 @@ test('losing the graphics context mid-visit falls back to the picture', async ({
   await expect(page.getByTestId('world-poster')).toBeVisible()
   await expect(page.locator('[data-quality] canvas')).toHaveCount(0)
   await page.getByRole('button', { name: 'Navigation' }).click()
-  await expect(page.locator('#index a')).toHaveCount(19)
+  await expect(page.locator('#index a')).toHaveCount(20)
   await expect(page.locator('#index')).toBeVisible()
 })
 

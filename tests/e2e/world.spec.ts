@@ -287,7 +287,7 @@ test.describe('on a wide screen, at a place', () => {
     await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-mode', 'focus', { timeout: 10000 })
     const labels = page.locator('#labels')
-    await expect(labels.locator('a')).toHaveCount(19 + 5)
+    await expect(labels.locator('a')).toHaveCount(20 + 5)
     const beacon = labels.getByRole('link', {
       name: 'Beacon Engineering operations platform',
       exact: true,
@@ -335,8 +335,8 @@ test('from afar the districts are labelled, places are dots, and the far side is
   const dots = page.locator('#labels a[data-tier="dot"][data-on]')
   const shown = await dots.count()
   expect(shown).toBeGreaterThan(0)
-  // Some of the 19 are round the back.
-  expect(shown).toBeLessThan(19)
+  // Some of the 20 are round the back.
+  expect(shown).toBeLessThan(20)
   await expect(dots.locator('.lm-pin').first()).toBeVisible()
   await expect(dots.first()).toBeHidden()
   await expect(page.locator('#labels a[data-tier="place"][data-on]')).toHaveCount(0)
@@ -373,7 +373,7 @@ test('the map readout names the plate and the view, and steps aside for a place'
   await page.goto('/')
   await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
   const readout = page.locator('#view-readout')
-  await expect(readout).toContainText('Plate 01 · 5 districts · 19 places')
+  await expect(readout).toContainText('Plate 01 · 5 districts · 20 places')
   await expect(readout).toContainText(/View \d+°[NS] \d{3}°[EW] · \d+\.\d×/)
   await page.goto('/places/beacon')
   await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
@@ -693,10 +693,10 @@ test.describe('on a phone, at a place', () => {
     await expect(page.locator('[data-quality] canvas')).toBeVisible({ timeout: 15000 })
     await expect(rig(page)).toHaveAttribute('data-rig-mode', 'focus', { timeout: 15000 })
     const pins = page.locator('#labels a[data-tier="nearby"][data-on]')
-    await expect(pins).toHaveCount(2)
+    await expect(pins).toHaveCount(3)
     const panel = (await page.locator('article').boundingBox())!
     const ids: string[] = []
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 3; i++) {
       const pin = (await pins.nth(i).locator('.lm-pin').boundingBox())!
       // Above the panel and on the screen.
       expect(pin.y + pin.height).toBeLessThan(panel.y)
@@ -704,7 +704,7 @@ test.describe('on a phone, at a place', () => {
       expect(pin.x + pin.width).toBeLessThanOrEqual(412)
       ids.push((await pins.nth(i).getAttribute('id'))!)
     }
-    expect(ids.sort()).toEqual(['label-ember-tattoo', 'label-the-budget'])
+    expect(ids.sort()).toEqual(['label-dnd4noobs', 'label-ember-tattoo', 'label-the-budget'])
     const first = pins.first()
     const href = (await first.getAttribute('href'))!
     // A finger finds the pin across 44px, though it is drawn small.

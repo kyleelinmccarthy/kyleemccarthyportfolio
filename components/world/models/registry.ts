@@ -19,6 +19,7 @@ import { Postbox } from './Postbox'
 import { SignalMast } from './SignalMast'
 import { Studio } from './Studio'
 import { TattooShop } from './TattooShop'
+import { Tavern } from './Tavern'
 import { Towers } from './Towers'
 
 /** What every landmark is drawn from: its place, and the district it stands in. */
@@ -64,6 +65,7 @@ export const MODELS: Record<ModelKey, LandmarkComponent> = {
   flags: Flags,
   mountain: Mountain,
   postbox: Postbox,
+  tavern: Tavern,
 }
 
 /** The component for a model key, or the generic building for a key with none. */

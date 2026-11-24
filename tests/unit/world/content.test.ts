@@ -8,11 +8,11 @@ import { looks, greetings, constellations, welcome, dayHours } from '@/content/s
 import { onTheGo } from '@/content/onTheGo'
 
 describe('world content', () => {
-  it('has five districts and nineteen places', () => {
+  it('has five districts and twenty places', () => {
     expect(districts.map((d) => d.id)).toEqual(['works', 'frenzy', 'hours', 'studio', 'home'])
     const count = (id: string) => places.filter((p) => p.district === id).length
-    expect([count('works'), count('frenzy'), count('hours'), count('studio'), count('home')]).toEqual([6, 4, 3, 2, 4])
-    expect(places).toHaveLength(19)
+    expect([count('works'), count('frenzy'), count('hours'), count('studio'), count('home')]).toEqual([6, 4, 4, 2, 4])
+    expect(places).toHaveLength(20)
   })
   it('gives every place a unique, URL-safe id', () => {
     const ids = places.map((p) => p.id)
