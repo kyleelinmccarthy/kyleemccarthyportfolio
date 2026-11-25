@@ -98,7 +98,7 @@ function Sign({ colour }: { colour: Colours }) {
 }
 
 /**
- * dnd4noobs, a site that teaches kids and new players to play Dungeons &
+ * dnd4noobs, a site that teaches new players to play Dungeons &
  * Dragons, with Pip, a goblin bard, as its guide. Its landmark is the tavern
  * every adventure starts in: a timber-framed tavern of a storey and a half
  * on a stone footing, plastered walls between dark timbers, its half storey

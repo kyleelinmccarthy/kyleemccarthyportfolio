@@ -37,7 +37,7 @@ export const guide = {
     'kingdoms-and-crowns': 'A homeschool hub with a 3D world inside. Finished quests earn time in the Realm, where each deed raises a building.',
     'the-budget': 'Every budgeting app assumes you get paid on the first. We don’t, so this one works by pay period.',
     // DRAFT: Kylee's review
-    dnd4noobs: 'Pip plays at the tavern door. She teaches kids and new players to play D&D, one roll at a time.',
+    dnd4noobs: 'Pip plays at the tavern door. She teaches new players to play D&D, one roll at a time.',
     'ember-tattoo': 'A friend’s studio had a site that didn’t match the work. Nobody hired me; I saw the gap.',
     art: 'Digital, pencil, ink and paint. Anime turns up in my art whether I plan it or not.',
     'tattoo-designs': 'Designs I drew for people who got them. Scroll or pinch to zoom in on the board.',

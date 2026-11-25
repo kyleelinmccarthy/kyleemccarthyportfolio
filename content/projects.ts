@@ -356,9 +356,9 @@ export const projects: Project[] = [
     slug: 'dnd4noobs',
     name: 'dnd4noobs',
     // DRAFT: Kylee's review
-    descriptor: 'Learn-to-Play App · Kids and New Players',
+    descriptor: 'Learn-to-Play App · For New Players',
     status: 'beta',
-    headline: 'Pip, a little goblin bard, teaches kids and new players to play D&D.',
+    headline: 'Pip, a little goblin bard, teaches new players to play D&D.',
     problem:
       'My kids and some friends wanted to learn to play D&D, and the rulebook is a lot to hand someone on day one.',
     built:
@@ -383,7 +383,7 @@ export const projects: Project[] = [
         },
         {
           src: '/media/dnd4noobs/adventure.jpg',
-          alt: 'The practice adventure The Lost Lute: Pip, mid-stride with a lute, says this is a choice and neither path is wrong; the dwarf fighter Bruna’s card sits beside two paths, into the woods or down the old well',
+          alt: 'The practice adventure The Lost Lute: Pip, mid-stride with a lute, says this is a choice and neither path is wrong; the elf druid Alyseira’s card sits beside two paths, into the woods or down the old well',
         },
       ],
     },

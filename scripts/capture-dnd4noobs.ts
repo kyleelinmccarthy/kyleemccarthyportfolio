@@ -84,9 +84,49 @@ async function buildHeroToName(page: Page) {
   await page.waitForTimeout(500)
 }
 
-/** Picks the pregenerated Bruna (a made-up hero) and plays on to a scene mid-adventure. */
+/** The adventure's hero, chosen by Kylee: made up, built in the app's own builder. */
+const ADVENTURE_HERO = 'Alyseira'
+
+/**
+ * Builds Alyseira, a Wood Elf Druid, through The Lost Lute's "Build my own
+ * hero" path, starts the adventure with her and plays on to a scene
+ * mid-adventure.
+ */
 async function playIntoAdventure(page: Page) {
-  await page.getByText(/Bruna/).click()
+  const choose = async (text: string) => {
+    await page.locator('main button', { hasText: text }).first().click()
+    await page.waitForTimeout(250)
+  }
+  const next = async () => {
+    await page.getByRole('button', { name: /^Next →/ }).click()
+    await page.waitForTimeout(500)
+  }
+  await choose('Druid')
+  await next()
+  await choose('Criminal') // Background: no extra spell picks
+  await next()
+  await choose('Elf')
+  await choose('Wood Elf') // Lineage
+  await next()
+  // Abilities, standard set: Wisdom highest, then the background's +2 / +1.
+  const scores = ['8', '14', '13', '10', '15', '12'] // Str, Dex, Con, Int, Wis, Cha
+  const selects = page.locator('main select')
+  for (const [i, score] of scores.entries()) await selects.nth(i).selectOption(score)
+  await selects.nth(6).selectOption('dex')
+  await selects.nth(7).selectOption('con')
+  await next()
+  for (const skill of ['animal handling', 'nature']) await choose(skill)
+  await next()
+  for (const gear of ['Leather armor', 'Quarterstaff', 'Sling']) await choose(gear)
+  await next()
+  for (const spell of ['Guidance', 'Produce Flame', 'Cure Wounds', 'Entangle', 'Goodberry', 'Speak with Animals']) {
+    await choose(spell)
+  }
+  await next()
+  await page.locator('main input').first().fill(ADVENTURE_HERO)
+  await next()
+  await page.getByRole('button', { name: `Start the adventure with ${ADVENTURE_HERO}!` }).click()
+  await page.waitForURL(/\/tutorials\/lost-lute\/play/)
   await page.waitForTimeout(1500)
   const go = page.getByRole('button', { name: /^Continue →/ })
   await go.click()
@@ -103,7 +143,7 @@ const SHOTS: Shot[] = [
   { name: 'hero', path: '/' },
   { name: 'learn', path: '/learn/meet-the-d20', prepare: rollTheDie },
   { name: 'create', path: '/create', prepare: buildHeroToName },
-  { name: 'adventure', path: '/tutorials/lost-lute/play', prepare: playIntoAdventure },
+  { name: 'adventure', path: '/create?tutorial=lost-lute', prepare: playIntoAdventure },
 ]
 
 async function main() {

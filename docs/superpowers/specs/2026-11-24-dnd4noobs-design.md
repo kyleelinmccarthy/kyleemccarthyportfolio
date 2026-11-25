@@ -6,7 +6,7 @@ Approved by Kylee on 2026-11-24.
 
 Add Kylee's new project, dnd4noobs (https://dnd4noobs.com, source in
 `E:\codeProjects\dnd-4-noobs`), to the portfolio. It is a browser app that
-teaches kids and new players tabletop role-playing. Pip, a little goblin
+teaches new players tabletop role-playing. Pip, a little goblin
 bard (she/her), helps on every page. She built it because her kids, and
 friends who wanted to learn D&D, found the rules a lot to take in on day one.
 
@@ -46,18 +46,21 @@ tower, a giant d20 (which would repeat the egg) and a tabletop with a DM screen.
   a wide purple hat with a gold buckle and a blue-purple feather, a purple
   cloak, and a lute.
 - Screenshots: from her local copy. Landing page, Pip helping, the hero
-  builder, and a practice adventure.
+  builder, and a practice adventure. The adventure is played as Alyseira, an
+  elf druid built in the app's builder (Kylee's pick, 2026-11-25), not a
+  ready-made hero.
 - Status `beta` (invite-only), live link https://dnd4noobs.com.
 - Draft wording, marked DRAFT for her to edit:
-  - headline: "Pip, a little goblin bard, teaches kids and new players to play D&D."
+  - headline: "Pip, a little goblin bard, teaches new players to play D&D."
+    (2026-11-25: Kylee asked for "new players", never "kids and new players".)
   - problem: "My kids and some friends wanted to learn to play D&D, and the
     rulebook is a lot to hand someone on day one."
   - built: Pip helps the way each player learns best (show me, tell me, let
     me read, let me try); players build a legal level-1 hero from the free 5e
     rules, then play practice adventures that teach checks, talking and
     combat; DMs load a campaign pack so players see only options that fit.
-  - guide: "Pip plays at the tavern door. She teaches kids and new players to
-    play D&D, one roll at a time."
+  - guide: "Pip plays at the tavern door. She teaches new players to play
+    D&D, one roll at a time."
 - Work happens on branch `feat/dnd4noobs`.
 
 ## Left to the builder
