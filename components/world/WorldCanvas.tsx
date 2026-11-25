@@ -249,8 +249,8 @@ export function WorldCanvas({ districts, places, quality: initialQuality, reduce
           <BubbleProjector places={places} districts={districts} placeId={placeId} guest={guest} rig={rigNow} />
           <PetPresses places={places} districts={districts} placeId={placeId} reducedMotion={reducedMotion} />
           <PetBubbleProjector places={places} districts={districts} placeId={placeId} rig={rigNow} />
-          {/* The easter eggs, loaded once the world has drawn: the bug by day, the d20's stars by night. */}
-          {drawn ? <EggsWorldLayer districts={districts} places={places} night={look === 'night'} reducedMotion={reducedMotion} /> : null}
+          {/* The easter eggs, loaded once the world has drawn: the bug by day (on the overview only), the constellations' presses by night. */}
+          {drawn ? <EggsWorldLayer districts={districts} places={places} night={look === 'night'} overview={route.kind === 'overview'} reducedMotion={reducedMotion} /> : null}
           {effects === 'none' ? null : <Effects bloom={effects === 'bloom'} />}
         </Canvas>
       </div>

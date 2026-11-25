@@ -89,6 +89,25 @@ async function catchBug(page: Page) {
 }
 
 test.describe('the bug, by day', () => {
+  test('it is out only on the overview: gone at a place, back on the overview', async ({ page }) => {
+    drivesTheCanvas()
+    await planet(page, 'day', { bug: true })
+    const at = await bugOnScreen(page)
+    // The pointer over it, then into a place by its link (a client-side visit, as a visitor's own).
+    await page.mouse.move(at.x, at.y)
+    await expect(page.locator('[data-quality] canvas')).toHaveCSS('cursor', 'pointer')
+    await page.evaluate(() => (document.querySelector('a[href="/places/post"]') as HTMLAnchorElement).click())
+    await expect(page).toHaveURL('/places/post')
+    await expect.poll(() => page.evaluate(() => (window as unknown as { __eggBugScreen?: unknown }).__eggBugScreen ?? null)).toBeNull()
+    await page.waitForTimeout(500)
+    expect(await page.evaluate(() => (window as unknown as { __eggBugScreen?: unknown }).__eggBugScreen ?? null)).toBeNull()
+    expect(await page.evaluate(() => document.querySelector<HTMLCanvasElement>('[data-quality] canvas')!.style.cursor)).toBe('')
+    // Back on the overview, it is out again.
+    await page.goBack()
+    await expect(page).toHaveURL('/')
+    await bugOnScreen(page)
+  })
+
   test('pressing it shows the line and a count kept on the device, and the count goes on next visit', async ({ page }) => {
     drivesTheCanvas()
     await planet(page, 'day', { bug: true })
