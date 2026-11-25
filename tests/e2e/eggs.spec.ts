@@ -4,7 +4,7 @@ import { eggWords } from '../../content/eggs'
 import { BUGS_STORAGE_KEY } from '../../lib/eggs/bugCount'
 
 /*
- * The two easter eggs. By day a ladybug wanders the planet: pressing it shows
+ * The two easter eggs. By day a bumblebee bumbles over the planet: pressing it shows
  * "It's a feature, not a bug." with a count kept on the device. By night the
  * constellation "The Natural 20" rolls a die when pressed, and typing `roll`
  * anywhere rolls it at any hour; a natural 20 has a line of its own. The bug is
