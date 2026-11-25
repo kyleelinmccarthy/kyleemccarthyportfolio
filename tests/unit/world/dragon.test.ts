@@ -36,6 +36,17 @@ describe('the dragon die’s flight', () => {
     expect(next.clone().sub(at).dot(ahead)).toBeGreaterThan(0)
   })
 
+  it('starts on a loop through a given point, when a test asks', () => {
+    const r = dragonRadius(places, districts)
+    const through = dirOf({ lat: 4, lon: -20 })
+    expect(angleDeg(dragonAt(DRAGON_SEED, 0, r, undefined, through).at.clone().normalize(), through)).toBeLessThan(DRAGON.wobble + 1)
+    // And flies on from there as it always does.
+    const a = dragonAt(DRAGON_SEED, 10, r, undefined, through).at.clone().normalize()
+    const b = dragonAt(DRAGON_SEED, 11, r, undefined, through).at.clone().normalize()
+    expect(angleDeg(a, b)).toBeGreaterThan(DRAGON.speed * 0.6)
+    expect(Math.abs(dragonBank(DRAGON_SEED, 10, through))).toBeLessThanOrEqual(DRAGON.bank + 1e-9)
+  })
+
   it('banks no further than its most', () => {
     for (let t = 0; t < 200; t += 1.7) expect(Math.abs(dragonBank(DRAGON_SEED, t))).toBeLessThanOrEqual(DRAGON.bank + 1e-9)
   })

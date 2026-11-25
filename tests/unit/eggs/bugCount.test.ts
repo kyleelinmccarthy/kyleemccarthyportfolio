@@ -1,6 +1,6 @@
 import { afterEach, describe, it, expect, vi } from 'vitest'
 import { BUGS_STORAGE_KEY, MOST_SQUASHED, readSquashed, storeSquashed } from '@/lib/eggs/bugCount'
-import { bugAt, bugOn, takeRiggedRoll } from '@/lib/eggs/hooks'
+import { bugAt, bugOn, dragonOn, dragonThrough, takeRiggedRoll } from '@/lib/eggs/hooks'
 
 afterEach(() => {
   window.localStorage.clear()
@@ -52,6 +52,15 @@ describe('the eggs’ test hooks', () => {
     expect(bugOn(undefined, undefined)).toBe(true)
     expect(bugAt('1', { at: { lat: 1, lon: 2 } })).toEqual({ lat: 1, lon: 2 })
     expect(bugAt(undefined, { at: { lat: 1, lon: 2 } })).toBeUndefined()
+  })
+
+  it('leave the dragon die out of an e2e build unless a test asks for it, and always in elsewhere', () => {
+    expect(dragonOn('1', undefined)).toBe(false)
+    expect(dragonOn('1', {})).toBe(true)
+    expect(dragonOn(undefined, undefined)).toBe(true)
+    expect(dragonOn(undefined, {})).toBe(true)
+    expect(dragonThrough('1', { at: { lat: 1, lon: 2 } })).toEqual({ lat: 1, lon: 2 })
+    expect(dragonThrough(undefined, { at: { lat: 1, lon: 2 } })).toBeUndefined()
   })
 
   it('rig the next roll only in an e2e build, and only once', () => {

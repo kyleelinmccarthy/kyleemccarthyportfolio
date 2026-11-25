@@ -7,10 +7,11 @@ import { landmark } from './sky'
  * By day a bumblebee bumbles over the planet; pressing it pops it into
  * confetti with the line below and a count kept on the device. By night the
  * constellation "The Bumblebee" does the same, as often as it is pressed. By
- * night the constellation "The Natural 20" can be pressed (or `roll` typed
- * anywhere, at any hour) to roll a twenty-sided die across the screen; a 20
- * sets off fireworks over the planet. The bee is out only on the planet's
- * overview.
+ * day a d20 with dragon wings flies round the planet, and by night the
+ * constellation "The Natural 20" hangs on the sky: pressing either (or typing
+ * `roll` anywhere, at any hour) rolls a twenty-sided die across the screen; a
+ * 20 sets off fireworks over the planet. The bee and the dragon die are out
+ * only on the planet's overview.
  *
  * Words marked DRAFT are drafted for the owner's review.
  */
@@ -114,8 +115,8 @@ export const SQUASH_SAY_MS = 3200
  * world units (the planet's radius is 1); sizes in model units.
  */
 export const DRAGON = {
-  /** How far it flies a second along its loop, in degrees of arc. */
-  speed: 7,
+  /** How far it flies a second along its loop, in degrees of arc: slow enough to catch with a press. */
+  speed: 4,
   /** How far its loop's plane tips (degrees), and how many seconds the tip takes to go round once. */
   wobble: 22,
   wobblePeriod: 75,
@@ -131,11 +132,10 @@ export const DRAGON = {
   beats: 6,
   beat: 0.7,
   open: 0.25,
-  /** How fast the die turns about its own up as it flies (radians a second), and the most it leans into a turn (radians). */
-  spin: 0.35,
+  /** The most it leans into a turn (radians). */
   bank: 0.5,
-  /** The invisible shape that takes a press: a ball this round (model units), a little bigger than the die and its wings' roots. */
-  hit: 0.3,
+  /** The invisible shape that takes a press: a ball this round (model units), a little bigger than the die and its wings. */
+  hit: 0.36,
   /**
    * Under reduced motion it holds still over firm land at least this many degrees from every place: the land is
    * busy enough that the clearest spot is about 19 degrees from its nearest, and a landmark is only a few across.

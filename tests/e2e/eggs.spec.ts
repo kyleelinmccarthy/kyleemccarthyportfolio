@@ -18,15 +18,16 @@ const BUG_AT = { lat: 4, lon: -20 }
 
 const said = (page: Page) => page.locator('#egg-said')
 
-/** The planet, as an already-greeted visitor sees it, in `theme`, with the bug out (by day) if `bug`. */
-async function planet(page: Page, theme: 'day' | 'night', { bug = false } = {}) {
+/** The planet, as an already-greeted visitor sees it, in `theme`, with the bug out (by day) if `bug` and the dragon die if `dragon`. */
+async function planet(page: Page, theme: 'day' | 'night', { bug = false, dragon = false } = {}) {
   await page.addInitScript(
-    ({ theme, bug, at }) => {
+    ({ theme, bug, dragon, at }) => {
       sessionStorage.setItem('kym-guide-greeted', '1')
       sessionStorage.setItem('kym-theme', theme)
       if (bug) Object.assign(window, { __eggBug: { at } })
+      if (dragon) Object.assign(window, { __eggDragon: { at } })
     },
-    { theme, bug, at: BUG_AT },
+    { theme, bug, dragon, at: BUG_AT },
   )
   await page.goto('/')
   await expect(rig(page)).toHaveAttribute('data-rig-mode', 'orbit', { timeout: 60_000 })
@@ -57,6 +58,33 @@ async function turnToConstellation(page: Page, title: string) {
   }
   await expect(name).toHaveAttribute('data-on', '', { timeout: 10_000 })
   return name
+}
+
+/** Where the dragon die is on the screen once it is out on the near side, uncovered. */
+async function dragonOnScreen(page: Page) {
+  await expect
+    .poll(
+      () =>
+        page.evaluate(() => {
+          const at = (window as unknown as { __eggDragonScreen?: { x: number; y: number; front: boolean } }).__eggDragonScreen
+          return at?.front && document.elementFromPoint(at.x, at.y)?.tagName === 'CANVAS' ? 'ready' : 'not yet'
+        }),
+      { timeout: 60_000 },
+    )
+    .toBe('ready')
+  return page.evaluate(() => (window as unknown as { __eggDragonScreen: { x: number; y: number } }).__eggDragonScreen)
+}
+
+/** Where the dragon die is said to be this frame, or null when it is not out. */
+const dragonScreen = (page: Page) => page.evaluate(() => (window as unknown as { __eggDragonScreen?: unknown }).__eggDragonScreen ?? null)
+
+/** Presses the dragon die where it is, a few times if it flew off, until a roll is told. */
+async function pressDragon(page: Page) {
+  for (let i = 0; i < 4; i++) {
+    await press(page, await dragonOnScreen(page))
+    if (/^You rolled/.test((await said(page).textContent()) ?? '')) return
+    await page.waitForTimeout(300)
+  }
 }
 
 /** Where the bug is on the screen once it is out on the near side, uncovered. */
@@ -158,6 +186,52 @@ test.describe('the bumblebee constellation', () => {
   })
 })
 
+test.describe('the dragon die, by day', () => {
+  test('pressing it rolls the die; while the roll is out it is hidden, then it is back', async ({ page }) => {
+    drivesTheCanvas()
+    await planet(page, 'day', { dragon: true })
+    await page.evaluate(() => Object.assign(window, { __eggRoll: 7 }))
+    await pressDragon(page)
+    await expect(said(page)).toHaveText(eggWords.rolled(7), { timeout: 15_000 })
+    // While the die is out on the screen, the dragon die is not: no screen point, no pointer (read together, in one frame's reading).
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const roll = document.querySelector('.egg-roll') !== null
+          const dragon = (window as unknown as { __eggDragonScreen?: unknown }).__eggDragonScreen ?? null
+          const cursor = document.querySelector<HTMLCanvasElement>('[data-quality] canvas')!.style.cursor
+          return roll && dragon === null && cursor !== 'pointer' ? 'hidden while rolling' : roll ? 'still out' : 'no roll'
+        }),
+      )
+      .toBe('hidden while rolling')
+    // Once the roll has gone, it is back (flying on, wherever it has got to).
+    await expect(page.locator('.egg-roll')).toBeHidden({ timeout: 15_000 })
+    await expect.poll(() => dragonScreen(page), { timeout: 30_000 }).not.toBeNull()
+  })
+
+  test('it is out only on the overview: gone at a place, back on the overview', async ({ page }) => {
+    drivesTheCanvas()
+    await planet(page, 'day', { dragon: true })
+    await dragonOnScreen(page)
+    await page.evaluate(() => (document.querySelector('a[href="/places/post"]') as HTMLAnchorElement).click())
+    await expect(page).toHaveURL('/places/post')
+    await expect.poll(() => dragonScreen(page)).toBeNull()
+    await page.waitForTimeout(500)
+    expect(await dragonScreen(page)).toBeNull()
+    await page.goBack()
+    await expect(page).toHaveURL('/')
+    await dragonOnScreen(page)
+  })
+
+  test('is not out at night', async ({ page }) => {
+    drivesTheCanvas()
+    await planet(page, 'night', { dragon: true })
+    await page.waitForFunction(() => ((window as unknown as { __worldFrames?: number }).__worldFrames ?? 0) > 10)
+    await page.waitForTimeout(500)
+    expect(await dragonScreen(page)).toBeNull()
+  })
+})
+
 test.describe('the d20', () => {
   test('at night, pressing The Natural 20 rolls the die, and the result is told', async ({ page }) => {
     drivesTheCanvas()
@@ -205,6 +279,18 @@ test.describe('the d20', () => {
 
 test.describe('with reduced motion', () => {
   test.beforeEach(({ page }) => page.emulateMedia({ reducedMotion: 'reduce' }))
+
+  test('the dragon die holds still, and pressed it rolls', async ({ page }) => {
+    drivesTheCanvas()
+    await planet(page, 'day', { dragon: true })
+    await page.waitForTimeout(2000)
+    const first = await dragonOnScreen(page)
+    await page.waitForTimeout(1500)
+    const later = await dragonOnScreen(page)
+    expect(Math.hypot(later.x - first.x, later.y - first.y)).toBeLessThan(2)
+    await press(page, later)
+    await expect(said(page)).toHaveText(/^You rolled/, { timeout: 15_000 })
+  })
 
   test('a roll simply appears at rest with its result, with no fireworks; a natural 1 has its line', async ({ page }) => {
     drivesTheCanvas()
