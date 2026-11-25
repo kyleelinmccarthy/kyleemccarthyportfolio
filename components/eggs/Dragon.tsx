@@ -50,13 +50,14 @@ export function Dragon({ districts, places, reducedMotion }: DragonProps) {
   const wingR = useRef<Group>(null)
   const wingL = useRef<Group>(null)
   const radius = useMemo(() => dragonRadius(places, districts), [places, districts])
-  const hold = useMemo(() => dragonHold(places, districts), [places, districts])
   // In an e2e build a test may ask for its loop to start through a given spot, read once.
   const [hook] = useState(() => (typeof window === 'undefined' ? undefined : window.__eggDragon))
   const through = useMemo(() => {
     const at = dragonThrough(process.env.NEXT_PUBLIC_E2E, hook)
     return at ? dirOf(at) : undefined
   }, [hook])
+  // Under reduced motion it holds still well clear of every place, or where a test asked it to start.
+  const hold = useMemo(() => through ?? dragonHold(places), [through, places])
   const hit = useMemo(() => ({ geometry: new SphereGeometry(1, 10, 8), material: new MeshBasicMaterial({ visible: false }) }), [])
   const time = useRef(0)
   const scratch = useMemo(

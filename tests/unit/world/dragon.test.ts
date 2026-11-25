@@ -1,12 +1,10 @@
 import { describe, it, expect } from 'vitest'
 import { DRAGON } from '@/content/eggs'
 import { districts, places } from '@/content/world'
-import { FIRM_GROUND } from '@/lib/world/characters'
 import { DRAGON_SEED, dragonAt, dragonBank, dragonHold, dragonRadius, dragonWing } from '@/lib/world/dragon'
 import { angleDeg, dirOf } from '@/lib/world/geo'
 import { ORBIT_NEAREST } from '@/lib/world/gestures'
 import { landmarkTop } from '@/lib/world/labels'
-import { landValue } from '@/lib/world/terrain'
 
 describe('the dragon die’s flight', () => {
   it('flies clear of every landmark’s top, and inside the nearest the camera may come', () => {
@@ -59,9 +57,11 @@ describe('the dragon die’s flight', () => {
     expect(beatsSeen.size).toBeGreaterThan(5)
   })
 
-  it('holds, under reduced motion, over firm land well clear of every place', () => {
-    const hold = dragonHold(places, districts)
+  it('holds, under reduced motion, where it is never drawn over any place, from any view outside the planet', () => {
+    // Seen from outside, the die at radius r can cover a point of the planet only within arccos(1 / r) of under it.
+    const r = dragonRadius(places, districts)
+    expect(DRAGON.holdClear).toBeGreaterThanOrEqual((Math.acos(1 / r) * 180) / Math.PI)
+    const hold = dragonHold(places)
     for (const p of places) expect(angleDeg(hold, dirOf(p.at)), p.id).toBeGreaterThanOrEqual(DRAGON.holdClear)
-    expect(landValue(hold, districts).v).toBeGreaterThanOrEqual(FIRM_GROUND)
   })
 })

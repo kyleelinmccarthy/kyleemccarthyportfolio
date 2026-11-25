@@ -15,19 +15,21 @@ import { BUGS_STORAGE_KEY } from '../../lib/eggs/bugCount'
 
 /** Where the bug is asked to appear: open land on the side of the planet the overview faces. */
 const BUG_AT = { lat: 4, lon: -20 }
+/** Where the dragon die's loop is asked to start (and where it holds under reduced motion): straight ahead of the overview, high enough to clear the planet's middle on a phone. */
+const DRAGON_AT = { lat: 14, lon: -15 }
 
 const said = (page: Page) => page.locator('#egg-said')
 
 /** The planet, as an already-greeted visitor sees it, in `theme`, with the bug out (by day) if `bug` and the dragon die if `dragon`. */
 async function planet(page: Page, theme: 'day' | 'night', { bug = false, dragon = false } = {}) {
   await page.addInitScript(
-    ({ theme, bug, dragon, at }) => {
+    ({ theme, bug, dragon, at, dragonAt }) => {
       sessionStorage.setItem('kym-guide-greeted', '1')
       sessionStorage.setItem('kym-theme', theme)
       if (bug) Object.assign(window, { __eggBug: { at } })
-      if (dragon) Object.assign(window, { __eggDragon: { at } })
+      if (dragon) Object.assign(window, { __eggDragon: { at: dragonAt } })
     },
-    { theme, bug, dragon, at: BUG_AT },
+    { theme, bug, dragon, at: BUG_AT, dragonAt: DRAGON_AT },
   )
   await page.goto('/')
   await expect(rig(page)).toHaveAttribute('data-rig-mode', 'orbit', { timeout: 60_000 })
@@ -78,13 +80,22 @@ async function dragonOnScreen(page: Page) {
 /** Where the dragon die is said to be this frame, or null when it is not out. */
 const dragonScreen = (page: Page) => page.evaluate(() => (window as unknown as { __eggDragonScreen?: unknown }).__eggDragonScreen ?? null)
 
-/** Presses the dragon die where it is, a few times if it flew off, until a roll is told. */
+/** The rigged roll a test set, until a roll takes it. */
+const riggedRoll = (page: Page) => page.evaluate(() => (window as unknown as { __eggRoll?: number }).__eggRoll ?? null)
+
+/**
+ * Presses the dragon die where it is, a few times if it flew off, until a roll has begun (it has taken the rigged
+ * roll, so set one first); where it last pressed. A roll's words come only once the die lands, so they are no sign.
+ */
 async function pressDragon(page: Page) {
+  let at = { x: 0, y: 0 }
   for (let i = 0; i < 4; i++) {
-    await press(page, await dragonOnScreen(page))
-    if (/^You rolled/.test((await said(page).textContent()) ?? '')) return
-    await page.waitForTimeout(300)
+    at = await dragonOnScreen(page)
+    await press(page, at)
+    await page.waitForTimeout(200)
+    if ((await riggedRoll(page)) === null) break
   }
+  return at
 }
 
 /** Where the bug is on the screen once it is out on the near side, uncovered. */
@@ -191,7 +202,16 @@ test.describe('the dragon die, by day', () => {
     drivesTheCanvas()
     await planet(page, 'day', { dragon: true })
     await page.evaluate(() => Object.assign(window, { __eggRoll: 7 }))
-    await pressDragon(page)
+    const pressed = await pressDragon(page)
+    // At once, while the die tumbles: a press where it was rolls nothing, so a rigged roll is still waiting to be taken.
+    await page.evaluate(() => Object.assign(window, { __eggRoll: 20 }))
+    await press(page, pressed)
+    await page.waitForTimeout(200)
+    expect(await riggedRoll(page)).toBe(20)
+    expect(await page.evaluate(() => document.querySelector<HTMLCanvasElement>('[data-quality] canvas')!.style.cursor)).not.toBe('pointer')
+    await page.evaluate(() => Object.assign(window, { __eggRoll: undefined }))
+    // The press went through to whatever was under the die; if that was a landmark, come back to the overview.
+    if (new URL(page.url()).pathname !== '/') await page.goBack()
     await expect(said(page)).toHaveText(eggWords.rolled(7), { timeout: 15_000 })
     // While the die is out on the screen, the dragon die is not: no screen point, no pointer (read together, in one frame's reading).
     await expect

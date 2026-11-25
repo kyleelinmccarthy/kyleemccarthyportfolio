@@ -137,10 +137,11 @@ export const DRAGON = {
   /** The invisible shape that takes a press: a ball this round (model units), a little bigger than the die and its wings. */
   hit: 0.36,
   /**
-   * Under reduced motion it holds still over firm land at least this many degrees from every place: the land is
-   * busy enough that the clearest spot is about 19 degrees from its nearest, and a landmark is only a few across.
+   * Under reduced motion it holds still at least this many degrees from every place. Flying at its height (about 1.37),
+   * it can be drawn over a point of the planet only within arccos(1 / 1.37), about 43 degrees, of the spot under it,
+   * so past that it never covers a landmark from any view.
    */
-  holdClear: 15,
+  holdClear: 45,
 } as const
 
 /** The dragon die's colours, from the landmark palette: its own, not the Mountain die's purple. */

@@ -1,11 +1,9 @@
 import { Vector3 } from 'three'
 import { DRAGON } from '@/content/eggs'
 import type { District, Place } from '@/content/types'
-import { FIRM_GROUND } from './characters'
 import { D2R, angleDeg, dirOf } from './geo'
 import { landmarkTop } from './labels'
 import { mulberry32, WORLD_SEED } from './rng'
-import { landValue } from './terrain'
 
 /*
  * The dragon die easter egg's flight, as data: how high it flies, where it is
@@ -129,16 +127,15 @@ export function dragonWing(t: number): number {
 
 /**
  * Where it holds still under reduced motion, as a direction from the centre:
- * over firm land, as far as can be from every place (every 10 degrees tried),
- * so it never hangs over a landmark.
+ * as far as can be from every place (every 10 degrees tried), land or sea, so
+ * from no view is it ever drawn over a landmark and taking its presses.
  */
-export function dragonHold(places: Place[], districts: District[]): Vector3 {
+export function dragonHold(places: Place[]): Vector3 {
   const homes = places.map((p) => dirOf(p.at))
   let best = { dir: new Vector3(0, 1, 0), clear: -1 }
   for (let lat = -60; lat <= 60; lat += 10) {
     for (let lon = -180; lon < 180; lon += 10) {
       const dir = dirOf({ lat, lon })
-      if (landValue(dir, districts).v < FIRM_GROUND) continue
       const clear = Math.min(...homes.map((h) => angleDeg(dir, h)))
       if (clear > best.clear) best = { dir, clear }
     }
