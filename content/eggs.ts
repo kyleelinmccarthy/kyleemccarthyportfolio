@@ -108,6 +108,52 @@ export const CONFETTI = {
 /** How long the bug's words stay up, in milliseconds. */
 export const SQUASH_SAY_MS = 3200
 
+/**
+ * The dragon die, by day: a d20 with dragon wings flying round the planet over
+ * every landmark. Angles over the planet are in degrees of arc; heights in
+ * world units (the planet's radius is 1); sizes in model units.
+ */
+export const DRAGON = {
+  /** How far it flies a second along its loop, in degrees of arc. */
+  speed: 7,
+  /** How far its loop's plane tips (degrees), and how many seconds the tip takes to go round once. */
+  wobble: 22,
+  wobblePeriod: 75,
+  /** How far its flight sits above the tallest landmark's top, in world units. */
+  above: 0.12,
+  /** How far it bobs up and down as it flies (world units), this many times a second. */
+  bob: 0.01,
+  bobs: 0.7,
+  /** It flaps this many seconds, then glides this many, round and round. */
+  flap: 1.4,
+  glide: 2.6,
+  /** Its wings beat this many times a second while it flaps, this far either way (radians), about this tilt up from flat. */
+  beats: 6,
+  beat: 0.7,
+  open: 0.25,
+  /** How fast the die turns about its own up as it flies (radians a second), and the most it leans into a turn (radians). */
+  spin: 0.35,
+  bank: 0.5,
+  /** The invisible shape that takes a press: a ball this round (model units), a little bigger than the die and its wings' roots. */
+  hit: 0.3,
+  /**
+   * Under reduced motion it holds still over firm land at least this many degrees from every place: the land is
+   * busy enough that the clearest spot is about 19 degrees from its nearest, and a landmark is only a few across.
+   */
+  holdClear: 15,
+} as const
+
+/** The dragon die's colours, from the landmark palette: its own, not the Mountain die's purple. */
+export const dragonColors = {
+  /** The die: teal softened toward green, a dragon's scales. */
+  die: { from: landmark.teal, toward: landmark.green, k: 0.3 },
+  /** Its wings' membranes: coral warmed toward pink. */
+  membrane: { from: landmark.coral, toward: landmark.pink, k: 0.25 },
+  ribs: landmark.indigo,
+  tail: landmark.teal,
+  eyes: landmark.offWhite,
+} as const
+
 /** The die and its roll. */
 export const DIE = {
   /** Its size: the distance across it, in pixels, on a wide screen and on a phone (`PHONE_WIDTH`). */
