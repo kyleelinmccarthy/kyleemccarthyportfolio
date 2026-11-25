@@ -6,6 +6,8 @@ import { projects } from '@/content/projects'
 import { districts, places, tourFinale, tourOrder, placeById } from '@/content/world'
 import { looks, greetings, constellations, welcome, dayHours } from '@/content/sky'
 import { onTheGo } from '@/content/onTheGo'
+import { BEE_CONSTELLATION } from '@/content/eggs'
+import { angleDeg, dirOf } from '@/lib/world/geo'
 
 describe('world content', () => {
   it('has five districts and twenty places', () => {
@@ -66,11 +68,17 @@ describe('world content', () => {
     const keys = Object.keys(looks.afternoon).sort()
     for (const k of ['morning', 'afternoon', 'evening', 'night'] as const) expect(Object.keys(looks[k]).sort()).toEqual(keys)
   })
-  it('has the four constellations, each with in-range lines', () => {
-    expect(constellations.map((c) => c.name)).toEqual(['The Crown', 'Jimothy Major', 'The Natural 20', 'The Pencil'])
+  it('has the five constellations, each with in-range lines', () => {
+    expect(constellations.map((c) => c.name)).toEqual(['The Crown', 'Jimothy Major', 'The Natural 20', 'The Pencil', 'The Bumblebee'])
     for (const c of constellations) for (const [a, b] of c.lines) {
       expect(a).toBeLessThan(c.points.length)
       expect(b).toBeLessThan(c.points.length)
     }
+  })
+  it('hangs The Bumblebee well apart from every other figure', () => {
+    const bee = constellations.find((c) => c.name === BEE_CONSTELLATION)!
+    for (const c of constellations) if (c !== bee) expect(angleDeg(dirOf(bee.at), dirOf(c.at)), c.name).toBeGreaterThan(30)
+    expect(bee.points.length).toBeGreaterThanOrEqual(12)
+    expect(bee.points.length).toBeLessThanOrEqual(22)
   })
 })

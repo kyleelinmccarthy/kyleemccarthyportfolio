@@ -1,6 +1,6 @@
 import { drivesTheCanvas, expect, rig, test, touchOf, type Page } from './canvas'
 // Relative imports: Playwright does not know the `@/` alias.
-import { eggWords } from '../../content/eggs'
+import { BEE_CONSTELLATION, ROLL_CONSTELLATION, eggWords } from '../../content/eggs'
 import { BUGS_STORAGE_KEY } from '../../lib/eggs/bugCount'
 
 /*
@@ -36,11 +36,12 @@ async function planet(page: Page, theme: 'day' | 'night', { bug = false } = {}) 
 }
 
 /**
- * Turns the planet with short drags to the right (the camera going west) until The Natural 20's name shows on the
- * sky: it hangs beyond Tiny Frenzy, so from the opening view it is behind the camera.
+ * Turns the planet with short drags to the right (the camera going west) until the constellation `title`'s name
+ * shows on the sky. The Natural 20 hangs beyond Tiny Frenzy, so from the opening view it is behind the camera.
  */
-async function turnToTheNatural20(page: Page) {
-  const name = page.locator('#label-const-the-natural-20')
+async function turnToConstellation(page: Page, title: string) {
+  // As `constellationLabelId` names it.
+  const name = page.locator(`#label-const-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`)
   const { width, height } = page.viewportSize()!
   const from = { x: width * 0.3, y: height * 0.5 }
   const step = height * 0.09
@@ -116,12 +117,34 @@ test.describe('the bug, by day', () => {
   })
 })
 
+test.describe('the bumblebee constellation', () => {
+  test('at night, pressing The Bumblebee counts a bug, as catching the bee does', async ({ page }) => {
+    // On a phone's tall view a figure on this side of the sky is named over only about 10° of turning, too narrow
+    // for the drags to land in reliably. The press itself is the same code as The Natural 20's, tested on a phone.
+    test.skip(test.info().project.name === 'mobile', 'the press is shared with The Natural 20, which runs on a phone')
+    drivesTheCanvas()
+    await planet(page, 'night')
+    const name = await turnToConstellation(page, BEE_CONSTELLATION)
+    await page.waitForTimeout(800)
+    const box = (await name.boundingBox())!
+    const at = { x: box.x + box.width / 2, y: box.y - 50 }
+    expect(await page.evaluate(({ x, y }) => document.elementFromPoint(x, y)?.tagName, at)).toBe('CANVAS')
+    await press(page, at)
+    await expect(said(page)).toHaveText(`${eggWords.feature} ${eggWords.squashed(1)}.`)
+    await expect(page.locator('.egg-bubble')).toBeVisible()
+    // It stays on the sky: a second press counts again.
+    await expect(page.locator('.egg-bubble')).toBeHidden({ timeout: 10_000 })
+    await press(page, at)
+    await expect(said(page)).toHaveText(`${eggWords.feature} ${eggWords.squashed(2)}.`)
+  })
+})
+
 test.describe('the d20', () => {
   test('at night, pressing The Natural 20 rolls the die, and the result is told', async ({ page }) => {
     drivesTheCanvas()
     await planet(page, 'night')
     // Its name is shown on the sky once the planet is turned; pressing just over it, on its stars, rolls.
-    const name = await turnToTheNatural20(page)
+    const name = await turnToConstellation(page, ROLL_CONSTELLATION)
     await page.waitForTimeout(800)
     const box = (await name.boundingBox())!
     const at = { x: box.x + box.width / 2, y: box.y - 50 }

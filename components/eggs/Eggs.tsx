@@ -4,7 +4,8 @@ import { Suspense, lazy } from 'react'
 import type { EggsInWorldProps } from './EggsInWorld'
 
 /*
- * The two easter eggs (a bug on the planet by day, a d20 by night), as the
+ * The easter eggs (a bug on the planet by day; by night, two constellations
+ * that take a press: one rolls a d20, one counts a bug), as the
  * world mounts them: each half loaded on its own, only once the world has
  * drawn its first frame, so neither ever delays it. Nothing of them is in the
  * page's first load, and nothing at all without the world (no script, no
@@ -14,7 +15,7 @@ import type { EggsInWorldProps } from './EggsInWorld'
 const InWorld = lazy(() => import('./EggsInWorld'))
 const OnPage = lazy(() => import('./EggsOnPage').then((m) => ({ default: m.EggsOnPage })))
 
-/** Inside the canvas: the bug by day, the constellation's press by night. */
+/** Inside the canvas: the bug by day, the two constellations' presses by night. */
 export function EggsWorldLayer(props: EggsInWorldProps) {
   return (
     <Suspense fallback={null}>

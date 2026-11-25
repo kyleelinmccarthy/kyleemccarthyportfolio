@@ -1,35 +1,40 @@
-import { landmark } from "./sky";
+import { landmark } from './sky'
 
 /*
- * The two easter eggs, as data: what they say and how they are tuned.
+ * The four easter eggs, two by day and two by night, as data: what they say
+ * and how they are tuned.
  *
- * By day a bumblebee bumbles over the planet; pressing it pops it into confetti
- * with the line below and a count kept on the device. By night the
- * constellation "The Natural 20" can be pressed (or `roll` typed anywhere, at
- * any hour) to roll a twenty-sided die across the screen; a 20 sets off
- * fireworks over the planet.
+ * By day a bumblebee bumbles over the planet; pressing it pops it into
+ * confetti with the line below and a count kept on the device. By night the
+ * constellation "The Bumblebee" does the same, as often as it is pressed. By
+ * night the constellation "The Natural 20" can be pressed (or `roll` typed
+ * anywhere, at any hour) to roll a twenty-sided die across the screen; a 20
+ * sets off fireworks over the planet. The bee is out only on the planet's
+ * overview.
  *
  * Words marked DRAFT are drafted for the owner's review.
  */
 
 /** The constellation that rolls the die when pressed (its name in `constellations`, `content/sky.ts`). */
-export const ROLL_CONSTELLATION = "The Natural 20";
+export const ROLL_CONSTELLATION = 'The Natural 20'
+/** DRAFT: the constellation that counts a bug when pressed, as catching the bee does (its name in `constellations`). */
+export const BEE_CONSTELLATION = 'The Bumblebee'
 
 /** What the eggs say. */
 export const eggWords = {
   /** Said when the bug is caught. */
-  feature: "It’s a feature, not a bug.",
+  feature: 'It’s a feature, not a bug.',
   /** The count of bugs caught on this device, under it. */
   squashed: (n: number) => `Bugs squashed: ${n}`,
   /** The word that rolls the die, typed anywhere outside a field. */
-  rollWord: "roll",
+  rollWord: 'roll',
   /** The result of a roll. */
   rolled: (n: number) => `You rolled ${n}.`,
   /** DRAFT: a natural 20, under the result, with the fireworks. */
-  natural20: "Natural 20. Critical success!",
+  natural20: 'Natural 20. Critical success!',
   /** DRAFT: a natural 1, under the result: a small, gentle joke. */
-  natural1: "A natural 1. It happens to the best of us.",
-} as const;
+  natural1: 'A natural 1. It happens to the best of us.',
+} as const
 
 /**
  * The bug: a small bumblebee. Sizes are in model units (a landmark's, `MODEL_SCALE`
@@ -71,11 +76,11 @@ export const BUG = {
   beats: 22,
   beat: 0.55,
   open: 0.35,
-} as const;
+} as const
 
 /** The bumblebee's colours, from the landmark palette. */
 export const bugColors = {
-  /** Its fluffy thorax and the gold stripe on its abdomen. */
+  /** Its fluffy thorax and the gold band round its abdomen. */
   fur: landmark.gold,
   /** Its dark abdomen, either side of the gold band: indigo, as every dark here is, never black. */
   bands: landmark.indigo,
@@ -84,20 +89,13 @@ export const bugColors = {
   eyes: landmark.offWhite,
   /** Its wings: pale, the sky softened toward white. */
   wings: { from: landmark.sky, toward: landmark.offWhite, k: 0.55 },
-} as const;
+} as const
 
 /** The confetti a caught bug pops into: from the palette, and short-lived. */
 export const CONFETTI = {
   pieces: 60,
   seconds: 1.4,
-  colors: [
-    landmark.gold,
-    landmark.pink,
-    landmark.teal,
-    landmark.sky,
-    landmark.coral,
-    landmark.purple,
-  ],
+  colors: [landmark.gold, landmark.pink, landmark.teal, landmark.sky, landmark.coral, landmark.purple],
   /** Pixels a second, outward and upward at the start; pixels a second squared, downward. */
   speed: [220, 540],
   gravity: 900,
@@ -105,10 +103,10 @@ export const CONFETTI = {
   drag: 2.6,
   /** A piece's size, in pixels. */
   size: [6, 11],
-} as const;
+} as const
 
 /** How long the bug's words stay up, in milliseconds. */
-export const SQUASH_SAY_MS = 3200;
+export const SQUASH_SAY_MS = 3200
 
 /** The die and its roll. */
 export const DIE = {
@@ -136,7 +134,7 @@ export const DIE = {
     number: landmark.offWhite,
     edge: landmark.indigo,
   },
-} as const;
+} as const
 
 /** The fireworks a natural 20 sets off: a few shells over the planet, from the palette, for a few seconds. */
 export const FIREWORKS = {
@@ -150,13 +148,7 @@ export const FIREWORKS = {
   speed: [90, 270],
   gravity: 140,
   drag: 1.4,
-  colors: [
-    landmark.gold,
-    landmark.pink,
-    landmark.sky,
-    landmark.teal,
-    landmark.offWhite,
-  ],
+  colors: [landmark.gold, landmark.pink, landmark.sky, landmark.teal, landmark.offWhite],
   /** Where the bursts open: a band across the middle of the screen's upper part, as shares of its width and height. */
   band: { x: [0.32, 0.68], y: [0.12, 0.36] },
-} as const;
+} as const

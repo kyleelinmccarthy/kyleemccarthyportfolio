@@ -258,4 +258,26 @@ export const constellations: Constellation[] = [
     points: [[-4, -1], [3, -1], [4.6, 0], [3, 1], [-4, 1]],
     lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0], [1, 3]],
   },
+  {
+    name: 'The Bumblebee',
+    at: { lat: 10, lon: 110 },
+    // A bumblebee from above, head up: a round body with two bands across it and
+    // a point at its tail, a head before it with two feelers, and a wing spread
+    // out from each shoulder.
+    points: [
+      // The body, round from the top clockwise: its shoulders, its sides, its tail (0–7).
+      [0, 1.2], [1.3, 0.6], [1.5, -0.6], [1, -2], [0, -2.8], [-1, -2], [-1.5, -0.6], [-1.3, 0.6],
+      // The head and its two feelers (8–10).
+      [0, 2.4], [-0.9, 3.6], [0.9, 3.6],
+      // The right wing's tips (11, 12) and the left's (13, 14).
+      [3.6, 2.2], [3.2, 0.2], [-3.6, 2.2], [-3.2, 0.2],
+    ],
+    lines: [
+      [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 0],
+      // The two bands across the body.
+      [7, 1], [6, 2],
+      [0, 8], [8, 9], [8, 10],
+      [1, 11], [11, 12], [12, 1], [7, 13], [13, 14], [14, 7],
+    ],
+  },
 ]
