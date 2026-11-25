@@ -229,8 +229,22 @@ export const constellations: Constellation[] = [
   {
     name: 'Jimothy Major',
     at: { lat: -15, lon: 153 },
-    points: [[-3, 2], [-2, 4], [-1, 2.4], [1, 2.4], [2, 4], [3, 2], [2, -1], [0, -2.5], [-2, -1], [-1, 0.6], [1, 0.6]],
-    lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 0]],
+    // A raccoon's face, not a fox's: short round ears set wide, cheek ruffs flaring
+    // out to the sides, and the bandit mask across the eyes, with the dark
+    // stripe running down the nose to its tip.
+    points: [
+      // The head: left ear, the crown, right ear, right ruff, nose, left ruff (0–10).
+      [-2.5, 2.5], [-3, 3.4], [-2.3, 4], [-1.3, 2.8], [1.3, 2.8], [2.3, 4], [3, 3.4], [2.5, 2.5], [3.7, 0.8], [0, -2.4], [-3.7, 0.8],
+      // The mask's top edge (11–13) and bottom edge (14–16), between the two ruffs.
+      [-1.8, 1.9], [0, 1.4], [1.8, 1.9], [1.6, 0], [0, 0.5], [-1.6, 0],
+      // The eyes, inside the mask (17, 18).
+      [-1.5, 1], [1.5, 1],
+    ],
+    lines: [
+      [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9], [9, 10], [10, 0],
+      [10, 11], [11, 12], [12, 13], [13, 8], [8, 14], [14, 15], [15, 16], [16, 10],
+      [15, 9],
+    ],
   },
   {
     name: 'The Natural 20',
