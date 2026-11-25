@@ -145,12 +145,11 @@ export const DRAGON = {
 
 /** The dragon die's colours, from the landmark palette: its own, not the Mountain die's purple. */
 export const dragonColors = {
-  /** The die: teal softened toward green, a dragon's scales. */
+  /** The die and its tail: teal softened toward green, a dragon's scales. */
   die: { from: landmark.teal, toward: landmark.green, k: 0.3 },
   /** Its wings' membranes: coral warmed toward pink. */
   membrane: { from: landmark.coral, toward: landmark.pink, k: 0.25 },
   ribs: landmark.indigo,
-  tail: landmark.teal,
   eyes: landmark.offWhite,
 } as const
 

@@ -8,6 +8,7 @@ import { COMPANION_DRAW_BUDGET, COMPANION_TRIANGLE_BUDGET } from '@/lib/world/ch
 import { PLANET_DRAW_BUDGET, PLANET_TRIANGLE_BUDGET, triangleCount } from '@/lib/world/kit'
 import { drawCalls, survey } from './landmarkChecks'
 import { bumblebee } from '../eggs/bumblebeeMount'
+import { dragonDie } from '../eggs/dragonDieMount'
 import { mount } from './r3f'
 
 /** The two characters as the world mounts them at `placeId` (shadows, sway, batching and all), and what they draw. */
@@ -87,7 +88,7 @@ describe('the characters as the world draws them', () => {
 })
 
 describe('the planet with the characters on it', () => {
-  it('keeps within the planet’s totals: every landmark, the pair at their heaviest, and the easter egg’s bug', async () => {
+  it('keeps within the planet’s totals: every landmark, the pair at their heaviest, and the easter eggs’ bee and dragon die', async () => {
     let triangles = 0
     let draws = 0
     for (const place of places) {
@@ -104,7 +105,9 @@ describe('the planet with the characters on it', () => {
     }
     const bug = await bumblebee()
     await bug.unmount()
-    expect(triangles + heaviest.triangles + bug.triangles).toBeLessThanOrEqual(PLANET_TRIANGLE_BUDGET)
-    expect(draws + heaviest.draws + bug.draws).toBeLessThanOrEqual(PLANET_DRAW_BUDGET)
+    const dragon = await dragonDie()
+    await dragon.unmount()
+    expect(triangles + heaviest.triangles + bug.triangles + dragon.triangles).toBeLessThanOrEqual(PLANET_TRIANGLE_BUDGET)
+    expect(draws + heaviest.draws + bug.draws + dragon.draws).toBeLessThanOrEqual(PLANET_DRAW_BUDGET)
   }, 120_000)
 })
